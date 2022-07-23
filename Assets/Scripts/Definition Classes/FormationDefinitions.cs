@@ -1,0 +1,163 @@
+using System.Collections;
+using System.Collections.Generic;
+using static Footballer;
+
+public static class FormationDefinitions
+{
+    public static Dictionary<string, List<Position>> Formations = new Dictionary<string, List<Position>>()
+    {
+        { 
+            "4-3-3", 
+            new List<Position>()
+            {
+                Position.BR,
+                Position.LO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.PO,
+                Position.ŒPD,
+                Position.ŒP,
+                Position.ŒP,
+                Position.LP,
+                Position.PP,
+                Position.N
+            } 
+        },
+        {
+            "4-2-3-1",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.LO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.PO,
+                Position.ŒP,
+                Position.ŒP,
+                Position.ŒPO,
+                Position.LP,
+                Position.PP,
+                Position.N
+            }
+        },
+        {
+            "4-4-1-1",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.LO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.PO,
+                Position.ŒP,
+                Position.ŒP,
+                Position.ŒPO,
+                Position.LP,
+                Position.PP,
+                Position.N
+            }
+        },
+        {
+            "4-1-4-1",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.LO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.PO,
+                Position.ŒPD,
+                Position.ŒP,
+                Position.ŒP,
+                Position.LP,
+                Position.PP,
+                Position.N
+            }
+        },
+        {
+            "4-3-1-2",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.LO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.PO,
+                Position.ŒP,
+                Position.ŒP,
+                Position.ŒP,
+                Position.ŒPO,
+                Position.N,
+                Position.N
+            }
+        },
+        {
+            "4-4-2",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.LO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.PO,
+                Position.ŒP,
+                Position.ŒP,
+                Position.LP,
+                Position.PP,
+                Position.N,
+                Position.N
+            }
+        },
+        {
+            "5-3-2",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.LO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.PO,
+                Position.ŒP,
+                Position.ŒP,
+                Position.ŒPO,
+                Position.N,
+                Position.N
+            }
+        },
+        {
+            "3-4-1-2",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.ŒO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.ŒP,
+                Position.ŒP,
+                Position.LP,
+                Position.PP,
+                Position.ŒPO,
+                Position.N,
+                Position.N
+            }
+        },
+        {
+            "3-4-2-1",
+            new List<Position>()
+            {
+                Position.BR,
+                Position.ŒO,
+                Position.ŒO,
+                Position.ŒO,
+                Position.ŒP,
+                Position.ŒP,
+                Position.LP,
+                Position.PP,
+                Position.ŒPO,
+                Position.ŒPO,
+                Position.N
+            }
+        }
+    };
+}
