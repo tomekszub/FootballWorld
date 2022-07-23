@@ -1,0 +1,12 @@
+VFB
+VFL
+SC
+BSC
+1.FSV
+1.FC
+FC
+SV
+SG
+MSV
+FSV
+SSV

@@ -1,0 +1,64 @@
+Madrid
+Barcelona
+Sevilla
+Málaga
+Valencia
+Zaragoza
+Palma
+Murcia
+Las Palmas
+A Coruña
+Bilbao
+Alicante
+Córdoba
+Valladolid
+Vigo
+Gijón
+Vitoria-Gasteiz
+Elche
+Granada
+Tarrasa
+Badalona
+Oviedo
+Petrel
+Sabadell
+Cartagena
+Santa Cruz
+Pamplona
+León
+Almería
+Logroño
+Fuenlabrada
+Leganés
+Donostia
+Mataró
+Albacete
+Castellón de la Plana
+Santander
+Getafe
+Alcorcón
+Burgos
+Guadalajara
+La Laguna
+Badajoz
+Marbella
+Salamanca
+Huelva
+Ciudad de Melilla
+Tarragona
+Dos Hermanas
+Torrejón de Ardoz
+Algeciras
+Cádiz
+Jaén
+Reus
+Girona
+San Vicente de Baracaldo
+Lugo
+Roquetas de Mar
+Cáceres
+Lorca
+San Fernando
+San Cugat del Vallés
+Santiago de Compostela
+Toledo
