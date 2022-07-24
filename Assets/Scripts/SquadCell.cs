@@ -1,20 +1,20 @@
-﻿using System.Collections;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class SquadCell : MonoBehaviour, IPointerDownHandler
 {
+    [SerializeField] TextMeshProUGUI _Text;
+
     Footballer playerOnPosition = null;
     static GameObject selectedFootballer = null;
     // Start is called before the first frame update
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log(this.gameObject.name + " Was Clicked.");
         if (selectedFootballer == null)
         {
             selectedFootballer = gameObject;
-            GetComponent<TextMeshProUGUI>().color = Color.yellow;
+            _Text.color = Color.yellow;
         }
         else
         {
@@ -24,7 +24,7 @@ public class SquadCell : MonoBehaviour, IPointerDownHandler
                 selectedFootballer.GetComponent<SquadCell>().SetFootballer(playerOnPosition);
                 SetFootballer(temp);
             }
-            GetComponent<TextMeshProUGUI>().color = Color.white;
+            _Text.color = Color.white;
             selectedFootballer = null;
         }
         
@@ -36,7 +36,7 @@ public class SquadCell : MonoBehaviour, IPointerDownHandler
     public void SetFootballer(Footballer f)
     {
         playerOnPosition = f;
-        GetComponent<TextMeshProUGUI>().SetText(playerOnPosition.Surname);
-        GetComponent<TextMeshProUGUI>().color = Color.white;
+        _Text.SetText($"{playerOnPosition.Surname} <size=40%>({playerOnPosition.Pos})");
+        _Text.color = Color.white;
     }
 }
