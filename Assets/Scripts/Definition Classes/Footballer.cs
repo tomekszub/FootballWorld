@@ -38,7 +38,7 @@ public class Footballer
 		AlteredSurname = alteredSurname;
 		Country = country;
 		Flag = Resources.Load<Sprite> ("Flags/" + country);
-		Rating = Mathf.Round((freeKicks + dribling + tackle + heading + shoot + speed + pass) / 7);
+		Rating = Mathf.Round((dribling + tackle + heading + shoot + speed + pass) / 6);
 		FreeKicks = freeKicks;
 		Pos = pos;
 		Dribling = dribling;
