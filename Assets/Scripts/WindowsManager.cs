@@ -6,14 +6,17 @@ public class WindowsManager : MonoBehaviour
 {
     public static WindowsManager Instance;
 
-    public GameObject TableWindow;
-    public GameObject ClubMenuWindow;
-    public GameObject MainMenuWindow;
-    public GameObject SimulationWindow;
-    public SquadListPanel SquadWindow;
-    public GameObject ShopWindow;
+    [SerializeField] MyClub _MyClub;
+
+    [SerializeField] GameObject TableWindow;
+    [SerializeField] GameObject ClubMenuWindow;
+    [SerializeField] GameObject MainMenuWindow;
+    [SerializeField] GameObject SimulationWindow;
+    [SerializeField] SquadListPanel SquadListWindow;
+    [SerializeField] GameObject SquadTacticWindow;
+    [SerializeField] GameObject ShopWindow;
     [HideInInspector]
-    public List<GameObject> allWindows = new List<GameObject>();
+    [SerializeField] List<GameObject> allWindows = new List<GameObject>();
     // Start is called before the first frame update
     void Awake()
     {
@@ -32,7 +35,8 @@ public class WindowsManager : MonoBehaviour
         // commentPanel needs to be active at all times, it is last in hierarchy so invisible unless all tabs inactive 
         //allWindows.Add(SimulationWindow); 
         allWindows.Add(ShopWindow); 
-        allWindows.Add(SquadWindow.gameObject);
+        allWindows.Add(SquadListWindow.gameObject);
+        allWindows.Add(SquadTacticWindow);
         ShowWindow("Main Menu");
     }
     void HideAllWindows()
@@ -51,13 +55,17 @@ public class WindowsManager : MonoBehaviour
             case "Main Menu": MainMenuWindow.SetActive(true); break;
             case "Table": TableWindow.SetActive(true); break;
             case "Simulation": SimulationWindow.SetActive(true); break;
-            case "Squad": 
-                SquadWindow.gameObject.SetActive(true); 
-                SquadWindow.SetupSquad(MyClub.myClubID);
+            case "SquadList": 
+                SquadListWindow.gameObject.SetActive(true);
+                SquadListWindow.SetupSquad(MyClub.myClubID);
+                break;
+            case "SquadTactic":
+                SquadTacticWindow.gameObject.SetActive(true);
+                _MyClub.SetUpSquadScreen();
                 break;
             case "Shop": ShopWindow.SetActive(true);break;
             default:
-                break;
+                throw new KeyNotFoundException($"Window with name {name} does not exist!");
         }
     }
 }

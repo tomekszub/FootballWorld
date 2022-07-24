@@ -825,7 +825,6 @@ public class MyClub : MonoBehaviour
     }
     public void SetUpSquadScreen()
     {
-        WindowsManager.Instance.ShowWindow("Squad");
         // set dropdown value to current formation
         for (int i = 0; i < formationDropDown.options.Count; i++)
         {
@@ -1041,7 +1040,7 @@ public class MyClub : MonoBehaviour
                 int inTheMiddle = attackersNumber - 2;
                 for (int i = 1; i <= inTheMiddle; i++)
                 {
-                    Database.clubDB[myClubID].FootballersIDs[defAndMidCount + inTheMiddle + i] = squadPanelsParent.transform.GetChild(0).GetChild(i).GetComponent<SquadCell>().GetFootballerID();
+                    Database.clubDB[myClubID].FootballersIDs[defAndMidCount + inTheMiddle + i + 1] = squadPanelsParent.transform.GetChild(0).GetChild(i).GetComponent<SquadCell>().GetFootballerID();
                 }
                 Database.clubDB[myClubID].FootballersIDs[defAndMidCount + 1] = squadPanelsParent.transform.GetChild(0).GetChild(0).GetComponent<SquadCell>().GetFootballerID();
                 Database.clubDB[myClubID].FootballersIDs[defAndMidCount + 2] = squadPanelsParent.transform.GetChild(0).GetChild(attackersNumber - 1).GetComponent<SquadCell>().GetFootballerID();

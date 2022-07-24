@@ -52,11 +52,11 @@ public class LeagueGenerator : MonoBehaviour
         return c;
     }
 
-    (string, List<Footballer.Position>) GetRandomFormation()
+    (string, List<Position>) GetRandomFormation()
     {
         int random = Random.Range(0, FormationDefinitions.Formations.Count);
         string formation = FormationDefinitions.Formations.ElementAt(random).Key;
-        return (formation, new List<Footballer.Position>(FormationDefinitions.Formations.ElementAt(random).Value));
+        return (formation, new List<Position>(FormationDefinitions.Formations.ElementAt(random).Value));
     }
 
     List<int> GenerateClubRatings()
