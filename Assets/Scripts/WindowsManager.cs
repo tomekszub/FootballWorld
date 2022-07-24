@@ -57,7 +57,7 @@ public class WindowsManager : MonoBehaviour
             case "Simulation": SimulationWindow.SetActive(true); break;
             case "SquadList": 
                 SquadListWindow.gameObject.SetActive(true);
-                SquadListWindow.SetupSquad(MyClub.myClubID);
+                SquadListWindow.Init();
                 break;
             case "SquadTactic":
                 SquadTacticWindow.gameObject.SetActive(true);

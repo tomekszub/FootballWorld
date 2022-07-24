@@ -171,9 +171,9 @@ public class Comment : MonoBehaviour
         for (int i = 0; i < 11; i++)
         {
             teams[0].Add(Database.footballersDB[Database.clubDB[hostId].FootballersIDs[i]]);
-            teams[0][i].MatchesPlayed++;
+            teams[0][i].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
             teams[1].Add(Database.footballersDB[Database.clubDB[guestId].FootballersIDs[i]]);
-            teams[1][i].MatchesPlayed++;
+            teams[1][i].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
         }
         teamsMidPos[0] = new List<int>();
         teamsMidPos[1] = new List<int>();
@@ -635,7 +635,7 @@ public class Comment : MonoBehaviour
                 // gol
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(penaltyPlayers[0], teamName[guestBall],1);
-                penaltyPlayers[0].Goals++;
+                penaltyPlayers[0].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 CommentLine.PenaltyGoal();
                 minute++;
@@ -675,7 +675,7 @@ public class Comment : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.Goals);
                 ChangeCuriosity();
                 CommentLine.LongShotGoal();
                 minute++;
@@ -720,7 +720,7 @@ public class Comment : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.Goals);
                 ChangeCuriosity();
                 CommentLine.CounterAttackGoal();
                 minute++;
@@ -764,7 +764,7 @@ public class Comment : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.Goals);
                 ChangeCuriosity();
                 CommentLine.NormalAttackGoal();
                 minute++;
@@ -807,7 +807,7 @@ public class Comment : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.Goals);
                 ChangeCuriosity();
                 CommentLine.OneOnOneAttackGoal();
                 minute++;
@@ -851,7 +851,7 @@ public class Comment : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 CommentLine.HeaderGoal();
                 minute++;

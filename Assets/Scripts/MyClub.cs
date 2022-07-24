@@ -10,6 +10,7 @@ public class MyClub : MonoBehaviour
     public static int myLeagueID;
     public static int myInLeagueIndex;
     public static int myClubID;
+    public static HashSet<string> myTournaments = new HashSet<string>();
     static string leagueName;
     public int testHost, testGuest;
     DateTime startOfTheSeason = new DateTime(2018, 8, 17);
@@ -59,7 +60,7 @@ public class MyClub : MonoBehaviour
     }
     public void TestClick()
     {
-        Simulation.SimulationStart(testHost, testGuest);
+        Simulation.SimulationStart(testHost, testGuest, "");
 
         commentPanel.SetActive(true);
         clubMenuPanel.SetActive(false);
@@ -141,8 +142,11 @@ public class MyClub : MonoBehaviour
         }
         // -1 oznacza ze numer rundy ma byc automatyczny, to znaczy kazda runda inny id rundy (dla ligi jest ok, np dla fazy gr lm trzeba to ustawic)
         MatchCalendar.CreateGroupCalendar(Database.leagueDB[myLeagueID].Name, -1, clubs, startOfTheSeason);
+        myTournaments.Add(Database.leagueDB[myLeagueID].Name);
         CreateCupCalendar();
+        myTournaments.Add("National Cup");
         CreateChampionsLeagueCalendar();
+        myTournaments.Add("Champions Cup");
         UpdateCalendar();
         //c = new Comment();
         //c = FindObjectOfType<Comment>();
@@ -264,7 +268,7 @@ public class MyClub : MonoBehaviour
             guestId = matches[currentMatch].SecondTeamId;
             if (hostId != myClubID && guestId != myClubID)
             {
-                MatchStats[] ms = Simulation.SimulationStart(hostId, guestId);
+                MatchStats[] ms = Simulation.SimulationStart(hostId, guestId, matches[currentMatch].CompetitionName);
                 ProcesssMatchStats(ms, matches[currentMatch].CompetitionName);
                 if (endOfRound)
                 {
@@ -410,7 +414,7 @@ public class MyClub : MonoBehaviour
                 } 
             }
         }
-        else if(competitionName == "Qual Champions League" || competitionName == "Champions League")
+        else if(competitionName == "Champions Cup")
         {
             qualCL[matches[currentMatch].RoundIndex].SendMatchResult(matches[currentMatch]);
             if (qualCL[currCLRound].GetWinners() != null)
@@ -428,7 +432,7 @@ public class MyClub : MonoBehaviour
                         Debug.LogError("It should be 33 added teams in this round!");
                         return;
                     }
-                    qualCL.Add(new CupKnockoutStage("Qual Champions League", cs, qualCL[0].GetWinners(), true, 2));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", cs, qualCL[0].GetWinners(), true, 2));
                     currCLRound++;
                     Match[] ms = qualCL[1].GetMatches();
                     //ms[0].Date = new DateTime(2019, 6, 28);
@@ -447,7 +451,7 @@ public class MyClub : MonoBehaviour
                         Debug.LogError("It should be 3 added teams in this round!");
                         return;
                     }
-                    qualCL.Add(new CupKnockoutStage("Qual Champions League", cs, qualCL[1].GetWinners(), true, 2));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", cs, qualCL[1].GetWinners(), true, 2));
                     currCLRound++;
                     // league path
                     cs = new List<Club>();
@@ -461,7 +465,7 @@ public class MyClub : MonoBehaviour
                         Debug.LogError("It should be 6 added teams in this round!");
                         return;
                     }
-                    qualCL.Add(new CupKnockoutStage("Qual Champions League", cs, null, true, 2));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", cs, null, true, 2));
                     currCLRound++;
                     //
 
@@ -484,7 +488,7 @@ public class MyClub : MonoBehaviour
                         Debug.LogError("It should be 2 added teams in this round!");
                         return;
                     }
-                    qualCL.Add(new CupKnockoutStage("Qual Champions League", cs, qualCL[2].GetWinners(), true, 2));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", cs, qualCL[2].GetWinners(), true, 2));
                     currCLRound++;
                     cs = new List<Club>();
                     for (int i = 0; i < Database.leagueDB.Count; i++)
@@ -497,7 +501,7 @@ public class MyClub : MonoBehaviour
                         Debug.LogError("It should be 5 added teams in this round!");
                         return;
                     }
-                    qualCL.Add(new CupKnockoutStage("Qual Champions League", cs, qualCL[3].GetWinners(), true, 2));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", cs, qualCL[3].GetWinners(), true, 2));
                     currCLRound++;
                     Match[] ms = qualCL[4].GetMatches();
                     Match[] ms2 = qualCL[5].GetMatches();
@@ -518,9 +522,9 @@ public class MyClub : MonoBehaviour
                         Debug.LogError("It should be 2 added teams in this round!");
                         return;
                     }
-                    qualCL.Add(new CupKnockoutStage("Qual Champions League", cs, qualCL[4].GetWinners(), true, 2));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", cs, qualCL[4].GetWinners(), true, 2));
                     currCLRound++;
-                    qualCL.Add(new CupKnockoutStage("Qual Champions League", null, qualCL[5].GetWinners(), true, 2));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", null, qualCL[5].GetWinners(), true, 2));
                     currCLRound++;
                     Match[] ms = qualCL[6].GetMatches();
                     Match[] ms2 = qualCL[7].GetMatches();
@@ -544,7 +548,7 @@ public class MyClub : MonoBehaviour
                     List<Club> pw = new List<Club>();
                     pw.AddRange(qualCL[6].GetWinners());
                     pw.AddRange(qualCL[7].GetWinners());
-                    qualCL.Add(new CupGroupStage("Champions League",8, new DateTime(2018, 9, 17),14,cs, pw));
+                    qualCL.Add(new CupGroupStage("Champions Cup",8, new DateTime(2018, 9, 17),14,cs, pw));
                     currCLRound++;
                     /*Match[] ms = qualCL[8].GetMatches();
                     foreach (var item in ms)
@@ -554,7 +558,7 @@ public class MyClub : MonoBehaviour
                 }
                 else if(currCLRound == 8)                       // 1/8 finalu
                 {
-                    qualCL.Add(new CupKnockoutStage("Champions League", null, qualCL[8].GetWinners(), true, 2, true));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", null, qualCL[8].GetWinners(), true, 2, true));
                     currCLRound++;
                     Match[] ms = qualCL[9].GetMatches();
                     //ms[0].Date = new DateTime(2019, 6, 28);
@@ -562,7 +566,7 @@ public class MyClub : MonoBehaviour
                 }
                 else if (currCLRound == 9)                      // 1/4 finalu
                 {
-                    qualCL.Add(new CupKnockoutStage("Champions League", null, qualCL[9].GetWinners(), true, 1));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", null, qualCL[9].GetWinners(), true, 1));
                     currCLRound++;
                     Match[] ms = qualCL[10].GetMatches();
                     //ms[0].Date = new DateTime(2019, 6, 28);
@@ -570,7 +574,7 @@ public class MyClub : MonoBehaviour
                 }
                 else if (currCLRound == 10)                      // 1/2 finalu
                 {
-                    qualCL.Add(new CupKnockoutStage("Champions League", null, qualCL[10].GetWinners(), true, 1));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", null, qualCL[10].GetWinners(), true, 1));
                     currCLRound++;
                     Match[] ms = qualCL[11].GetMatches();
                     //ms[0].Date = new DateTime(2019, 6, 28);
@@ -578,7 +582,7 @@ public class MyClub : MonoBehaviour
                 }
                 else if (currCLRound == 11)                      // grand finale
                 {
-                    qualCL.Add(new CupKnockoutStage("Champions League", null, qualCL[11].GetWinners(), false, 1));
+                    qualCL.Add(new CupKnockoutStage("Champions Cup", null, qualCL[11].GetWinners(), false, 1));
                     currCLRound++;
                     Match[] ms = qualCL[12].GetMatches();
                     //ms[0].Date = new DateTime(2019, 6, 28);
@@ -659,11 +663,11 @@ public class MyClub : MonoBehaviour
             Debug.LogError("It should be 2 teams in this round!");
             return;
         }
-        qualCL.Add(new CupKnockoutStage("Qual Champions League",cs, null, false));
+        qualCL.Add(new CupKnockoutStage("Champions Cup",cs, null, false));
         Match[] ms = qualCL[0].GetMatches();
         foreach (var m in ms)
         {
-            //m.CompetitionName = "Champions League";
+            //m.CompetitionName = "Champions Cup";
             m.Date = new DateTime(2018, 6, 25);
             m.RoundIndex = 0;
         }

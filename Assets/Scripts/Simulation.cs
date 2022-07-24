@@ -25,6 +25,7 @@ public class Simulation : MonoBehaviour
     static float curiosity = 1;
     static int weakness = 0;
     static int changedCuriosity = 0;
+    static string _competitionName = "";
     #region Geters
     public static string GetGuestName()
     {
@@ -98,9 +99,9 @@ public class Simulation : MonoBehaviour
             //teams[0].Add(Database.footballersDB[hostStartFootballer + i]);
             //teams[1].Add(Database.footballersDB[guestStartFootballer + i]);
             teams[0].Add(Database.footballersDB[Database.clubDB[hostId].FootballersIDs[i]]);
-            teams[0][i].MatchesPlayed++;
+            teams[0][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
             teams[1].Add(Database.footballersDB[Database.clubDB[guestId].FootballersIDs[i]]);
-            teams[1][i].MatchesPlayed++;
+            teams[1][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
         }
         teamsMidPos[0] = new List<int>();
         teamsMidPos[1] = new List<int>();
@@ -114,8 +115,9 @@ public class Simulation : MonoBehaviour
         //resultText.transform.GetComponent<Text> ().text = hostName + "  " + matchStats[0].GetGoals() + " - " + minute + " - " + matchStats[1ś.GetGoals() + "  " + guestName;
     }
     // główna pętla
-    public static MatchStats[] SimulationStart(int hostID, int guestID)
+    public static MatchStats[] SimulationStart(int hostID, int guestID, string competitionName)
     {
+        _competitionName = competitionName;
         hostId = hostID;
         guestId = guestID;
         PrepareNextMatch();
@@ -496,7 +498,7 @@ public class Simulation : MonoBehaviour
                 // gol
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(penaltyPlayers[0], teamName[guestBall],1);
-                penaltyPlayers[0].Goals++;
+                penaltyPlayers[0].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 minute++;
                 return;
@@ -531,7 +533,7 @@ public class Simulation : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 minute++;
                 return;
@@ -572,7 +574,7 @@ public class Simulation : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 minute++;
                 return;
@@ -612,7 +614,7 @@ public class Simulation : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 minute++;
                 return;
@@ -651,7 +653,7 @@ public class Simulation : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 minute++;
                 return;
@@ -691,7 +693,7 @@ public class Simulation : MonoBehaviour
                 // goool
                 matchStats[guestBall].GoalScored();
                 matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall],1);
-                teams[guestBall][playerWithBall].Goals++;
+                teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
                 ChangeCuriosity();
                 minute++;
                 return;
