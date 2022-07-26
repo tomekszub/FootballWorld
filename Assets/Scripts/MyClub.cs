@@ -58,15 +58,6 @@ public class MyClub : MonoBehaviour
         c = FindObjectOfType<Comment>();
         //Database.clubDB.Add (new Club (0, inputClubName, 1, inputStadiumName, 10000, inputName, inputFormation, 10000, 10011));
     }
-    public void TestClick()
-    {
-        Simulation.SimulationStart(testHost, testGuest, "");
-
-        commentPanel.SetActive(true);
-        clubMenuPanel.SetActive(false);
-        parentObj.SetActive(false);
-        c.Init(testHost, testGuest, "", true);
-    }
     public void PrepareLeagueDropDown()
     {
         //List<string> l = new List<string>();
