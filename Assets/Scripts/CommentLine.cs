@@ -133,28 +133,17 @@ public class CommentLine : MonoBehaviour
     }
     public static void AttackFirstPhase()
     {
-
-        int hostChances = Comment.Instance.GetHostChances();
-
-        int who = Random.Range(1, 100);
-        int isGuestWithBall = 1;
-        if (who <= hostChances) 
-            isGuestWithBall = 0;
-        Comment.Instance.SetGuestBall(isGuestWithBall);
-        int pos = Random.Range(1, defLastPlayerNumber[isGuestWithBall] + 1);
-        Comment.Instance.SetPlayerWithBall(pos);
-        
         int rnd = Random.Range(10, 70);
         rnd /= 10;
         string text = "";
         switch (rnd)
         {
-            case 1: text += "Akcje " + host_guest_string[isGuestWithBall].getGenitive() + " długim podaniem rozpoczyna " + teams[isGuestWithBall][pos].Surname + ".";break;
-            case 2: text += "Przy piłce " + teams[isGuestWithBall][pos].Surname + ", przyjmuje piłkę i podaje.";break;
-            case 3: text += teams[isGuestWithBall][pos].Surname + " dostaje piłkę i odgrywa ją do partnera.";break;
-            case 4: text += teams[isGuestWithBall][pos].Surname + " podaje piłkę do kolegi.";break;
-            case 5: text += teams[isGuestWithBall][pos].Surname + " w posiadaniu piłki, szuka kolegi z zespołu i podaje.";break;
-            case 6: text += "Teraz " + teams[isGuestWithBall][pos].Surname + ", od razu podaje do przodu.";break;
+            case 1: text += "Akcje " + host_guest_string[Comment.Instance.GetGuestBall()].getGenitive() + " długim podaniem rozpoczyna " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + ".";break;
+            case 2: text += "Przy piłce " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + ", przyjmuje piłkę i podaje.";break;
+            case 3: text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " dostaje piłkę i odgrywa ją do partnera.";break;
+            case 4: text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " podaje piłkę do kolegi.";break;
+            case 5: text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " w posiadaniu piłki, szuka kolegi z zespołu i podaje.";break;
+            case 6: text += "Teraz " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + ", od razu podaje do przodu.";break;
         }
 
         t.text += "\n" + Comment.Instance.GetMinute() + " min. " + text;
@@ -165,70 +154,45 @@ public class CommentLine : MonoBehaviour
     }
     public static void PassMiddle()
     {
-        int isHostWithBall = System.Convert.ToInt32(Comment.Instance.GetGuestBall());
-        int newPos = teamsMidPos[isHostWithBall][Random.Range(0, teamsMidPos[isHostWithBall].Count)];
-        int pos = Random.Range(defLastPlayerNumber[isHostWithBall] + 1, midLastPlayerNumber[isHostWithBall] + 1);
-        Comment.Instance.SetPlayerWithBall(newPos);
-        
-        int rnd = Random.Range(10, 40);
-        rnd = rnd / 10;
-        switch (rnd)
-        {
-            case 1:
-                t.text += "\nPiłka trafia do " + teams[isHostWithBall][pos].AlteredSurname + ". Ten dogrywa do lepiej ustawionego partnera.";
-                break;
-            case 2:
-                t.text += "\n" + teams[isHostWithBall][pos].Surname + " dostał piłkę i podaje ją do przodu.";
-                break;
-            case 3:
-                t.text += "\n" + teams[isHostWithBall][pos].Surname + " po otrzymaniu futbolówki niezwłocznie oddaje ją do nieatakowanego partnera.";
-                break;
-        }
-    }
-    public static void PassToTheWing(bool rightWing)
-    {
-        
-        int isRightWing = System.Convert.ToInt32(rightWing);
-        int isHostWithBall = Comment.Instance.GetGuestBall();
-        int pos = Random.Range(defLastPlayerNumber[isHostWithBall] + 1, midLastPlayerNumber[isHostWithBall] + 1);
-
-        if (wingPos[isHostWithBall, isRightWing] != pos) 
-            Comment.Instance.SetPlayerWithBall(wingPos[isHostWithBall, isRightWing]);
-        else
-        {
-            // jesli skrzydlowym jest pomocnik podajacy pilke
-            // to na skrzydel pilke musi przejac obronca
-            // jesli akcja na prawym skrzydel to ostatni obronca z listy (kolejnosc pilkarzy od lewej), jesli nie to piewszy 
-            if (isRightWing == 1) 
-                Comment.Instance.SetPlayerWithBall(defLastPlayerNumber[isHostWithBall]);
-            else 
-                Comment.Instance.SetPlayerWithBall(1);
-        }
         int rnd = Random.Range(10, 40);
         rnd /= 10;
         switch (rnd)
         {
             case 1:
-                t.text += "\nPiłka trafia do " + teams[isHostWithBall][pos].AlteredSurname + ". Zagranie na " + left_right_wing_string[isRightWing].getNominative() + " skrzydło.";
+                t.text += "\nPiłka trafia do " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].AlteredSurname + ". Ten dogrywa do lepiej ustawionego partnera.";
                 break;
             case 2:
-                t.text += "\n" + teams[isHostWithBall][pos].Surname + " podaje na skrzydło.";
+                t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " dostał piłkę i podaje ją do przodu.";
                 break;
             case 3:
-                t.text += "\n" + teams[isHostWithBall][pos].Surname + " po otrzymaniu piłki bez zastanowienia posyła ją na " + left_right_direction_string[isRightWing] + ".";
+                t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " po otrzymaniu futbolówki niezwłocznie oddaje ją do nieatakowanego partnera.";
+                break;
+        }
+    }
+    public static void PassToTheWing(int isRightWing)
+    {
+        int rnd = Random.Range(10, 40);
+        rnd /= 10;
+        switch (rnd)
+        {
+            case 1:
+                t.text += "\nPiłka trafia do " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].AlteredSurname + ". Zagranie na " + left_right_wing_string[isRightWing].getNominative() + " skrzydło.";
+                break;
+            case 2:
+                t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " podaje na skrzydło.";
+                break;
+            case 3:
+                t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " po otrzymaniu piłki bez zastanowienia posyła ją na " + left_right_direction_string[isRightWing] + ".";
                 break;
         }
     }
     public static void DecidesToShoot()
     {
-        int pos = Random.Range(defLastPlayerNumber[Comment.Instance.GetGuestBall()] + 1, midLastPlayerNumber[Comment.Instance.GetGuestBall()] + 1);
-        Comment.Instance.SetPlayerWithBall(pos);
-        
-        t.text += "\n" + teams[Comment.Instance.GetGuestBall()][pos].Surname + " decyduje się na uderzenie z daleka...";
+        t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " decyduje się na uderzenie z daleka...";
     }
-    public static void PreparingToPenalty(Footballer player)
+    public static void PreparingToPenalty()
     {
-        t.text += "\n" + Comment.Instance.GetMinute() + " min. Do piłki podchodzi " + player.Surname + "...";
+        t.text += "\n" + Comment.Instance.GetMinute() + " min. Do piłki podchodzi " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + "...";
     }
     public static void PenaltyGoal()
     {
