@@ -22,7 +22,7 @@ Bozkurt
 Işık
 Turan
 Coşkun
-özer
+Özer
 Kaplan
 Sari
 Tekin
@@ -31,8 +31,8 @@ Karataş
 Uzun
 Ceylan
 Karaca
-çiçek
-çalişkan
+Çiçek
+Çalişkan
 Demirci
 Bayram
 Deniz
@@ -57,7 +57,7 @@ Erol
 Aksu
 Alkan
 Tosun
-özen
+Özen
 Sağlam
 Cengiz
 Duran
@@ -74,11 +74,11 @@ Uslu
 Aydoğan
 Yazici
 Er
-ünlü
+Ünlü
 Toprak
 Akgül
 Topal
-şentürk
+Şentürk
 Ergün
 Bal
 Ilhan
@@ -91,7 +91,7 @@ Aydoğdu
 Orhan
 Ak
 Kalkan
-özel
+Özel
 Uğur
 Esen
 Bayraktar

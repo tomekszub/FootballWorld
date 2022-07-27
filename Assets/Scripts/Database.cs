@@ -32,7 +32,6 @@ public class Database : MonoBehaviour
         else
             Instance = this;
 
-        //List<Club> clubDB = new List<Club>();
         arbiterDB [0, 0] = "44";
 		arbiterDB [1, 0] = "Howard Webb";
 		arbiterDB [0, 1] = "46";
@@ -43,21 +42,7 @@ public class Database : MonoBehaviour
 		arbiterDB [1, 3] = "Victor Kassai";
 		arbiterDB [0, 4] = "44";
 		arbiterDB [1, 4] = "Nicola Rizzoli";
-        //text = this.GetComponent<Text> ();          													drybling odbior główki strzały szybkosć podania
-        // 201 - 240
 
-        /*      Kluby           Wzrost              Ocena Og.
-         1 = 0-2,5 mln                              0-25k
-         2 = 2,5-6              150-155             25-100k
-         3 = 6-10               155-160             100-250k
-         4 = 10-25              160-165             250-600k
-         5 = 25-50              165-170             600k-2mln
-         6 = 50-80              170-180             2-6mln
-         7 = 80-110             180-185             6-18mln
-         8 = 110-440            185-190             18-40mln
-         9 = 440+               190-195             40-70mln
-
-        */ // 06.2019 składy aktualne 
         #region footballers
         ////////////// Real
         footballersDB.Add(new Footballer(0, "Thibaut", "Courtois", "Courtois", "Belgia", 10f, 3.5f, Footballer.Position.BR, 3.5f, 4.5f, 9f, 3.5f, 4f, 8.5f, 1992));
@@ -3142,28 +3127,6 @@ public class Database : MonoBehaviour
         footballersDB.Add(new Footballer(2964, "Daniel", "Olaniyi", "Olaniyi", "Nigeria", 1f, 1f, Footballer.Position.N, 1f, 1f, 6f, 1f, 7f, 1f, 1998));
 
         #endregion
-
-        /*      Kluby           Wzrost              Ocena Og.
-         1 = 0-2,5 mln                              0-25k
-         2 = 2,5-6              150-155             25-100k
-         3 = 6-10               155-160             100-250k
-         4 = 10-25              160-165             250-600k
-         5 = 25-50              165-170             600k-2mln
-         6 = 50-80              170-180             2-6mln
-         7 = 80-110             180-185             6-18mln
-         8 = 110-440            185-190             18-40mln
-         9 = 440+               190-195             40-70mln
-
-        */
-
-        //var newFootballers = _LeagueMaster.CreateRandomFootballersForLeague("Spain", 32, _CountryMaster);
-        //var shuffledFootballers = newFootballers.OrderBy(a => Random.value);
-        //int ind = 0;
-        //foreach (var footballer in shuffledFootballers)
-        //{
-        //    footballersDB[ind] = new Footballer(ind, footballer.Item2.Item1, footballer.Item2.Item2, footballer.Item2.Item2, footballer.Item1, Random.Range(1f,10f), 6.5f, footballersDB[ind].Pos, 6.5f, 6.5f, 6f, 6.5f, 6f, 6f, 1998);
-        //    ind++;
-        //}
 
         var clubs = _CountryMaster.GetRandomClubNames("Poland", 5);
         var coaches = _CountryMaster.GetRandomPeople("Poland", 5);
