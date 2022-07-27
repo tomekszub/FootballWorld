@@ -3271,15 +3271,12 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(100, clubs[3], "Polska", 4, "Stadion Energa Gdańsk", 43615, $"{coaches[3].Item1} {coaches[3].Item2}", "4-3-3", 1435, 1464, new List<float>() { 0, 0, 0, 1.5f, 0 }));
         clubDB.Add(new Club(101, "La Fiorita 1967", "San Marino", 1, "Campo Sportivo di Montegiardino", 430, "Juri Tamburini", "4-3-3", 2826, 2855, new List<float>() { 0, 0, 0, 3.0f, 0 }));  //15 zesp.
         clubDB.Add(new Club(102, "Inter Club d'Escaldes", "Andora", 1, "Estadi Comunal d'Andorra la Vella", 1900, "Adolfo Baines", "4-3-3", 2856, 2886, new List<float>() { 0, 0, 0, 0, 0 }));
-        //clubDB.Add(new Club(103, "Fc Prishtina", "Kosowo", 1, "Stadiumi Fadil Vokrri", 13429, "Mirel Josa", "4-2-3-1", 2887, 2910, new List<float>() { 0, 0, 0, 1.75f, 0 }));
-        //clubDB.Add(new Club(104, "Ballymena United", "Irlandia Północna", 1, "Ballymena Showgrounds", 5200, "David Jeffrey", "4-2-3-1", 2911, 2935, new List<float>() { 0, 0, 0, 1.25f, 0 }));
-        //clubDB.Add(new Club(105, clubs[4], "Polska", 1, "Ballymena Showgrounds", 5200, $"{coaches[4].Item1} {coaches[4].Item2}", "4-2-3-1", 2965, 2989, new List<float>() { 0, 0, 0, 1.25f, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
         _LeagueGenerator.Generate("Italy", 20);
         _LeagueGenerator.Generate("Germany", 18);
-        leagueDB.Add(new League_Old("Ligue Premiere", "Francja", new List<Club>() { clubDB[36], clubDB[37], clubDB[38] }, 58.498f,36));
+        _LeagueGenerator.Generate("France", 20);
         leagueDB.Add(new League_Old("Rossiyskaya Liga", "Rosja", new List<Club>() { clubDB[39], clubDB[40], clubDB[98] }, 50.549f));
         leagueDB.Add(new League_Old("Liga Portugal", "Portugalia", new List<Club>() { clubDB[33], clubDB[34], clubDB[35] }, 48.232f));
         leagueDB.Add(new League_Old("Belgische liga", "Belgia", new List<Club>() { clubDB[43], clubDB[44] }, 39.900f));
