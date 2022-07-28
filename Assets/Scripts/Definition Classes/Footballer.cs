@@ -38,8 +38,34 @@ public class Footballer
 		AlteredSurname = alteredSurname;
 		Country = country;
 		Flag = Resources.Load<Sprite> ("Flags/" + country);
-		Rating = Mathf.Round((dribling + tackle + heading + shoot + speed + pass) / 6);
-		FreeKicks = freeKicks;
+        switch (pos)
+        {
+            case Position.BR:
+				Rating = Mathf.Round((dribling + tackle + speed + pass) / 4);
+				break;
+            case Position.PO:
+            case Position.LO:
+				Rating = Mathf.Round((dribling + tackle + speed + pass) / 4);
+				break;
+            case Position.ŚO:
+            case Position.ŚPD:
+				Rating = Mathf.Round((heading + tackle + pass) / 3);
+				break;
+            case Position.ŚP:
+				Rating = Mathf.Round((dribling + tackle + pass) / 3);
+				break;
+            case Position.PP:
+            case Position.LP:
+				Rating = Mathf.Round((dribling + shoot + pass + speed) / 4);
+				break;
+            case Position.ŚPO:
+				Rating = Mathf.Round((dribling + shoot + pass) / 3);
+				break;
+            case Position.N:
+				Rating = Mathf.Round((dribling + shoot + heading + speed) / 4);
+				break;
+        }
+        FreeKicks = freeKicks;
 		Pos = pos;
 		Dribling = dribling;
 		Tackle = tackle;
@@ -51,8 +77,8 @@ public class Footballer
 		Penalty = freeKicks + shoot;
         BirthYear = birthYear;
 		_statistics = new Dictionary<string, PlayerStatistics> ();
-	}
-	public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
+    }
+    public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
 	{
 		Id = id;
 		Name = name;
