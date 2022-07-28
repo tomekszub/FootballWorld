@@ -630,47 +630,72 @@ public class CommentLine : MonoBehaviour
     }
     public static void CounterAttackPenaltyFoul()
     {
-        
         int rnd = Random.Range(10, 40);
-        rnd = rnd / 10;
+        rnd /= 10;
         switch (rnd)
         {
             case 1:
                 t.text += "\nAle zostaje podcięty przez obrońcę i mamy jedenastkę.";
                 break;
             case 2:
-                t.text += "\nW ostatnie chwili obrońca wchodzi na wśłizgu w nogi atakującego i mamy rzut karny.";
+                t.text += "\nW ostatniej chwili obrońca wchodzi na wślizgu w nogi atakującego i mamy rzut karny.";
                 break;
             case 3:
-                t.text += "\nI zostaje nieprzepisowo zatrzymany przez nadbiegajacego obrońcę, karny.";
+                t.text += "\nI zostaje nieprzepisowo zatrzymany przez nadbiegającego obrońcę, karny.";
+                break;
+        }
+    }
+    public static void CounterAttackPreShot()
+    {
+        int rnd = Random.Range(10, 40);
+        rnd /= 10;
+        switch (rnd)
+        {
+            case 1:
+                t.text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].AlteredSurname + ", ten ma przed sobą tylko bramkarza.";
+                break;
+            case 2:
+                t.text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].AlteredSurname + ", ten jest sam na sam z bramkarzem.";
+                break;
+            case 3:
+                t.text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].AlteredSurname + ", który jest teraz na czystej pozycji.";
+                break;
+        }
+    }
+    public static void CounterAttackSuccessPass()
+    {
+        int rnd = Random.Range(10, 30);
+        rnd = rnd / 10;
+        switch (rnd)
+        {
+            case 1:
+                t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " podaje do ";
+                break;
+            case 2:
+                t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " zgrywa do ";
                 break;
         }
     }
     public static void CornerExecution(Footballer f)
     {
-        
         t.text += "\n" + Comment.Instance.GetMinute() + " min. Stały fragment gry wykonywać będzie " + f.Surname + ". Dośrodkowanie...";
     }
     public static void FreeHeader()
     {
-        
         t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " urywa się spod opieki obrońcy i strzela...";
     }
     public static void ContestedHeader()
     {
-        
         t.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " wygrywa pojedynek główkowy...";
     }
     public static void DefenderWinsHeader(Footballer defender)
     {
-        
         t.text += "\nDobre dośrodkowanie, ale " + defender.Surname + " wygrywa pojedynek główkowy.";
     }
     public static void FailedCross()
     {
-        
         int rnd = Random.Range(10, 40);
-        rnd = rnd / 10;
+        rnd /= 10;
         switch (rnd)
         {
             case 1:
@@ -739,12 +764,10 @@ public class CommentLine : MonoBehaviour
     }
     public static void ChanceForOneOnOne()
     {
-        
         t.text += "\nTam jest " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + ", odwraca się, a przed nim tylko jeden obrońca...";
     }
     public static void FailedChanceOneToOne()
     {
-        
         t.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][Comment.Instance.GetPlayerWithBall()].Surname + " wyłuskuje piłkę napastnikowi i wybija ją.";
     }
     public static void OneToOneSituation()
