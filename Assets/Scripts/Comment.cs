@@ -487,7 +487,7 @@ public class Comment : MonoBehaviour
             int[] penaltyPlayers = new int[10];
             for (int i = 1; i < 11; i++)
             {
-                penaltyPlayers[i] = i;
+                penaltyPlayers[i-1] = i;
             }
             penaltyPlayers = penaltyPlayers.OrderByDescending(x => teams[guestBall][x].Penalty).ToArray();
             playerWithBall = penaltyPlayers[0];
