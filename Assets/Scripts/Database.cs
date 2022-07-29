@@ -3230,9 +3230,6 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(96, "LASK Linz", "Austria", 4, "Raiffeisen Arena", 6009, "Valérien Ismaël", "4-4-2", 2936, 2964, new List<float>() { 0, 0, 0, 0, 0 }));
         clubDB.Add(new Club(97, "HNK Rijeka", "Chorwacja", 4, "Stadion Rujevica", 8136, "Igor Biscan", "4-4-2", 2705, 2736, new List<float>() { 0, 0, 0, 11, 0 }));
         clubDB.Add(new Club(98, "Lokomotiv Moskwa", "Rosja", 7, "RZD Arena", 27320, "Yuri Semin", "4-3-2-1", 2737, 2762, new List<float>() { 0, 0, 0, 27, 0 }));
-        clubDB.Add(new Club(99, "AC Milan", "Włochy", 8, "San Siro", 80000, "Marco Giampaolo", "4-3-3", 2763, 2789, new List<float>() { 0,0,0,19,0}));
-        clubDB.Add(new Club(100, clubs[3], "Polska", 4, "Stadion Energa Gdańsk", 43615, $"{coaches[3].Item1} {coaches[3].Item2}", "4-3-3", 1435, 1464, new List<float>() { 0, 0, 0, 1.5f, 0 }));
-        clubDB.Add(new Club(101, "La Fiorita 1967", "San Marino", 1, "Campo Sportivo di Montegiardino", 430, "Juri Tamburini", "4-3-3", 2826, 2855, new List<float>() { 0, 0, 0, 3.0f, 0 }));  //15 zesp.
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
@@ -3287,7 +3284,7 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Northern Ireland", 12);
         _LeagueGenerator.Generate("Kosovo", 10);
         _LeagueGenerator.Generate("Andorra", 8);
-        leagueDB.Add(new League_Old("Sammarinese Division", "San Marino", new List<Club>() { clubDB[56], clubDB[101] }, 0.666f));
+        _LeagueGenerator.Generate("San Marino", 8);
 
         /*test.Add(new Team(clubDB[0].Name, 86, 105, 39, 30, 10, 0));
         test.Add(new Team(clubDB[1].Name, 86, 100, 29, 30, 10, 0)); 	 	
