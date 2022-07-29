@@ -1,0 +1,8 @@
+FC
+FK
+Dinamo
+SKA
+Arsenal
+Torpedo
+Spartak
+Zenit

@@ -3229,14 +3229,13 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(95, "Red Bull Salzburg", "Austria", 7, "Red Bull Arena Salzburg", 30188, "Jesse Marsch", "4-4-2", 2676, 2704, new List<float>() { 0, 0, 0, 43.5f, 0 }));
         clubDB.Add(new Club(96, "LASK Linz", "Austria", 4, "Raiffeisen Arena", 6009, "Valérien Ismaël", "4-4-2", 2936, 2964, new List<float>() { 0, 0, 0, 0, 0 }));
         clubDB.Add(new Club(97, "HNK Rijeka", "Chorwacja", 4, "Stadion Rujevica", 8136, "Igor Biscan", "4-4-2", 2705, 2736, new List<float>() { 0, 0, 0, 11, 0 }));
-        clubDB.Add(new Club(98, "Lokomotiv Moskwa", "Rosja", 7, "RZD Arena", 27320, "Yuri Semin", "4-3-2-1", 2737, 2762, new List<float>() { 0, 0, 0, 27, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
         _LeagueGenerator.Generate("Italy", 20);
         _LeagueGenerator.Generate("Germany", 18);
         _LeagueGenerator.Generate("France", 20);
-        leagueDB.Add(new League_Old("Rossiyskaya Liga", "Rosja", new List<Club>() { clubDB[39], clubDB[40], clubDB[98] }, 50.549f));
+        _LeagueGenerator.Generate("Russia", 16);
         leagueDB.Add(new League_Old("Liga Portugal", "Portugalia", new List<Club>() { clubDB[33], clubDB[34], clubDB[35] }, 48.232f));
         leagueDB.Add(new League_Old("Belgische liga", "Belgia", new List<Club>() { clubDB[43], clubDB[44] }, 39.900f));
         leagueDB.Add(new League_Old("Ukrayinsʹka liha", "Ukraina", new List<Club>() { clubDB[41], clubDB[42] }, 38.900f));
