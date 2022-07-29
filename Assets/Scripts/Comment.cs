@@ -15,46 +15,46 @@ public class Comment : MonoBehaviour
     float _time = 0.1f;
     bool _isPlaying = false;
     int _minute = 0;
-    int hostId, guestId;
-    List<Footballer>[] teams = new List<Footballer>[2];
-    float[] teamDef = new float[2], teamMid = new float[2], teamAtk = new float[2];
-    int hostChances, _goalChances;
-    MatchStats[] matchStats = new MatchStats[2];
-    string[] teamName = new string[2];
-    int playerWithBall;  // piłkarz przy piłce
-    int guestBall;  // posiadanie piłki
-    int[] defLastPlayerNumber = new int[2];// granice pozycji piłkarzy: obrona , pomoc , atak
-    int[] midLastPlayerNumber = new int[2];
-    List<int>[] teamsMidPos = new List<int>[2];// Lista piłkarzy(pomocnicy of., napastnicy) bedacych w środku formacji
-    List<int>[] teamsDefPos = new List<int>[2];// Lista piłkarzy(obrońcy ) bedacych w środku formacji
-    int[,] wingPos = new int[2, 2]; //static int HostLeftPos, GuestLeftPos, HostRightPos, GuestRightPos;
-    int[,] defWingPos = new int[2, 2]; //int HostDefLeftPos, GuestDefLeftPos, HostDefRightPos, GuestDefRightPos;
-    int not = 0;
-    float curiosity = 1;
-    int weakness = 0;
-    int changedCuriosity = 0;
-    bool end = false;
-    string competitionName = "";
+    int _hostId, _guestId;
+    List<Footballer>[] _teams = new List<Footballer>[2];
+    float[] _teamDef = new float[2], _teamMid = new float[2], _teamAtk = new float[2];
+    int _hostChances, _goalChances;
+    MatchStats[] _matchStats = new MatchStats[2];
+    string[] _teamName = new string[2];
+    int _playerWithBall;  // piłkarz przy piłce
+    int _guestBall;  // posiadanie piłki
+    int[] _defLastPlayerNumber = new int[2];// granice pozycji piłkarzy: obrona , pomoc , atak
+    int[] _midLastPlayerNumber = new int[2];
+    List<int>[] _teamsMidPos = new List<int>[2];// Lista piłkarzy(pomocnicy of., napastnicy) bedacych w środku formacji
+    List<int>[] _teamsDefPos = new List<int>[2];// Lista piłkarzy(obrońcy ) bedacych w środku formacji
+    int[,] _wingPos = new int[2, 2]; //static int HostLeftPos, GuestLeftPos, HostRightPos, GuestRightPos;
+    int[,] _defWingPos = new int[2, 2]; //int HostDefLeftPos, GuestDefLeftPos, HostDefRightPos, GuestDefRightPos;
+    int _not = 0;
+    float _curiosity = 1;
+    int _weakness = 0;
+    int _changedCuriosity = 0;
+    bool _end = false;
+    string _competitionName = "";
     #region Getters
-    public string GetGuestName() => teamName[1];
-    public string GetHostName() => teamName[0];
-    public int GetGuestID() => guestId;
-    public int GetHostID() => hostId;
+    public string GetGuestName() => _teamName[1];
+    public string GetHostName() => _teamName[0];
+    public int GetGuestID() => _guestId;
+    public int GetHostID() => _hostId;
     public int GetMinute() => _minute;
-    public List<Footballer>[] GetTeams() => teams;
-    public List<int>[] GetMidPos() => teamsMidPos;
-    public List<int>[] GetDefPos() => teamsDefPos;
-    public MatchStats[] GetMatchStats() => matchStats;
-    public int GetHostChances() => hostChances;
+    public List<Footballer>[] GetTeams() => _teams;
+    public List<int>[] GetMidPos() => _teamsMidPos;
+    public List<int>[] GetDefPos() => _teamsDefPos;
+    public MatchStats[] GetMatchStats() => _matchStats;
+    public int GetHostChances() => _hostChances;
     public int GetGoalChances() => _goalChances;
-    public int[] GetDefLastPlayerNumber() => defLastPlayerNumber;
-    public int[] GetMidLastPlayerNumber() => defLastPlayerNumber;
-    public int[,] GetWingPos() => wingPos;
-    public int[,] GetDefWingPos() => defWingPos;
-    public int GetGuestBall() => guestBall;
-    public int SetGuestBall(int val) => guestBall = val;
-    public int GetPlayerWithBall() => playerWithBall;
-    public int SetPlayerWithBall(int val) => playerWithBall = val;
+    public int[] GetDefLastPlayerNumber() => _defLastPlayerNumber;
+    public int[] GetMidLastPlayerNumber() => _defLastPlayerNumber;
+    public int[,] GetWingPos() => _wingPos;
+    public int[,] GetDefWingPos() => _defWingPos;
+    public int GetGuestBall() => _guestBall;
+    public int SetGuestBall(int val) => _guestBall = val;
+    public int GetPlayerWithBall() => _playerWithBall;
+    public int SetPlayerWithBall(int val) => _playerWithBall = val;
     #endregion
     void Awake()
     {
@@ -66,9 +66,9 @@ public class Comment : MonoBehaviour
     // Use this for initialization, 
     public void Init(int hostID, int guestID, string compName)
     {
-        competitionName = compName;
-        hostId = hostID;
-        guestId = guestID;
+        _competitionName = compName;
+        _hostId = hostID;
+        _guestId = guestID;
         PrepareNextMatch();
     }
     public void OnSimSpeedChanged(float val)
@@ -78,31 +78,31 @@ public class Comment : MonoBehaviour
 
     void PrepareNextMatch()
     {
-        end = false;
-        matchStats[0] = new MatchStats(new List<Scorer>());
-        matchStats[1] = new MatchStats(new List<Scorer>());
-        teamName[0] = Database.clubDB[hostId].Name;
-        teamName[1] = Database.clubDB[guestId].Name;
+        _end = false;
+        _matchStats[0] = new MatchStats(new List<Scorer>());
+        _matchStats[1] = new MatchStats(new List<Scorer>());
+        _teamName[0] = Database.clubDB[_hostId].Name;
+        _teamName[1] = Database.clubDB[_guestId].Name;
        
-        teams[0] = new List<Footballer>(11);
-        teams[1] = new List<Footballer>(11);
+        _teams[0] = new List<Footballer>(11);
+        _teams[1] = new List<Footballer>(11);
         for (int i = 0; i < 11; i++)
         {
-            teams[0].Add(Database.footballersDB[Database.clubDB[hostId].FootballersIDs[i]]);
-            teams[0][i].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
-            teams[1].Add(Database.footballersDB[Database.clubDB[guestId].FootballersIDs[i]]);
-            teams[1][i].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
+            _teams[0].Add(Database.footballersDB[Database.clubDB[_hostId].FootballersIDs[i]]);
+            _teams[0][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
+            _teams[1].Add(Database.footballersDB[Database.clubDB[_guestId].FootballersIDs[i]]);
+            _teams[1][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
         }
-        teamsMidPos[0] = new List<int>();
-        teamsMidPos[1] = new List<int>();
-        teamsDefPos[0] = new List<int>();
-        teamsDefPos[1] = new List<int>();
+        _teamsMidPos[0] = new List<int>();
+        _teamsMidPos[1] = new List<int>();
+        _teamsDefPos[0] = new List<int>();
+        _teamsDefPos[1] = new List<int>();
         Clear();
-        RecognizeFormation(Database.clubDB[hostId].Formation, true);
-        RecognizeFormation(Database.clubDB[guestId].Formation, false);
+        RecognizeFormation(Database.clubDB[_hostId].Formation, true);
+        RecognizeFormation(Database.clubDB[_guestId].Formation, false);
         CalculateWeakness();
         _isPlaying = false;
-        CommentLine.StartingSettings();
+        CommentLine.Instance.StartingSettings();
         _StartStopButton.text = "Rozpocznij mecz";
     }
     public void StartStopButtonClick()
@@ -111,9 +111,9 @@ public class Comment : MonoBehaviour
         {
             StartCoroutine(CommentStart());
         }
-        if (end)
+        if (_end)
         {
-            _MyClub.ProcesssMatchStats(matchStats, competitionName);
+            _MyClub.ProcesssMatchStats(_matchStats, _competitionName);
             WindowsManager.Instance.ShowWindow("Club Menu");
         }
     }
@@ -121,23 +121,23 @@ public class Comment : MonoBehaviour
     IEnumerator CommentStart()
     {
         UpdateChances();
-        CommentLine.UpdateResult(matchStats);
+        CommentLine.Instance.UpdateResult(_matchStats);
         if (_minute >= 90)
         {
             yield return new WaitForSeconds(_time);
-            CommentLine.EndOfTheMatch();
-            end = true;
+            CommentLine.Instance.EndOfTheMatch();
+            _end = true;
             _StartStopButton.text = "Zakończ mecz";
-            Debug.Log("KONIEC MECZU!!!---Wynik: " + matchStats[0].GetGoals() + "-" + matchStats[1].GetGoals() + " " + Time.time);
+            Debug.Log("KONIEC MECZU!!!---Wynik: " + _matchStats[0].GetGoals() + "-" + _matchStats[1].GetGoals() + " " + Time.time);
             StopAllCoroutines();
         }
         _isPlaying = true;
         if (_minute == 0)
         {
-            CommentLine.StartingComment();
+            CommentLine.Instance.StartingComment();
             _minute++;
             yield return new WaitForSeconds(_time);
-            CommentLine.StartOfTheMatch();
+            CommentLine.Instance.StartOfTheMatch();
             _minute++;
         }
         if (_minute < 90 && _minute > 1)
@@ -145,27 +145,27 @@ public class Comment : MonoBehaviour
             int ch = Random.Range(1, 100);
             if (ch >= 90)
             {
-                not = 0;
+                _not = 0;
                 yield return new WaitForSeconds(_time);
-                CommentLine.InfoComment();
+                CommentLine.Instance.InfoComment();
                 _minute++;
                 StartCoroutine(CommentStart());
             }
             if (ch > 5 + _goalChances && ch < 90)
             {
-                not++;
-                if (not > 8)
+                _not++;
+                if (_not > 8)
                 {
                     yield return new WaitForSeconds(_time);
-                    CommentLine.BoringPartOfTheMatch();
-                    not = 0;
+                    CommentLine.Instance.BoringPartOfTheMatch();
+                    _not = 0;
                 }
                 _minute++;
                 StartCoroutine(CommentStart());
             }
             if (ch <= 5 + _goalChances)
             {
-                not = 0;
+                _not = 0;
                 yield return new WaitForSeconds(_time);
                 AttackFirstPhase();
                 yield return new WaitForSeconds(_time);
@@ -177,67 +177,67 @@ public class Comment : MonoBehaviour
     {
         int who = Random.Range(1, 100);
 
-        if (who <= hostChances)
-            guestBall = 0;
+        if (who <= _hostChances)
+            _guestBall = 0;
         else
-            guestBall = 1;
+            _guestBall = 1;
 
-        int pos = Random.Range(1, defLastPlayerNumber[guestBall] + 1);
-        playerWithBall = pos;
-        CommentLine.AttackFirstPhase();
+        int pos = Random.Range(1, _defLastPlayerNumber[_guestBall] + 1);
+        _playerWithBall = pos;
+        CommentLine.Instance.AttackFirstPhase();
     }
     void AttackSecondPhase()
     {
 
-        int counterPos = Random.Range(midLastPlayerNumber[GetReverseIsGuestBall()] + 1, 11);
-        float counterChance = teams[GetReverseIsGuestBall()][counterPos].Tackle - teams[guestBall][playerWithBall].Pass;
+        int counterPos = Random.Range(_midLastPlayerNumber[GetReverseIsGuestBall()] + 1, 11);
+        float counterChance = _teams[GetReverseIsGuestBall()][counterPos].Tackle - _teams[_guestBall][_playerWithBall].Pass;
         counterChance = (counterChance + 10) / 2;
         int dec = Random.Range(1, 37 + (int)counterChance);
         if (dec <= 10)
         {
             // środek podanie
-            playerWithBall = Random.Range(defLastPlayerNumber[guestBall] + 1, midLastPlayerNumber[guestBall] + 1);
-            CommentLine.PassMiddle();
-            playerWithBall = teamsMidPos[guestBall][Random.Range(0, teamsMidPos[guestBall].Count)];
+            _playerWithBall = Random.Range(_defLastPlayerNumber[_guestBall] + 1, _midLastPlayerNumber[_guestBall] + 1);
+            CommentLine.Instance.PassMiddle();
+            _playerWithBall = _teamsMidPos[_guestBall][Random.Range(0, _teamsMidPos[_guestBall].Count)];
             StartCoroutine(AttackThirdPhase("middle"));
         }
         else if (dec <= 34 && dec > 10)
         {
             int isRightWing = dec > 22 ? 0 : 1;
 
-            int pos = Random.Range(defLastPlayerNumber[guestBall] + 1, midLastPlayerNumber[guestBall] + 1);
-            playerWithBall = pos;
+            int pos = Random.Range(_defLastPlayerNumber[_guestBall] + 1, _midLastPlayerNumber[_guestBall] + 1);
+            _playerWithBall = pos;
 
-            CommentLine.PassToTheWing(isRightWing);
+            CommentLine.Instance.PassToTheWing(isRightWing);
 
-            if (wingPos[guestBall, isRightWing] != pos)
-                playerWithBall = wingPos[guestBall, isRightWing];
+            if (_wingPos[_guestBall, isRightWing] != pos)
+                _playerWithBall = _wingPos[_guestBall, isRightWing];
             else
             {
                 // jesli skrzydlowym jest pomocnik podajacy pilke
                 // to na skrzydel pilke musi przejac obronca
                 // jesli akcja na prawym skrzydel to ostatni obronca z listy (kolejnosc pilkarzy od lewej), jesli nie to piewszy 
                 if (isRightWing == 1)
-                    playerWithBall = defLastPlayerNumber[guestBall];
+                    _playerWithBall = _defLastPlayerNumber[_guestBall];
                 else
-                     playerWithBall = 1;
+                     _playerWithBall = 1;
             }
 
             StartCoroutine(AttackThirdPhase(isRightWing == 0 ? "left" : "right"));
         }
         else if (dec > 34 && dec <= 37)
         {
-            playerWithBall = Random.Range(defLastPlayerNumber[guestBall] + 1, midLastPlayerNumber[guestBall] + 1);
+            _playerWithBall = Random.Range(_defLastPlayerNumber[_guestBall] + 1, _midLastPlayerNumber[_guestBall] + 1);
             // Strzał
-            CommentLine.DecidesToShoot();
+            CommentLine.Instance.DecidesToShoot();
             StartCoroutine(Shot(10));
         }
         else if (dec > 37)
         {
             // Kontratak
-            playerWithBall = counterPos;
-            guestBall = GetReverseIsGuestBall();
-            CommentLine.InterceptionAndCounter();
+            _playerWithBall = counterPos;
+            _guestBall = GetReverseIsGuestBall();
+            CommentLine.Instance.InterceptionAndCounter();
             StartCoroutine(CounterAttack());
         }
     }
@@ -246,236 +246,236 @@ public class Comment : MonoBehaviour
         int isGuest = host ? 0 : 1;
         if (formation == "4-3-3")
         {
-            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating + teams[isGuest][4].Rating);
-            teamDef[isGuest] = (teamDef[isGuest] / 4) + (teamDef[isGuest] / 4);
-            defLastPlayerNumber[isGuest] = 4;
-            teamMid[isGuest] = (teams[isGuest][5].Rating + teams[isGuest][6].Rating + teams[isGuest][7].Rating);
-            teamMid[isGuest] = (teamMid[isGuest] / 3) + (teamMid[isGuest] / 3);
-            midLastPlayerNumber[isGuest] = 7;
-            teamAtk[isGuest] = (teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
-            teamAtk[isGuest] = (teamAtk[isGuest] / 3) + (teamAtk[isGuest] / 3);
-            teamsMidPos[isGuest].Add(10);
-            wingPos[isGuest, 0] = 8;
-            wingPos[isGuest, 1] = 9;
+            _teamDef[isGuest] = (_teams[isGuest][1].Rating + _teams[isGuest][2].Rating + _teams[isGuest][3].Rating + _teams[isGuest][4].Rating);
+            _teamDef[isGuest] = (_teamDef[isGuest] / 4) + (_teamDef[isGuest] / 4);
+            _defLastPlayerNumber[isGuest] = 4;
+            _teamMid[isGuest] = (_teams[isGuest][5].Rating + _teams[isGuest][6].Rating + _teams[isGuest][7].Rating);
+            _teamMid[isGuest] = (_teamMid[isGuest] / 3) + (_teamMid[isGuest] / 3);
+            _midLastPlayerNumber[isGuest] = 7;
+            _teamAtk[isGuest] = (_teams[isGuest][8].Rating + _teams[isGuest][9].Rating + _teams[isGuest][10].Rating);
+            _teamAtk[isGuest] = (_teamAtk[isGuest] / 3) + (_teamAtk[isGuest] / 3);
+            _teamsMidPos[isGuest].Add(10);
+            _wingPos[isGuest, 0] = 8;
+            _wingPos[isGuest, 1] = 9;
         }
         else if (formation == "4-2-3-1" || formation == "4-4-1-1")
         {
-            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating + teams[isGuest][4].Rating);
-            teamDef[isGuest] = (teamDef[isGuest] / 4) + (teamDef[isGuest] / 4);
-            defLastPlayerNumber[isGuest] = 4;
-            teamMid[isGuest] = (teams[isGuest][5].Rating + teams[isGuest][6].Rating);
-            teamMid[isGuest] = (teamMid[isGuest] / 2) + (teamMid[isGuest] / 3);
-            midLastPlayerNumber[isGuest] = 6;
-            teamAtk[isGuest] = (teams[isGuest][7].Rating + teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
-            teamAtk[isGuest] = (teamAtk[isGuest] / 4) + (teamAtk[isGuest] / 3);
-            teamsMidPos[isGuest].Add(7);
-            teamsMidPos[isGuest].Add(10);
-            wingPos[isGuest, 0] = 8;
-            wingPos[isGuest, 1] = 9;
+            _teamDef[isGuest] = (_teams[isGuest][1].Rating + _teams[isGuest][2].Rating + _teams[isGuest][3].Rating + _teams[isGuest][4].Rating);
+            _teamDef[isGuest] = (_teamDef[isGuest] / 4) + (_teamDef[isGuest] / 4);
+            _defLastPlayerNumber[isGuest] = 4;
+            _teamMid[isGuest] = (_teams[isGuest][5].Rating + _teams[isGuest][6].Rating);
+            _teamMid[isGuest] = (_teamMid[isGuest] / 2) + (_teamMid[isGuest] / 3);
+            _midLastPlayerNumber[isGuest] = 6;
+            _teamAtk[isGuest] = (_teams[isGuest][7].Rating + _teams[isGuest][8].Rating + _teams[isGuest][9].Rating + _teams[isGuest][10].Rating);
+            _teamAtk[isGuest] = (_teamAtk[isGuest] / 4) + (_teamAtk[isGuest] / 3);
+            _teamsMidPos[isGuest].Add(7);
+            _teamsMidPos[isGuest].Add(10);
+            _wingPos[isGuest, 0] = 8;
+            _wingPos[isGuest, 1] = 9;
         }
         else if (formation == "4-1-4-1")
         {
-            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating + teams[isGuest][4].Rating);
-            teamDef[isGuest] = (teamDef[isGuest] / 4) + (teamDef[isGuest] / 4);
-            defLastPlayerNumber[isGuest] = 4;
-            teamMid[isGuest] = (teams[isGuest][5].Rating + teams[isGuest][6].Rating + teams[isGuest][7].Rating);
-            teamMid[isGuest] = (teamMid[isGuest] / 3) + (teamMid[isGuest] / 3);
-            midLastPlayerNumber[isGuest] = 6;
-            teamAtk[isGuest] = (teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
-            teamAtk[isGuest] = (teamAtk[isGuest] / 3) + (teamAtk[isGuest] / 3);
-            teamsMidPos[isGuest].Add(6);
-            teamsMidPos[isGuest].Add(7);
-            teamsMidPos[isGuest].Add(10);
-            wingPos[isGuest, 0] = 8;
-            wingPos[isGuest, 1] = 9;
+            _teamDef[isGuest] = (_teams[isGuest][1].Rating + _teams[isGuest][2].Rating + _teams[isGuest][3].Rating + _teams[isGuest][4].Rating);
+            _teamDef[isGuest] = (_teamDef[isGuest] / 4) + (_teamDef[isGuest] / 4);
+            _defLastPlayerNumber[isGuest] = 4;
+            _teamMid[isGuest] = (_teams[isGuest][5].Rating + _teams[isGuest][6].Rating + _teams[isGuest][7].Rating);
+            _teamMid[isGuest] = (_teamMid[isGuest] / 3) + (_teamMid[isGuest] / 3);
+            _midLastPlayerNumber[isGuest] = 6;
+            _teamAtk[isGuest] = (_teams[isGuest][8].Rating + _teams[isGuest][9].Rating + _teams[isGuest][10].Rating);
+            _teamAtk[isGuest] = (_teamAtk[isGuest] / 3) + (_teamAtk[isGuest] / 3);
+            _teamsMidPos[isGuest].Add(6);
+            _teamsMidPos[isGuest].Add(7);
+            _teamsMidPos[isGuest].Add(10);
+            _wingPos[isGuest, 0] = 8;
+            _wingPos[isGuest, 1] = 9;
         }
         else if (formation == "4-3-1-2")
         {
-            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating + teams[isGuest][4].Rating);
-            teamDef[isGuest] = (teamDef[isGuest] / 4) + (teamDef[isGuest] / 4);
-            defLastPlayerNumber[isGuest] = 4;
-            teamMid[isGuest] = (teams[isGuest][5].Rating + teams[isGuest][6].Rating + teams[isGuest][7].Rating);
-            teamMid[isGuest] = (teamMid[isGuest] / 3) + (teamMid[isGuest] / 3);
-            midLastPlayerNumber[isGuest] = 7;
-            teamAtk[isGuest] = (teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
-            teamAtk[isGuest] = (teamAtk[isGuest] / 3) + (teamAtk[isGuest] / 3);
-            teamsMidPos[isGuest].Add(8);
-            teamsMidPos[isGuest].Add(9);
-            teamsMidPos[isGuest].Add(10);
-            wingPos[isGuest, 0] = 6;
-            wingPos[isGuest, 1] = 7;
+            _teamDef[isGuest] = (_teams[isGuest][1].Rating + _teams[isGuest][2].Rating + _teams[isGuest][3].Rating + _teams[isGuest][4].Rating);
+            _teamDef[isGuest] = (_teamDef[isGuest] / 4) + (_teamDef[isGuest] / 4);
+            _defLastPlayerNumber[isGuest] = 4;
+            _teamMid[isGuest] = (_teams[isGuest][5].Rating + _teams[isGuest][6].Rating + _teams[isGuest][7].Rating);
+            _teamMid[isGuest] = (_teamMid[isGuest] / 3) + (_teamMid[isGuest] / 3);
+            _midLastPlayerNumber[isGuest] = 7;
+            _teamAtk[isGuest] = (_teams[isGuest][8].Rating + _teams[isGuest][9].Rating + _teams[isGuest][10].Rating);
+            _teamAtk[isGuest] = (_teamAtk[isGuest] / 3) + (_teamAtk[isGuest] / 3);
+            _teamsMidPos[isGuest].Add(8);
+            _teamsMidPos[isGuest].Add(9);
+            _teamsMidPos[isGuest].Add(10);
+            _wingPos[isGuest, 0] = 6;
+            _wingPos[isGuest, 1] = 7;
         }
         else if (formation == "4-4-2")
         {
-            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating + teams[isGuest][4].Rating);
-            teamDef[isGuest] = (teamDef[isGuest] / 4) + (teamDef[isGuest] / 4);
-            defLastPlayerNumber[isGuest] = 4;
-            teamMid[isGuest] = (teams[isGuest][5].Rating + teams[isGuest][6].Rating);
-            teamMid[isGuest] = (teamMid[isGuest] / 2) + (teamMid[isGuest] / 3);
-            midLastPlayerNumber[isGuest] = 6;
-            teamAtk[isGuest] = (teams[isGuest][7].Rating + teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
-            teamAtk[isGuest] = (teamAtk[isGuest] / 4) + (teamAtk[isGuest] / 3);
-            teamsMidPos[isGuest].Add(9);
-            teamsMidPos[isGuest].Add(10);
-            wingPos[isGuest, 0] = 7;
-            wingPos[isGuest, 1] = 8;
+            _teamDef[isGuest] = (_teams[isGuest][1].Rating + _teams[isGuest][2].Rating + _teams[isGuest][3].Rating + _teams[isGuest][4].Rating);
+            _teamDef[isGuest] = (_teamDef[isGuest] / 4) + (_teamDef[isGuest] / 4);
+            _defLastPlayerNumber[isGuest] = 4;
+            _teamMid[isGuest] = (_teams[isGuest][5].Rating + _teams[isGuest][6].Rating);
+            _teamMid[isGuest] = (_teamMid[isGuest] / 2) + (_teamMid[isGuest] / 3);
+            _midLastPlayerNumber[isGuest] = 6;
+            _teamAtk[isGuest] = (_teams[isGuest][7].Rating + _teams[isGuest][8].Rating + _teams[isGuest][9].Rating + _teams[isGuest][10].Rating);
+            _teamAtk[isGuest] = (_teamAtk[isGuest] / 4) + (_teamAtk[isGuest] / 3);
+            _teamsMidPos[isGuest].Add(9);
+            _teamsMidPos[isGuest].Add(10);
+            _wingPos[isGuest, 0] = 7;
+            _wingPos[isGuest, 1] = 8;
         }
         else if (formation == "5-3-2")
         {
-            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating + teams[isGuest][4].Rating + teams[isGuest][5].Rating);
-            teamDef[isGuest] = (teamDef[isGuest] / 5) + (teamDef[isGuest] / 4);
-            defLastPlayerNumber[isGuest] = 5;
-            teamMid[isGuest] = (teams[isGuest][6].Rating + teams[isGuest][7].Rating);
-            teamMid[isGuest] = (teamMid[isGuest] / 2) + (teamMid[isGuest] / 3);
-            midLastPlayerNumber[isGuest] = 7;
-            teamAtk[isGuest] = (teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
-            teamAtk[isGuest] = (teamAtk[isGuest] / 3) + (teamAtk[isGuest] / 3);
-            teamsMidPos[isGuest].Add(8);
-            teamsMidPos[isGuest].Add(9);
-            teamsMidPos[isGuest].Add(10);
-            wingPos[isGuest, 0] = 6;
-            wingPos[isGuest, 1] = 7;
+            _teamDef[isGuest] = (_teams[isGuest][1].Rating + _teams[isGuest][2].Rating + _teams[isGuest][3].Rating + _teams[isGuest][4].Rating + _teams[isGuest][5].Rating);
+            _teamDef[isGuest] = (_teamDef[isGuest] / 5) + (_teamDef[isGuest] / 4);
+            _defLastPlayerNumber[isGuest] = 5;
+            _teamMid[isGuest] = (_teams[isGuest][6].Rating + _teams[isGuest][7].Rating);
+            _teamMid[isGuest] = (_teamMid[isGuest] / 2) + (_teamMid[isGuest] / 3);
+            _midLastPlayerNumber[isGuest] = 7;
+            _teamAtk[isGuest] = (_teams[isGuest][8].Rating + _teams[isGuest][9].Rating + _teams[isGuest][10].Rating);
+            _teamAtk[isGuest] = (_teamAtk[isGuest] / 3) + (_teamAtk[isGuest] / 3);
+            _teamsMidPos[isGuest].Add(8);
+            _teamsMidPos[isGuest].Add(9);
+            _teamsMidPos[isGuest].Add(10);
+            _wingPos[isGuest, 0] = 6;
+            _wingPos[isGuest, 1] = 7;
         }
         else if (formation == "3-4-1-2" || formation == "3-4-2-1")
         {
-            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating);
-            teamDef[isGuest] = (teamDef[isGuest] / 3) + (teamDef[isGuest] / 4);
-            defLastPlayerNumber[isGuest] = 3;
-            teamMid[isGuest] = (teams[isGuest][4].Rating + teams[isGuest][5].Rating + teams[isGuest][6].Rating + teams[isGuest][7].Rating);
-            teamMid[isGuest] = (teamMid[isGuest] / 4) + (teamMid[isGuest] / 3);
-            midLastPlayerNumber[isGuest] = 7;
-            teamAtk[isGuest] = (teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
-            teamAtk[isGuest] = (teamAtk[isGuest] / 3) + (teamAtk[isGuest] / 3);
-            teamsMidPos[isGuest].Add(8);
-            teamsMidPos[isGuest].Add(9);
-            teamsMidPos[isGuest].Add(10);
-            wingPos[isGuest, 0] = 6;
-            wingPos[isGuest, 1] = 7;
+            _teamDef[isGuest] = (_teams[isGuest][1].Rating + _teams[isGuest][2].Rating + _teams[isGuest][3].Rating);
+            _teamDef[isGuest] = (_teamDef[isGuest] / 3) + (_teamDef[isGuest] / 4);
+            _defLastPlayerNumber[isGuest] = 3;
+            _teamMid[isGuest] = (_teams[isGuest][4].Rating + _teams[isGuest][5].Rating + _teams[isGuest][6].Rating + _teams[isGuest][7].Rating);
+            _teamMid[isGuest] = (_teamMid[isGuest] / 4) + (_teamMid[isGuest] / 3);
+            _midLastPlayerNumber[isGuest] = 7;
+            _teamAtk[isGuest] = (_teams[isGuest][8].Rating + _teams[isGuest][9].Rating + _teams[isGuest][10].Rating);
+            _teamAtk[isGuest] = (_teamAtk[isGuest] / 3) + (_teamAtk[isGuest] / 3);
+            _teamsMidPos[isGuest].Add(8);
+            _teamsMidPos[isGuest].Add(9);
+            _teamsMidPos[isGuest].Add(10);
+            _wingPos[isGuest, 0] = 6;
+            _wingPos[isGuest, 1] = 7;
         }
-        if (defLastPlayerNumber[isGuest] == 5)
+        if (_defLastPlayerNumber[isGuest] == 5)
         {
-            teamsDefPos[isGuest].Add(2);
-            teamsDefPos[isGuest].Add(3);
-            teamsDefPos[isGuest].Add(4);
-            defWingPos[isGuest, 0] = 1;
-            defWingPos[isGuest, 1] = 5;
+            _teamsDefPos[isGuest].Add(2);
+            _teamsDefPos[isGuest].Add(3);
+            _teamsDefPos[isGuest].Add(4);
+            _defWingPos[isGuest, 0] = 1;
+            _defWingPos[isGuest, 1] = 5;
         }
-        if (defLastPlayerNumber[isGuest] == 4)
+        if (_defLastPlayerNumber[isGuest] == 4)
         {
-            teamsDefPos[isGuest].Add(2);
-            teamsDefPos[isGuest].Add(3);
-            defWingPos[isGuest, 0] = 1;
-            defWingPos[isGuest, 1] = 4;
+            _teamsDefPos[isGuest].Add(2);
+            _teamsDefPos[isGuest].Add(3);
+            _defWingPos[isGuest, 0] = 1;
+            _defWingPos[isGuest, 1] = 4;
         }
-        if (defLastPlayerNumber[isGuest] == 3)
+        if (_defLastPlayerNumber[isGuest] == 3)
         {
-            teamsDefPos[isGuest].Add(1);
-            teamsDefPos[isGuest].Add(2);
-            teamsDefPos[isGuest].Add(3);
-            defWingPos[isGuest, 0] = 1;
-            defWingPos[isGuest, 1] = 3;
+            _teamsDefPos[isGuest].Add(1);
+            _teamsDefPos[isGuest].Add(2);
+            _teamsDefPos[isGuest].Add(3);
+            _defWingPos[isGuest, 0] = 1;
+            _defWingPos[isGuest, 1] = 3;
         }
 
     }
     void UpdateChances()
     {
-        hostChances = 50;
+        _hostChances = 50;
         // difference between host's attack and guest's defense
-        float advantage = (teamAtk[0] - teamDef[1]) * 2;
-        advantage += (teamDef[0] - teamAtk[1]) * 2;
-        advantage += (teamMid[0] - teamMid[1]) * 2;
-        hostChances += 4 + Mathf.RoundToInt(advantage);
+        float advantage = (_teamAtk[0] - _teamDef[1]) * 2;
+        advantage += (_teamDef[0] - _teamAtk[1]) * 2;
+        advantage += (_teamMid[0] - _teamMid[1]) * 2;
+        _hostChances += 4 + Mathf.RoundToInt(advantage);
       
-        hostChances -= weakness;
+        _hostChances -= _weakness;
 
-        if (hostChances >= 160)
-            hostChances = 95;
-        else if (hostChances >= 90)
-            hostChances = 90;
-        else if (hostChances <= -160)
-            hostChances = 5;
-        else if (hostChances < 10)
-            hostChances = 10;
+        if (_hostChances >= 160)
+            _hostChances = 95;
+        else if (_hostChances >= 90)
+            _hostChances = 90;
+        else if (_hostChances <= -160)
+            _hostChances = 5;
+        else if (_hostChances < 10)
+            _hostChances = 10;
 
-        float ratingDiff = Mathf.Abs(Database.clubDB[hostId].Rate - Database.clubDB[guestId].Rate);
-        float goalChances = (5 + (ratingDiff * 3)) / curiosity + changedCuriosity;
+        float ratingDiff = Mathf.Abs(Database.clubDB[_hostId].Rate - Database.clubDB[_guestId].Rate);
+        float goalChances = (5 + (ratingDiff * 3)) / _curiosity + _changedCuriosity;
         _goalChances = Mathf.RoundToInt(goalChances);
         _goalChances = Mathf.Clamp(_goalChances, 4, 35);
     }
     void CalculateWeakness()
     {
-        weakness = 0;
+        _weakness = 0;
         int rnd = Random.Range(1, 101);
         if (rnd <= 10)
         {
-            int ran = Random.Range(0, (Database.clubDB[hostId].Rate * 10 + Database.clubDB[guestId].Rate * 10));
-            if (Database.clubDB[hostId].Rate * 10 > ran)
+            int ran = Random.Range(0, (Database.clubDB[_hostId].Rate * 10 + Database.clubDB[_guestId].Rate * 10));
+            if (Database.clubDB[_hostId].Rate * 10 > ran)
             {
-                weakness = 10;
-                if (Database.clubDB[hostId].Rate > Database.clubDB[guestId].Rate)
+                _weakness = 10;
+                if (Database.clubDB[_hostId].Rate > Database.clubDB[_guestId].Rate)
                 {
-                    curiosity = 2;
+                    _curiosity = 2;
                 }
-                if (Database.clubDB[hostId].Rate < Database.clubDB[guestId].Rate)
+                if (Database.clubDB[_hostId].Rate < Database.clubDB[_guestId].Rate)
                 {
-                    curiosity = 0.5f;
+                    _curiosity = 0.5f;
                 }
-                if (Database.clubDB[hostId].Rate == Database.clubDB[guestId].Rate)
+                if (Database.clubDB[_hostId].Rate == Database.clubDB[_guestId].Rate)
                 {
-                    curiosity = 3;
+                    _curiosity = 3;
                 }
             }
             else
             {
-                weakness = -10;
-                if (Database.clubDB[hostId].Rate > Database.clubDB[guestId].Rate)
+                _weakness = -10;
+                if (Database.clubDB[_hostId].Rate > Database.clubDB[_guestId].Rate)
                 {
-                    curiosity = 0.5f;
+                    _curiosity = 0.5f;
                 }
-                if (Database.clubDB[hostId].Rate < Database.clubDB[guestId].Rate)
+                if (Database.clubDB[_hostId].Rate < Database.clubDB[_guestId].Rate)
                 {
-                    curiosity = 2;
+                    _curiosity = 2;
                 }
-                if (Database.clubDB[hostId].Rate == Database.clubDB[guestId].Rate)
+                if (Database.clubDB[_hostId].Rate == Database.clubDB[_guestId].Rate)
                 {
-                    curiosity = 3;
+                    _curiosity = 3;
                 }
             }
         }
     }
     void Clear()
     {
-        teamsMidPos[0].Clear();
-        teamsMidPos[1].Clear();
-        teamsDefPos[0].Clear();
-        teamsDefPos[1].Clear();
-        matchStats[0].Reset();
-        matchStats[1].Reset();
+        _teamsMidPos[0].Clear();
+        _teamsMidPos[1].Clear();
+        _teamsDefPos[0].Clear();
+        _teamsDefPos[1].Clear();
+        _matchStats[0].Reset();
+        _matchStats[1].Reset();
         _minute = 0;
     }
     void ChangeCuriosity()
     {
         // conversion from 0 , 1 to -1,1
-        int multiplier = guestBall * 2 - 1;
+        int multiplier = _guestBall * 2 - 1;
 
-        if (Database.clubDB[hostId].Rate > Database.clubDB[guestId].Rate)
+        if (Database.clubDB[_hostId].Rate > Database.clubDB[_guestId].Rate)
         {
-            changedCuriosity += 5 * multiplier;
+            _changedCuriosity += 5 * multiplier;
         }
-        else if (Database.clubDB[hostId].Rate < Database.clubDB[guestId].Rate)
+        else if (Database.clubDB[_hostId].Rate < Database.clubDB[_guestId].Rate)
         {
-            changedCuriosity += -5 * multiplier;
+            _changedCuriosity += -5 * multiplier;
         }
         else
         {
-            changedCuriosity -= 2;
+            _changedCuriosity -= 2;
         }
     }
     void GoalScored()
     {
-        matchStats[guestBall].GoalScored();
-        matchStats[guestBall].AddScorer(teams[guestBall][playerWithBall], teamName[guestBall], 1);
-        teams[guestBall][playerWithBall].AddStatistic(competitionName, Footballer.PlayerStatistics.StatName.Goals);
+        _matchStats[_guestBall].GoalScored();
+        _matchStats[_guestBall].AddScorer(_teams[_guestBall][_playerWithBall], _teamName[_guestBall], 1);
+        _teams[_guestBall][_playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);
         ChangeCuriosity();
     }
     IEnumerator FreeKick(bool isPenalty)
@@ -489,24 +489,24 @@ public class Comment : MonoBehaviour
             {
                 penaltyPlayers[i-1] = i;
             }
-            penaltyPlayers = penaltyPlayers.OrderByDescending(x => teams[guestBall][x].Penalty).ToArray();
-            playerWithBall = penaltyPlayers[0];
-            CommentLine.PreparingToPenalty();
+            penaltyPlayers = penaltyPlayers.OrderByDescending(x => _teams[_guestBall][x].Penalty).ToArray();
+            _playerWithBall = penaltyPlayers[0];
+            CommentLine.Instance.PreparingToPenalty();
             _minute++;
             yield return new WaitForSeconds(_time);
-            float plus = teams[guestBall][playerWithBall].Penalty - (1.5f * teams[GetReverseIsGuestBall()][0].Rating);
+            float plus = _teams[_guestBall][_playerWithBall].Penalty - (1.5f * _teams[GetReverseIsGuestBall()][0].Rating);
             int rnd = Random.Range(1, 101);
             if (rnd < 80 + plus)
             {
                 // gol
                 GoalScored();
-                CommentLine.PenaltyGoal();
+                CommentLine.Instance.PenaltyGoal();
             }
             else
             {
-                CommentLine.PenaltyMissed();
+                CommentLine.Instance.PenaltyMissed();
             }
-            matchStats[guestBall].ShotTaken();
+            _matchStats[_guestBall].ShotTaken();
             _minute++;
             StartCoroutine(CommentStart());
         }
@@ -521,14 +521,14 @@ public class Comment : MonoBehaviour
         if (difficulty == 10)
         {
             // strzał z bardzo daleka
-            matchStats[guestBall].ShotTaken();
+            _matchStats[_guestBall].ShotTaken();
             _minute++;
             int x = Random.Range(1, 101);
-            float plus = (teams[guestBall][playerWithBall].Shoot * 2) - teams[GetReverseIsGuestBall()][0].Rating;
+            float plus = (_teams[_guestBall][_playerWithBall].Shoot * 2) - _teams[GetReverseIsGuestBall()][0].Rating;
             if (x <= 20)
             {
                 // rożny
-                CommentLine.LongShotCorner();
+                CommentLine.Instance.LongShotCorner();
                 StartCoroutine(Corner());
             }
             else
@@ -536,10 +536,10 @@ public class Comment : MonoBehaviour
                 if (x <= 30 + plus)
                 {
                     GoalScored();
-                    CommentLine.LongShotGoal();
+                    CommentLine.Instance.LongShotGoal();
                 }
                 else
-                    CommentLine.LongShotMiss();
+                    CommentLine.Instance.LongShotMiss();
 
                 _minute++;
                 StartCoroutine(CommentStart());
@@ -548,24 +548,24 @@ public class Comment : MonoBehaviour
         else if (difficulty == 8)
         {
             // strzal z okolo 20 metrow przy kontrataku
-            matchStats[guestBall].ShotTaken();
+            _matchStats[_guestBall].ShotTaken();
             _minute++;
-            float keeperPlus = 20 + teams[GetReverseIsGuestBall()][0].Rating * 3;
-            float shooterPlus = 20 + teams[0][playerWithBall].Shoot * 2;
+            float keeperPlus = 20 + _teams[GetReverseIsGuestBall()][0].Rating * 3;
+            float shooterPlus = 20 + _teams[0][_playerWithBall].Shoot * 2;
             int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 10);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 31) <= teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/30 szansy ze zlapie
+                if (Random.Range(1, 31) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/30 szansy ze zlapie
                 {
                     //lapie
-                    CommentLine.CounterAttackSave();
+                    CommentLine.Instance.CounterAttackSave();
                     _minute++;
                     StartCoroutine(CommentStart());
                 }
                 else
                 {
                     //korner
-                    CommentLine.CounterAttackCorner();
+                    CommentLine.Instance.CounterAttackCorner();
                     StartCoroutine(Corner());
                 }
             }
@@ -574,11 +574,11 @@ public class Comment : MonoBehaviour
                 if (x <= keeperPlus + shooterPlus)
                 {
                     GoalScored();
-                    CommentLine.CounterAttackGoal();
+                    CommentLine.Instance.CounterAttackGoal();
                 }
                 else
                 {
-                    CommentLine.CounterAttackMiss();
+                    CommentLine.Instance.CounterAttackMiss();
                 }
                 _minute++;
                 StartCoroutine(CommentStart());
@@ -586,24 +586,24 @@ public class Comment : MonoBehaviour
         }
         else if (difficulty == 5)  // okolo 16 metrow normalny atak
         {
-            matchStats[guestBall].ShotTaken();
+            _matchStats[_guestBall].ShotTaken();
             _minute++;
-            float keeperPlus = 5 + teams[GetReverseIsGuestBall()][0].Rating * 2;
-            float shooterPlus = 15 + teams[guestBall][playerWithBall].Shoot * 4;
+            float keeperPlus = 5 + _teams[GetReverseIsGuestBall()][0].Rating * 2;
+            float shooterPlus = 15 + _teams[_guestBall][_playerWithBall].Shoot * 4;
             int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 15);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 51) <= teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/50 szansy ze zlapie
+                if (Random.Range(1, 51) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/50 szansy ze zlapie
                 {
                     //lapie
-                    CommentLine.NormalAttackSave();
+                    CommentLine.Instance.NormalAttackSave();
                     _minute++;
                     StartCoroutine(CommentStart());
                 }
                 else
                 {
                     //korner
-                    CommentLine.NormalAttackCorner();
+                    CommentLine.Instance.NormalAttackCorner();
                     StartCoroutine(Corner());
                 }
             }
@@ -612,10 +612,10 @@ public class Comment : MonoBehaviour
                 if (x <= keeperPlus + shooterPlus)
                 {
                     GoalScored();
-                    CommentLine.NormalAttackGoal();
+                    CommentLine.Instance.NormalAttackGoal();
                 }
                 else
-                    CommentLine.NormalAttackMiss();
+                    CommentLine.Instance.NormalAttackMiss();
 
                 _minute++;
                 StartCoroutine(CommentStart());
@@ -623,24 +623,24 @@ public class Comment : MonoBehaviour
         }
         else if (difficulty == 2)    //   Sam na sam
         {
-            matchStats[guestBall].ShotTaken();
+            _matchStats[_guestBall].ShotTaken();
             _minute++;
-            float keeperPlus = 10 + teams[GetReverseIsGuestBall()][0].Rating * 2;
-            float shooterPlus = 25 + teams[guestBall][playerWithBall].Shoot * 5;
+            float keeperPlus = 10 + _teams[GetReverseIsGuestBall()][0].Rating * 2;
+            float shooterPlus = 25 + _teams[_guestBall][_playerWithBall].Shoot * 5;
             int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 5);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 51) <= teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/50 szansy ze zlapie albo nie bedzie roznego
+                if (Random.Range(1, 51) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/50 szansy ze zlapie albo nie bedzie roznego
                 {
                     //lapie
-                    CommentLine.OneOnOneAttackSave();
+                    CommentLine.Instance.OneOnOneAttackSave();
                     _minute++;
                     StartCoroutine(CommentStart());
                 }
                 else
                 {
                     //korner
-                    CommentLine.OneOnOneAttackCorner();
+                    CommentLine.Instance.OneOnOneAttackCorner();
                     StartCoroutine(Corner());
                 }
             }
@@ -649,10 +649,10 @@ public class Comment : MonoBehaviour
                 if (x <= keeperPlus + shooterPlus)
                 {
                     GoalScored();
-                    CommentLine.OneOnOneAttackGoal();
+                    CommentLine.Instance.OneOnOneAttackGoal();
                 }
                 else
-                    CommentLine.OneOnOneAttackMiss();
+                    CommentLine.Instance.OneOnOneAttackMiss();
 
                 _minute++;
                 StartCoroutine(CommentStart());
@@ -660,24 +660,24 @@ public class Comment : MonoBehaviour
         }
         else if (difficulty == 3)    //   główka
         {
-            matchStats[guestBall].ShotTaken();
+            _matchStats[_guestBall].ShotTaken();
             _minute++;
-            float keeperPlus = 5 + teams[GetReverseIsGuestBall()][0].Rating * 2;
-            float shooterPlus = 10 + teams[guestBall][playerWithBall].Heading * 5;
+            float keeperPlus = 5 + _teams[GetReverseIsGuestBall()][0].Rating * 2;
+            float shooterPlus = 10 + _teams[_guestBall][_playerWithBall].Heading * 5;
             int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 10);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 31) <= teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/30 szansy ze zlapie albo nie bedzie roznego
+                if (Random.Range(1, 31) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/30 szansy ze zlapie albo nie bedzie roznego
                 {
                     //lapie
-                    CommentLine.HeaderSave();
+                    CommentLine.Instance.HeaderSave();
                     _minute++;
                     StartCoroutine(CommentStart());
                 }
                 else
                 {
                     //korner
-                    CommentLine.HeaderCorner();
+                    CommentLine.Instance.HeaderCorner();
                     StartCoroutine(Corner());
                 }
 
@@ -687,11 +687,11 @@ public class Comment : MonoBehaviour
                 if (x <= keeperPlus + shooterPlus)
                 {
                     GoalScored();
-                    CommentLine.HeaderGoal();
+                    CommentLine.Instance.HeaderGoal();
                 }
                 else
                 {
-                    CommentLine.HeaderMiss();
+                    CommentLine.Instance.HeaderMiss();
                 }
                 _minute++;
                 StartCoroutine(CommentStart());
@@ -702,36 +702,36 @@ public class Comment : MonoBehaviour
     {
         yield return new WaitForSeconds(_time);
         int rnd = Random.Range(1, 100);
-        float x = 20 - teams[guestBall][playerWithBall].Pass;
+        float x = 20 - _teams[_guestBall][_playerWithBall].Pass;
         if (rnd <= 30)
         {
-            CommentLine.CounterAttackShotTry();
+            CommentLine.Instance.CounterAttackShotTry();
             yield return new WaitForSeconds(_time);
             StartCoroutine(Shot(8));
         }
         else if (rnd > 30 && rnd <= 30 + x)
         {
-            CommentLine.CounterAttackFailedPass();
+            CommentLine.Instance.CounterAttackFailedPass();
             _minute++;
             StartCoroutine(CommentStart());
         }
         else
         {
-            CommentLine.CounterAttackSuccessPass();
+            CommentLine.Instance.CounterAttackSuccessPass();
             int newPos;
             do 
             {
-                newPos = Random.Range(midLastPlayerNumber[guestBall] + 1, 11);
+                newPos = Random.Range(_midLastPlayerNumber[_guestBall] + 1, 11);
             } 
-            while (playerWithBall == newPos);
+            while (_playerWithBall == newPos);
 
-            playerWithBall = newPos;
-            CommentLine.CounterAttackPreShot();
+            _playerWithBall = newPos;
+            CommentLine.Instance.CounterAttackPreShot();
             yield return new WaitForSeconds(_time);
             int chan = Random.Range(1, 101);
             if (chan < 70)
             {
-                CommentLine.CounterAttackPenaltyFoul();
+                CommentLine.Instance.CounterAttackPenaltyFoul();
                 StartCoroutine(FreeKick(true));
             }
             else
@@ -746,10 +746,10 @@ public class Comment : MonoBehaviour
         List<Footballer> cornerPlayers = new List<Footballer>();
         for (int i = 1; i < 11; i++)
         {
-            cornerPlayers.Add(teams[guestBall][i]);
+            cornerPlayers.Add(_teams[_guestBall][i]);
         }
         cornerPlayers = cornerPlayers.OrderByDescending(x => x.Corner).ToList();
-        CommentLine.CornerExecution(cornerPlayers[0]);
+        CommentLine.Instance.CornerExecution(cornerPlayers[0]);
         float border = 65 + cornerPlayers[0].FreeKicks + cornerPlayers[0].Pass;
         if (Random.Range(1, 101) <= border)
         {
@@ -758,15 +758,15 @@ public class Comment : MonoBehaviour
             attackerHeaders = cornerPlayers.OrderByDescending(x => x.Heading).ToList();
             for (int i = 1; i < 11; i++)
             {
-                defenderHeaders.Add(teams[GetReverseIsGuestBall()][i]);
+                defenderHeaders.Add(_teams[GetReverseIsGuestBall()][i]);
             }
             int y = Random.Range(0, 30); // losowanie indeksu piłkarzy, którzy będą walczyć o piłkę
             y /= 10;
             for (int i = 1; i < 11; i++)
             {
-                if (attackerHeaders[y].Id == teams[guestBall][i].Id)
+                if (attackerHeaders[y].Id == _teams[_guestBall][i].Id)
                 {
-                    playerWithBall = i;
+                    _playerWithBall = i;
                     break;
                 }
             }
@@ -775,7 +775,7 @@ public class Comment : MonoBehaviour
             {
                 // zgubienie obrońcy i strzał głową
                 yield return new WaitForSeconds(_time);
-                CommentLine.FreeHeader();
+                CommentLine.Instance.FreeHeader();
                 yield return new WaitForSeconds(_time);
                 StartCoroutine(Shot(3));
             }
@@ -784,13 +784,13 @@ public class Comment : MonoBehaviour
                 yield return new WaitForSeconds(_time);
                 if (Random.Range(1, 101) <= (50 + (attackerHeaders[y].Heading - defenderHeaders[y].Heading) * 10))
                 {
-                    CommentLine.ContestedHeader();
+                    CommentLine.Instance.ContestedHeader();
                     yield return new WaitForSeconds(_time);
                     StartCoroutine(Shot(3));
                 }
                 else
                 {
-                    CommentLine.DefenderWinsHeader(defenderHeaders[y]);
+                    CommentLine.Instance.DefenderWinsHeader(defenderHeaders[y]);
                     _minute++;
                     StartCoroutine(CommentStart());
                 }
@@ -799,7 +799,7 @@ public class Comment : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(_time);
-            CommentLine.FailedCross();
+            CommentLine.Instance.FailedCross();
             _minute++;
             StartCoroutine(CommentStart());
         }
@@ -811,54 +811,54 @@ public class Comment : MonoBehaviour
         if (direction == "left" || direction == "right")
         {
             int dir = direction == "right" ? 1 : 0;
-            CommentLine.TryingToDodge();
+            CommentLine.Instance.TryingToDodge();
             yield return new WaitForSeconds(_time);
-            float plus = ((teams[guestBall][playerWithBall].Dribling + teams[guestBall][playerWithBall].Speed) - (teams[GetReverseIsGuestBall()][defWingPos[GetReverseIsGuestBall(), dir]].Tackle + teams[GetReverseIsGuestBall()][defWingPos[GetReverseIsGuestBall(), dir]].Speed)) * 3;
+            float plus = ((_teams[_guestBall][_playerWithBall].Dribling + _teams[_guestBall][_playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][_defWingPos[GetReverseIsGuestBall(), dir]].Tackle + _teams[GetReverseIsGuestBall()][_defWingPos[GetReverseIsGuestBall(), dir]].Speed)) * 3;
             if (Random.Range(1, 101) < 55 + plus)
             {
                 int decision = Random.Range(1, 101);
                 //dośrodkowanie bądź strzał
                 if (decision <= 70)
                 {
-                    CommentLine.DecidesToCross();
-                    float border = 40 + teams[0][playerWithBall].Pass * 4;           //----------------- ewentualnie zmniejszyc mnożnik gdyby za dużo goli z główki
+                    CommentLine.Instance.DecidesToCross();
+                    float border = 40 + _teams[0][_playerWithBall].Pass * 4;           //----------------- ewentualnie zmniejszyc mnożnik gdyby za dużo goli z główki
                     int acc = Random.Range(1, 100);
                     if (acc <= border)
                     {
                         int attackerHeader;
                         do
                         {
-                            attackerHeader = Random.Range(midLastPlayerNumber[guestBall] + 1, 11);
-                        } while (attackerHeader == playerWithBall);
+                            attackerHeader = Random.Range(_midLastPlayerNumber[_guestBall] + 1, 11);
+                        } while (attackerHeader == _playerWithBall);
                         int defenderHeader;
                         do
                         {
-                            defenderHeader = Random.Range(1, defLastPlayerNumber[guestBall] + 1);
-                        } while (defenderHeader == defWingPos[GetReverseIsGuestBall(), dir]);
+                            defenderHeader = Random.Range(1, _defLastPlayerNumber[_guestBall] + 1);
+                        } while (defenderHeader == _defWingPos[GetReverseIsGuestBall(), dir]);
 
                         // główka
-                        if (Random.Range(1, 101) <= (30 + (teams[guestBall][attackerHeader].Rating - teams[GetReverseIsGuestBall()][defenderHeader].Rating) * 10))
+                        if (Random.Range(1, 101) <= (30 + (_teams[_guestBall][attackerHeader].Rating - _teams[GetReverseIsGuestBall()][defenderHeader].Rating) * 10))
                         {
                             // zgubienie obrońcy i stzrał głową
                             yield return new WaitForSeconds(_time);
-                            playerWithBall = attackerHeader;
-                            CommentLine.FreeHeader();
+                            _playerWithBall = attackerHeader;
+                            CommentLine.Instance.FreeHeader();
                             yield return new WaitForSeconds(_time);
                             StartCoroutine(Shot(3));
                         }
                         else
                         {
                             yield return new WaitForSeconds(_time);
-                            if (Random.Range(1, 101) <= (50 + (teams[guestBall][attackerHeader].Heading - teams[GetReverseIsGuestBall()][defenderHeader].Heading) * 10))
+                            if (Random.Range(1, 101) <= (50 + (_teams[_guestBall][attackerHeader].Heading - _teams[GetReverseIsGuestBall()][defenderHeader].Heading) * 10))
                             {
-                                playerWithBall = attackerHeader;
-                                CommentLine.ContestedHeader();
+                                _playerWithBall = attackerHeader;
+                                CommentLine.Instance.ContestedHeader();
                                 yield return new WaitForSeconds(_time);
                                 StartCoroutine(Shot(3));
                             }
                             else
                             {
-                                CommentLine.DefenderWinsHeader(teams[GetReverseIsGuestBall()][defenderHeader]);
+                                CommentLine.Instance.DefenderWinsHeader(_teams[GetReverseIsGuestBall()][defenderHeader]);
                                 _minute++;
                                 StartCoroutine(CommentStart());
                             }
@@ -867,20 +867,20 @@ public class Comment : MonoBehaviour
                     else
                     {
                         yield return new WaitForSeconds(_time);
-                        CommentLine.FailedCross();
+                        CommentLine.Instance.FailedCross();
                         _minute++;
                         StartCoroutine(CommentStart());
                     }
                 }
                 else
                 {
-                    CommentLine.DecidesToShootInsteadOfCrossing();
+                    CommentLine.Instance.DecidesToShootInsteadOfCrossing();
                     StartCoroutine(Shot(5));
                 }
             }
             else
             {
-                CommentLine.FailedWingDribble(dir);
+                CommentLine.Instance.FailedWingDribble(dir);
                 _minute++;
                 StartCoroutine(CommentStart());
             }
@@ -888,47 +888,47 @@ public class Comment : MonoBehaviour
         else if (direction == "middle")
         {
 
-            CommentLine.TryingToDodge();
+            CommentLine.Instance.TryingToDodge();
             yield return new WaitForSeconds(_time);
-            int firstDef = teamsDefPos[GetReverseIsGuestBall()][Random.Range(0, teamsDefPos[GetReverseIsGuestBall()].Count)];
-            float plus = ((teams[guestBall][playerWithBall].Dribling + teams[guestBall][playerWithBall].Speed) - (teams[GetReverseIsGuestBall()][firstDef].Tackle + teams[GetReverseIsGuestBall()][firstDef].Speed)) * 3;
+            int firstDef = _teamsDefPos[GetReverseIsGuestBall()][Random.Range(0, _teamsDefPos[GetReverseIsGuestBall()].Count)];
+            float plus = ((_teams[_guestBall][_playerWithBall].Dribling + _teams[_guestBall][_playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][firstDef].Tackle + _teams[GetReverseIsGuestBall()][firstDef].Speed)) * 3;
             if (Random.Range(1, 101) < 45 + plus)
             {
                 //podanie bądź strzał
                 if (Random.Range(1, 101) <= 65)
                 {
-                    CommentLine.DecidesToPass();
-                    float border = 30 + teams[guestBall][playerWithBall].Pass * 2;
+                    CommentLine.Instance.DecidesToPass();
+                    float border = 30 + _teams[_guestBall][_playerWithBall].Pass * 2;
                     if (Random.Range(1, 101) <= border)
                     {
                         int atackerIndex;
                         do
                         {
-                            atackerIndex = Random.Range(midLastPlayerNumber[guestBall] + 1, 11);
+                            atackerIndex = Random.Range(_midLastPlayerNumber[_guestBall] + 1, 11);
                         } 
-                        while (atackerIndex == playerWithBall);
+                        while (atackerIndex == _playerWithBall);
 
                         int defenderIndex;
                         do
                         {
-                            defenderIndex = teamsDefPos[GetReverseIsGuestBall()][Random.Range(0, teamsDefPos[GetReverseIsGuestBall()].Count)];
+                            defenderIndex = _teamsDefPos[GetReverseIsGuestBall()][Random.Range(0, _teamsDefPos[GetReverseIsGuestBall()].Count)];
                         } 
                         while (defenderIndex == firstDef);
 
-                        playerWithBall = atackerIndex;
+                        _playerWithBall = atackerIndex;
                         yield return new WaitForSeconds(_time);
-                        CommentLine.ChanceForOneOnOne();
+                        CommentLine.Instance.ChanceForOneOnOne();
                         yield return new WaitForSeconds(_time);
-                        if (Random.Range(1, 101) <= (50 + (teams[guestBall][atackerIndex].Dribling - teams[GetReverseIsGuestBall()][defenderIndex].Tackle) * 10))
+                        if (Random.Range(1, 101) <= (50 + (_teams[_guestBall][atackerIndex].Dribling - _teams[GetReverseIsGuestBall()][defenderIndex].Tackle) * 10))
                         {
-                            CommentLine.OneToOneSituation();
+                            CommentLine.Instance.OneToOneSituation();
                             yield return new WaitForSeconds(_time);
                             StartCoroutine(Shot(2));
                         }
                         else
                         {
-                            playerWithBall = defenderIndex;
-                            CommentLine.FailedChanceOneToOne();
+                            _playerWithBall = defenderIndex;
+                            CommentLine.Instance.FailedChanceOneToOne();
                             _minute++;
                             StartCoroutine(CommentStart());
                         }
@@ -937,24 +937,24 @@ public class Comment : MonoBehaviour
                     else
                     {
                         yield return new WaitForSeconds(_time);
-                        CommentLine.FailedPass();
+                        CommentLine.Instance.FailedPass();
                         _minute++;
                         StartCoroutine(CommentStart());
                     }
                 }
                 else
                 {
-                    CommentLine.DecidesToShootInsteadOfPassing();
+                    CommentLine.Instance.DecidesToShootInsteadOfPassing();
                     StartCoroutine(Shot(5));
                 }
             }
             else
             {
-                CommentLine.FailedMidDribble(teams[GetReverseIsGuestBall()][firstDef]);
+                CommentLine.Instance.FailedMidDribble(_teams[GetReverseIsGuestBall()][firstDef]);
                 _minute++;
                 StartCoroutine(CommentStart());
             }
         }
 	}
-    public int GetReverseIsGuestBall() => (guestBall == 0) ? 1 : 0;
+    public int GetReverseIsGuestBall() => (_guestBall == 0) ? 1 : 0;
 }
