@@ -1,12 +1,11 @@
-﻿using System.Collections;
+﻿using TMPro;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CommentLine : MonoBehaviour
 {
-    [SerializeField] Text _ResultText;
-    [SerializeField] Text _Commentary;
+    [SerializeField] TextMeshProUGUI _ResultText;
+    [SerializeField] TextMeshProUGUI _Commentary;
     string guestName, hostName;
     int guestId, hostId;
     List<Footballer>[] teams = new List<Footballer>[2];
@@ -35,6 +34,7 @@ public class CommentLine : MonoBehaviour
         _Commentary.text = "";
         guestName = Comment.Instance.GetGuestName();
         hostName = Comment.Instance.GetHostName();
+        _ResultText.text = $"{hostName} 0 - 0 {guestName}";
         guestId = Comment.Instance.GetGuestID();
         hostId = Comment.Instance.GetHostID();
         UpdateTeams();
@@ -57,7 +57,7 @@ public class CommentLine : MonoBehaviour
     {
         int rnd = Random.Range(1, 11);
         int arb = Random.Range(0, 5);
-        string text = "";
+        string text;
         List<Footballer> hostTeam = teams[0];
         List<Footballer> guestTeam = teams[1];
         switch (rnd)
@@ -73,12 +73,10 @@ public class CommentLine : MonoBehaviour
     }
     public void InfoComment()
     {
-        
         MatchStats[] ms = Comment.Instance.GetMatchStats();
         int hostShots = ms[0].GetShots();
         int guestShots = ms[1].GetShots();
         int hostChances = Comment.Instance.GetHostChances();
-        //int goalChances = Comment.GetGoalChances();
         int hostGoals = ms[0].GetGoals();
         int guestGoals = ms[1].GetGoals();
         int rnd = Random.Range(1, 9);
@@ -752,6 +750,6 @@ public class CommentLine : MonoBehaviour
     }
     public void UpdateResult(MatchStats[] matchStats)
     {
-        _ResultText.text = hostName + "  " + matchStats[0].GetGoals() + " - " + matchStats[1].GetGoals() + "  " + guestName;
+        _ResultText.text = $"{hostName} {matchStats[0].GetGoals()} - {matchStats[1].GetGoals()} {guestName}";
     }
 }

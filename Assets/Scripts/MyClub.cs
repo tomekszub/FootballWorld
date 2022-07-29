@@ -124,7 +124,7 @@ public class MyClub : MonoBehaviour
         myClubID = Database.leagueDB[myLeagueID].Teams[myInLeagueIndex].Id;
         //tableScript.tableTeams.Add(new Team(0 ,inputClubName, 0, 0, 0, 0, 0, 0));
         tableScript.ShowTable ();
-        OutputClubName.transform.GetComponent<Text>().text = Database.clubDB[myClubID].Name;
+        OutputClubName.transform.GetComponent<TextMeshProUGUI>().text = Database.clubDB[myClubID].Name;
         roundnumber = teamsNumber * 2 - 2;
         clubs = new List<Club>();
         for (int i = 0; i < teamsNumber; i++)
@@ -142,7 +142,7 @@ public class MyClub : MonoBehaviour
         //c = new Comment();
         //c = FindObjectOfType<Comment>();
         parentObj.SetActive (false);
-        OutputMoney.transform.GetComponent<Text>().text = currDate.Day + "/" + currDate.Month;
+        OutputMoney.transform.GetComponent<TextMeshProUGUI>().text = currDate.Day + "/" + currDate.Month;
     }
 	bool SearchRepetitions(int number)
 	{
