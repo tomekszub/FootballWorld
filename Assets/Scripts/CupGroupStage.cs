@@ -1,14 +1,13 @@
-﻿//using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine;
 
-public class ClubAvaibility
+public class ClubAvailability
 {
     public Club c;
     public int val;
-    public ClubAvaibility(Club cl, int v)
+    public ClubAvailability(Club cl, int v)
     {
         c = cl;
         val = v;
@@ -17,7 +16,7 @@ public class ClubAvaibility
 
 public class CupGroupStage : CupRound
 {
-    int ClubsInGroup,RoundIndex, BreakBetweenRounds;
+    int ClubsInGroup, RoundIndex, BreakBetweenRounds;
     List<Club[]> group;
     List<List<Team>> groupTable;
     
@@ -37,7 +36,7 @@ public class CupGroupStage : CupRound
         {
             group.Add(new Club[ClubsInGroup]);
         }
-        clubs = clubs.ToArray().OrderByDescending(n => n.GetRankingPoints()).ToList();
+        clubs = clubs.OrderByDescending(n => n.GetRankingPoints()).ToList();
         List<List<Club>> pot = new List<List<Club>>();
         for (int i = 0; i < ClubsInGroup; i++)
         {
@@ -47,12 +46,12 @@ public class CupGroupStage : CupRound
         {
             pot[i / groupsCount].Add(clubs[i]);
         }
-        //
         int fuse = 3;
-        bool ok = true;
-        //int lastPot = pot.Count - 1;
+        bool ok;
         while (fuse > 0)
         {
+            ok = true;
+
             foreach (Club c in pot[0])
             {
                 group[GetRandomAvailableGroup(0, c.CountryName, true)][0] = c;
@@ -66,7 +65,8 @@ public class CupGroupStage : CupRound
             {
                 for (int x = 0; x < group[i].Length; x++)
                 {
-                    if (group[i][x] == null) ok = false;
+                    if (group[i][x] == null) 
+                        ok = false;
                 }
             }
             if (ok) 
@@ -103,12 +103,13 @@ public class CupGroupStage : CupRound
     int GetRandomAvailableGroup(int pot, string country, bool returnGroupIndex)
     {
         List<int> availableGroups = new List<int>();
-        bool ok = true;
+        bool ok;
         for (int g = 0; g < group.Count; g++)
         {
             ok = true;
             // sprawdzamy czy jest wolne mejsce w grupie, jesli nie to kolejna grupa
-            if (group[g][pot] != null) continue;
+            if (group[g][pot] != null) 
+                continue;
             // od 0 do pot, jesli pot 0 to nie mamy co sprawdzac innych zepsoplow z tej grupy 
             //bo aktualny zespol bedzie pierwszym dodanym
             for (int i = 0; i < pot; i++)
@@ -119,18 +120,22 @@ public class CupGroupStage : CupRound
                     break;
                 }
             }
-            if (ok) availableGroups.Add(g);
+            if (ok) 
+                availableGroups.Add(g);
         }
-        if (!returnGroupIndex) return availableGroups.Count;
+
+        if (!returnGroupIndex)
+            return availableGroups.Count;
+
         int randomIndex = UnityEngine.Random.Range(0, availableGroups.Count - 1);
         return availableGroups.Count>0?availableGroups[randomIndex]:-1;
     }
     void DrawFromAPot(int pot, List<Club> lastPotContent)
     {
-        List<ClubAvaibility> cas = new List<ClubAvaibility>();
+        List<ClubAvailability> cas = new List<ClubAvailability>();
         for (int i = 0; i < lastPotContent.Count; i++)
         {
-            cas.Add(new ClubAvaibility(lastPotContent[i], GetRandomAvailableGroup(pot, lastPotContent[i].CountryName, false)));
+            cas.Add(new ClubAvailability(lastPotContent[i], GetRandomAvailableGroup(pot, lastPotContent[i].CountryName, false)));
         }
         cas = cas.ToArray().OrderBy(n => n.val).ToList();
         while (cas.Count != 0)
@@ -192,8 +197,10 @@ public class CupGroupStage : CupRound
                     groupTable[i][c].ScoredGoals += matches[matchID].Result.HostGoals;
                     groupTable[i][c].LostGoals += matches[matchID].Result.GuestGoals;
                     groupTable[i][c].DifferenceGoals += matches[matchID].Result.HostGoals - matches[matchID].Result.GuestGoals;
-                    if (groupID == -1) groupID = i;
-                    else break;
+                    if (groupID == -1) 
+                        groupID = i;
+                    else 
+                        break;
                 }
                 else if(matches[matchID].SecondTeamId == groupTable[i][c].Id)
                 {
@@ -215,14 +222,17 @@ public class CupGroupStage : CupRound
                     groupTable[i][c].ScoredGoals += matches[matchID].Result.GuestGoals;
                     groupTable[i][c].LostGoals += matches[matchID].Result.HostGoals;
                     groupTable[i][c].DifferenceGoals += matches[matchID].Result.GuestGoals - matches[matchID].Result.HostGoals;
-                    if (groupID == -1) groupID = i;
-                    else break;
+                    if (groupID == -1) 
+                        groupID = i;
+                    else 
+                        break;
                 }
             }
-            if (groupID != -1) break;
+            if (groupID != -1) 
+                break;
         }
         groupTable[groupID] = Table.SortTeamsTableByGoalDifference(groupTable[groupID]);
-        DebugGroups();
+        //DebugGroups();
     }
     bool DetermineWhoWon()
     {
@@ -244,7 +254,8 @@ public class CupGroupStage : CupRound
     }
     public override List<Club> GetWinners()
     {
-        if (!DetermineWhoWon()) return null;
+        if (!DetermineWhoWon()) 
+            return null;
         return base.GetWinners();
     }
 }
