@@ -26,4 +26,6 @@ public class ScrollRectSnapper : MonoBehaviour, IPointerDownHandler
         else if (rekt.verticalNormalizedPosition < -0.1)
             _ScrollLocked = true;
     }
+
+    public void ResetScrollLocker() => _ScrollLocked = true;
 }

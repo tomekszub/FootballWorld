@@ -142,7 +142,7 @@ public class MyClub : MonoBehaviour
         //c = new Comment();
         //c = FindObjectOfType<Comment>();
         parentObj.SetActive (false);
-        OutputMoney.transform.GetComponent<TextMeshProUGUI>().text = currDate.Day + "/" + currDate.Month;
+        OutputMoney.GetComponent<TextMeshProUGUI>().text = currDate.Day + "/" + currDate.Month;
     }
 	bool SearchRepetitions(int number)
 	{
@@ -237,7 +237,7 @@ public class MyClub : MonoBehaviour
         if (matches[currentMatch].Date != currDate)
         {
             currDate = currDate.AddDays(1);
-            OutputMoney.transform.GetComponent<Text>().text = currDate.Day + "/" + currDate.Month;
+            OutputMoney.GetComponent<TextMeshProUGUI>().text = currDate.Day + "/" + currDate.Month;
             UpdateCalendar();
             return;
         }
