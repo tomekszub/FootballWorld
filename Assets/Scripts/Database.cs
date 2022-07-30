@@ -3228,7 +3228,6 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(94, "GNK Dinamo Zagrzeb", "Chorwacja", 6, "Maksimir", 35123, "Nenad Bjelica", "4-3-3", 2647, 2675, new List<float>() { 0, 0, 0, 25.5f, 0 }));
         clubDB.Add(new Club(95, "Red Bull Salzburg", "Austria", 7, "Red Bull Arena Salzburg", 30188, "Jesse Marsch", "4-4-2", 2676, 2704, new List<float>() { 0, 0, 0, 43.5f, 0 }));
         clubDB.Add(new Club(96, "LASK Linz", "Austria", 4, "Raiffeisen Arena", 6009, "Valérien Ismaël", "4-4-2", 2936, 2964, new List<float>() { 0, 0, 0, 0, 0 }));
-        clubDB.Add(new Club(97, "HNK Rijeka", "Chorwacja", 4, "Stadion Rujevica", 8136, "Igor Biscan", "4-4-2", 2705, 2736, new List<float>() { 0, 0, 0, 11, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
@@ -3244,7 +3243,7 @@ public class Database : MonoBehaviour
         leagueDB.Add(new League_Old("Erste Liga", "Austria", new List<Club>() { clubDB[95], clubDB[96] }, 31.250f));
         leagueDB.Add(new League_Old("Prvni Liga", "Czechy", new List<Club>() { clubDB[51], clubDB[52] }, 28.675f));
         leagueDB.Add(new League_Old("SuperLig", "Grecja", new List<Club>() { clubDB[53], clubDB[54] }, 27.600f));
-        leagueDB.Add(new League_Old("Prva liga", "Chorwacja", new List<Club>() { clubDB[94], clubDB[97] }, 27.375f));
+        _LeagueGenerator.Generate("Croatia", 10);
         leagueDB.Add(new League_Old("Første liga", "Dania", new List<Club>() { clubDB[93] }, 27.025f));
         leagueDB.Add(new League_Old("Swiss League", "Szwajcaria", new List<Club>() { clubDB[49], clubDB[50] }, 26.900f));
         leagueDB.Add(new League_Old("First Cyprus League", "Cypr", new List<Club>() { clubDB[92] }, 24.925f));

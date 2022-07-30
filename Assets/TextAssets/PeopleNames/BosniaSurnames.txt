@@ -19,7 +19,7 @@ Vidović
 Gajić
 Blagojević
 Muratović
-šehić
+Šehić
 Maksimović
 Ostojić
 Mijatović
@@ -33,9 +33,9 @@ Mihajlović
 Kovač
 Softić
 Stupar
-šabanović
-čaušević
-živković
+Šabanović
+Čaušević
+Živković
 Bogdanović
 Stanić
 Samardžić
@@ -81,7 +81,7 @@ Kapetanović
 Zarić
 Davidović
 Kuzmanović
-ćurić
+Ćurić
 Ahmić
 Zorić
 Demirović
