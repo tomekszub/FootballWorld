@@ -18,7 +18,6 @@ public class Database : MonoBehaviour
 	public GameObject playerPanelPrefab;
     public GameObject searchResultContent;
     public GameObject warningText;
-    public GameObject consoleObj;
     [SerializeField] CountryMaster _CountryMaster;
     [SerializeField] LeagueMaster _LeagueMaster;
     [SerializeField] LeagueGenerator _LeagueGenerator;
@@ -3296,13 +3295,6 @@ public class Database : MonoBehaviour
             print (test[i].Name);
         }*/
 
-    }
-    void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.BackQuote))
-        {
-            consoleObj.SetActive(!consoleObj.activeSelf);
-        }
     }
         
 
