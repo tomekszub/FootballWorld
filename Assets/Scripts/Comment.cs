@@ -360,14 +360,14 @@ public class Comment : MonoBehaviour
             _defWingPos[isGuest, 0] = 1;
             _defWingPos[isGuest, 1] = 5;
         }
-        if (_defLastPlayerNumber[isGuest] == 4)
+        else if (_defLastPlayerNumber[isGuest] == 4)
         {
             _teamsDefPos[isGuest].Add(2);
             _teamsDefPos[isGuest].Add(3);
             _defWingPos[isGuest, 0] = 1;
             _defWingPos[isGuest, 1] = 4;
         }
-        if (_defLastPlayerNumber[isGuest] == 3)
+        else if (_defLastPlayerNumber[isGuest] == 3)
         {
             _teamsDefPos[isGuest].Add(1);
             _teamsDefPos[isGuest].Add(2);

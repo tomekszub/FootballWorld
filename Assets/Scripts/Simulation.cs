@@ -288,6 +288,22 @@ public class Simulation : MonoBehaviour
             wingPos[isGuest, 0] = 6;
             wingPos[isGuest, 1] = 7;
         }
+        else if (formation == "3-4-1-2" || formation == "3-4-2-1")
+        {
+            teamDef[isGuest] = (teams[isGuest][1].Rating + teams[isGuest][2].Rating + teams[isGuest][3].Rating);
+            teamDef[isGuest] = (teamDef[isGuest] / 3) + (teamDef[isGuest] / 4);
+            defLastPlayerNumber[isGuest] = 3;
+            teamMid[isGuest] = (teams[isGuest][4].Rating + teams[isGuest][5].Rating + teams[isGuest][6].Rating + teams[isGuest][7].Rating);
+            teamMid[isGuest] = (teamMid[isGuest] / 4) + (teamMid[isGuest] / 3);
+            midLastPlayerNumber[isGuest] = 7;
+            teamAtk[isGuest] = (teams[isGuest][8].Rating + teams[isGuest][9].Rating + teams[isGuest][10].Rating);
+            teamAtk[isGuest] = (teamAtk[isGuest] / 3) + (teamAtk[isGuest] / 3);
+            teamsMidPos[isGuest].Add(8);
+            teamsMidPos[isGuest].Add(9);
+            teamsMidPos[isGuest].Add(10);
+            wingPos[isGuest, 0] = 6;
+            wingPos[isGuest, 1] = 7;
+        }
         if (defLastPlayerNumber[isGuest] == 5)
         {
             teamsDefPos[isGuest].Add(2);
@@ -296,14 +312,14 @@ public class Simulation : MonoBehaviour
             defWingPos[isGuest, 0] = 1;
             defWingPos[isGuest, 1] = 5;
         }
-        if (defLastPlayerNumber[isGuest] == 4)
+        else if (defLastPlayerNumber[isGuest] == 4)
         {
             teamsDefPos[isGuest].Add(2);
             teamsDefPos[isGuest].Add(3);
             defWingPos[isGuest, 0] = 1;
             defWingPos[isGuest, 1] = 4;
         }
-        if (defLastPlayerNumber[isGuest] == 3)
+        else if (defLastPlayerNumber[isGuest] == 3)
         {
             teamsDefPos[isGuest].Add(1);
             teamsDefPos[isGuest].Add(2);
