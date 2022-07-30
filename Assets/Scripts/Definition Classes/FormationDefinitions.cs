@@ -51,9 +51,9 @@ public static class FormationDefinitions
                 Position.PO,
                 Position.ŒP,
                 Position.ŒP,
-                Position.ŒPO,
                 Position.LP,
                 Position.PP,
+                Position.ŒPO,
                 Position.N
             }
         },
