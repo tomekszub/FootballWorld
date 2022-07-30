@@ -14,13 +14,13 @@ public class SquadListPanel : MonoBehaviour
 
     private void Awake()
     {
-        _currLeagueTeamIndex = MyClub.myInLeagueIndex;
+        _currLeagueTeamIndex = MyClub.Instance.MyInLeagueIndex;
     }
 
     public void Init()
     {
         _TournamentSelectionDropdown.ClearOptions();
-        var tournaments = new List<string>(MyClub.myTournaments);
+        var tournaments = new List<string>(MyClub.Instance.MyTournaments);
         tournaments.Insert(0, "");
         _TournamentSelectionDropdown.AddOptions(tournaments);
         SetupSquad();
@@ -29,9 +29,9 @@ public class SquadListPanel : MonoBehaviour
     public void SetupSquad(int id = -1)
     {
         if (id == -1)
-            id = MyClub.myClubID;
+            id = MyClub.Instance.MyClubID;
 
-        if(id == MyClub.myClubID)
+        if(id == MyClub.Instance.MyClubID)
         {
             _TournamentSelectionDropdown.gameObject.SetActive(true);
             _TournamentSelectionDropdown.value = 0;
@@ -59,17 +59,17 @@ public class SquadListPanel : MonoBehaviour
     public void ShowNextClub()
     {
         _currLeagueTeamIndex++;
-        if(_currLeagueTeamIndex >= Database.leagueDB[MyClub.myLeagueID].Teams.Count)
+        if(_currLeagueTeamIndex >= Database.leagueDB[MyClub.Instance.MyLeagueID].Teams.Count)
             _currLeagueTeamIndex = 0;
-        SetupSquad(Database.leagueDB[MyClub.myLeagueID].Teams[_currLeagueTeamIndex].Id);
+        SetupSquad(Database.leagueDB[MyClub.Instance.MyLeagueID].Teams[_currLeagueTeamIndex].Id);
     }
 
     public void ShowPreviousClub()
     {
         _currLeagueTeamIndex--;
         if (_currLeagueTeamIndex <= -1)
-            _currLeagueTeamIndex = Database.leagueDB[MyClub.myLeagueID].Teams.Count - 1;
-        SetupSquad(Database.leagueDB[MyClub.myLeagueID].Teams[_currLeagueTeamIndex].Id);
+            _currLeagueTeamIndex = Database.leagueDB[MyClub.Instance.MyLeagueID].Teams.Count - 1;
+        SetupSquad(Database.leagueDB[MyClub.Instance.MyLeagueID].Teams[_currLeagueTeamIndex].Id);
     }
 
     public void OnTournamentChanged(int option)

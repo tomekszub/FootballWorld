@@ -31,18 +31,14 @@ public static class MatchCalendar
         }
         List<Match> ms = new List<Match>();
         int clubsCount = clubs.Count;
-        int roundnumber = clubsCount * 2 - 2;
+        int roundsAmount = clubsCount * 2 - 2;
         int[] help = new int[clubs.Count + 1];
-        //int[] help = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-        // UWAGA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // help[] musi miec 0 w sobie ,zeby dalo sie wprowadzic swoj klub, poki sie sprwadza jest ok bo pomija nasz klub  (nie ma symulacji)
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         for (int i = 0; i < clubsCount; i++)
         {
             help[i] = clubs[i].Id;
         }
-        help[clubs.Count] = -1; // jest tylko pomocniczym id weic moze byc cokolwiek np. -1
-        for (int i = 0; i < roundnumber; i++)
+        help[clubs.Count] = -1;
+        for (int i = 0; i < roundsAmount; i++)
         {
             if (i > 0)
             {
@@ -54,45 +50,34 @@ public static class MatchCalendar
             }
             for (int x = 0; x < clubsCount / 2; x++)
             {
-                if(i < roundnumber/2)ms.Add(new Match(competitionName, start2, i, help[x], help[clubsCount - x - 1]));
-                else ms.Add(new Match(competitionName, start2, i, help[clubsCount - x - 1], help[x]));
+                if(i < roundsAmount/2)
+                    ms.Add(new Match(competitionName, start2, i, help[x], help[clubsCount - x - 1]));
+                else 
+                    ms.Add(new Match(competitionName, start2, i, help[clubsCount - x - 1], help[x]));
             }
             start2 = start2.AddDays(periodBetweenRounds);
         }
 
-        if (MyClub.matches.Count == 0)
+        if (MyClub.Instance.Matches.Count == 0)
         {
             foreach (var item in ms)
             {
-                MyClub.matches.Add(item);
+                MyClub.Instance.Matches.Add(item);
             }
             return ms;
         }
         int matchesPerRound = clubs.Count / 2;
-        //int matchesSum = secondDayMatches + thirdDayMatches + fourthDayMatches;
-        //if(matchesSum >= matchesPerRound)
-        //{
-        //    firstDayMatches = matchesPerRound;
-        //    secondDayMatches = 0;
-        //    thirdDayMatches = 0;
-        //    fourthDayMatches = 0;
-        //}
-        //else if(matchesSum < matchesPerRound)
-        //{
-        //    firstDayMatches += (matchesPerRound - matchesSum);
-        //}
         int addToTheEnd = -matchesPerRound;
         for(int i = 0; i < ms.Count; i += matchesPerRound)
         {
             // round
             bool toTheEnd = true;
-            for (int m = 0; m < MyClub.matches.Count; m++)
+            for (int m = 0; m < MyClub.Instance.Matches.Count; m++)
             {
-                if (MyClub.matches[m].Date > start)
+                if (MyClub.Instance.Matches[m].Date > start)
                 {
-                    
                     // jesli to nie poczatek listy i poprzedni mecz ma ta sama date co runda ,ktora chcemy dodac
-                    if (m != 0 && MyClub.matches[m - 1].Date == start && MyClub.matches[m-1].CompetitionName != competitionName)
+                    if (m != 0 && MyClub.Instance.Matches[m - 1].Date == start && MyClub.Instance.Matches[m-1].CompetitionName != competitionName)
                     {
                         start = start.AddDays(periodBetweenRounds);
                     }
@@ -103,16 +88,16 @@ public static class MatchCalendar
                         {
                             if (roundIndex >= 0) ms[r].RoundIndex = roundIndex;
                             ms[r].Date = start;
-                            MyClub.matches.Insert(m, ms[r]);
+                            MyClub.Instance.Matches.Insert(m, ms[r]);
                         }
                         start = start.AddDays(periodBetweenRounds);
                         addToTheEnd = i+matchesPerRound;
-                        //matches.InsertRange(m, ms.GetRange(i, matchesPerRound));
                         break;
                     }
                 }
             }
-            if (toTheEnd) break;
+            if (toTheEnd) 
+                break;
         }
         if (addToTheEnd < ms.Count - 1)
         {
@@ -120,9 +105,10 @@ public static class MatchCalendar
             {
                 for (int r = i; r < i+matchesPerRound; r++)
                 {
-                    if (roundIndex >= 0) ms[r].RoundIndex = roundIndex;
+                    if (roundIndex >= 0) 
+                        ms[r].RoundIndex = roundIndex;
                     ms[r].Date = start;
-                    MyClub.matches.Add(ms[r]);
+                    MyClub.Instance.Matches.Add(ms[r]);
                 }
                 start = start.AddDays(periodBetweenRounds);
             }

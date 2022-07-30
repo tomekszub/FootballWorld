@@ -2950,19 +2950,6 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Kosovo", 10);
         _LeagueGenerator.Generate("Andorra", 8);
         _LeagueGenerator.Generate("San Marino", 8);
-
-        /*test.Add(new Team(clubDB[0].Name, 86, 105, 39, 30, 10, 0));
-        test.Add(new Team(clubDB[1].Name, 86, 100, 29, 30, 10, 0)); 	 	
-        for (int i = 2; i < 20; i++) 
-        {
-            test.Add(new Team(clubDB[i].Name, 76, 100, 29, 30, 10, 0));
-        }
-        test = test.OrderByDescending (n => n.Points).ToList (); 
-        for (int i = 0; i < 20; i++) 
-        {
-            print (test[i].Name);
-        }*/
-
     }
         
 
