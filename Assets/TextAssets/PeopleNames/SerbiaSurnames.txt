@@ -11,7 +11,7 @@ Kovačević
 Radovanović
 Jović
 Mladenović
-živanović
+Živanović
 Stevanović
 Milovanović
 Bogdanović
@@ -75,7 +75,7 @@ Arsenijević
 Radisavljević
 Joksimović
 Zorić
-ćirković
+Ćirković
 Sabo
 Živić
 Stanić
