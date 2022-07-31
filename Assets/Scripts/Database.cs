@@ -2774,7 +2774,8 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Andorra", 8);
         _LeagueGenerator.Generate("San Marino", 8);
     }
-        
+
+    public CountryMaster GetCountryMaster() => _CountryMaster;
 
 	public void Search()
 	{

@@ -2,13 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UI;
 
 
 public class Table : MonoBehaviour
 {
-	public List<GameObject> tableRowPrefabs;
-	public List<Team> tableTeams = new List<Team>();
+    [SerializeField] List<TableRow> _TableRows;
+
+	readonly Color32 topPositionsColor = new Color32(8,249,0,255);
+	readonly Color32 topPositionsColor2 = new Color32(255,255,0,255);
+	readonly Color32 topPositionsColor3 = new Color32(255,153,51,255);
+	readonly Color32 bottomPositionsColor = new Color32(255,102,102,255);
+
 	public static List<Team> SortTeamsTableByGoalDifference(List<Team> teams)
 	{
 		// Table must be sorted by descending number of points before calling this method
@@ -40,26 +44,34 @@ public class Table : MonoBehaviour
 		}
 		return returnTeams;
 	}
-	public void ShowTable()
+	public void ShowTable(List<Team> tableTeams, int[] positionRanges, bool showFlags = false)
 	{
         WindowsManager.Instance.ShowWindow("Table");
 		tableTeams = SortTeamsTableByGoalDifference (tableTeams);
-		for (int i = 0; i < tableRowPrefabs.Count; i++) 
+	    Color32 rowColor;
+		int posRange2 = positionRanges[0] + positionRanges[1];
+		int posRange3 = posRange2 + positionRanges[2];
+		int posRange4 = tableTeams.Count - positionRanges[3];
+		for (int i = 0; i < _TableRows.Count; i++) 
 		{
             if (i >= tableTeams.Count)
             {
-                tableRowPrefabs[i].SetActive(false);
+				_TableRows[i].gameObject.SetActive(false);
                 continue;
             }
-			tableRowPrefabs[i].transform.Find("Name").GetComponent<Text>().text =  (i + 1) + " " + tableTeams[i].Name;
-			tableRowPrefabs[i].transform.Find("Points").GetComponent<Text>().text = tableTeams[i].Points.ToString();
-			tableRowPrefabs[i].transform.Find("MatchesPlayed").GetComponent<Text>().text = tableTeams[i].MatchesPlayed.ToString();
-			tableRowPrefabs[i].transform.Find("Wins").GetComponent<Text>().text = tableTeams[i].Wins.ToString();
-			tableRowPrefabs[i].transform.Find("Draws").GetComponent<Text>().text = tableTeams[i].Draws.ToString();
-			tableRowPrefabs[i].transform.Find("Loses").GetComponent<Text>().text = tableTeams[i].Loses.ToString();
-			tableRowPrefabs[i].transform.Find("GoalsScored").GetComponent<Text>().text = tableTeams[i].ScoredGoals.ToString();
-			tableRowPrefabs[i].transform.Find("GoalsLost").GetComponent<Text>().text = tableTeams[i].LostGoals.ToString();
-			tableRowPrefabs[i].transform.Find("GoalsDifference").GetComponent<Text>().text = tableTeams[i].DifferenceGoals.ToString();
+
+			if (i < positionRanges[0])
+				rowColor = topPositionsColor;
+			else if (i < posRange2)
+				rowColor = topPositionsColor2;
+			else if (i < posRange3)
+				rowColor = topPositionsColor3;
+			else if (i < posRange4)
+				rowColor = Color.white;
+			else
+				rowColor = bottomPositionsColor;
+
+			_TableRows[i].SetTeam(tableTeams[i], rowColor, showFlags);
 		}
 	}
 }

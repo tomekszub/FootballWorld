@@ -8,7 +8,6 @@ public class Simulation : MonoBehaviour
 {
     static int minute = 1;
     public static int hostId, guestId;
-    //static int hostId, guestId, hostStartFootballer, guestStartFootballer; // id zespołów i id piłkarzy uczestniczącyh
     static List<Footballer>[] teams = new List<Footballer>[2];
     static float[] teamDef = new float[2], teamMid = new float[2], teamAtk = new float[2];
     static int hostChances, goalChances;  // szanse gospodarzy na akcje i akcje bramkowe w meczu

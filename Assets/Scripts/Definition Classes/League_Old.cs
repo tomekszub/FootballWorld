@@ -149,4 +149,47 @@ public class League_Old
             return Database.clubDB[CupWInnerID];
         }
     }
+
+    public int[] GetPositionRanges(int rankingPos)
+    {
+        int[] ranges = new int[4];
+
+        ranges[3] = 3;  // last 3 teams are relegated TODO: set it inthe league scriptable object
+
+        switch (rankingPos)
+        {
+            case >= 1 and <= 4:
+                ranges[0] = 4;
+                ranges[1] = 2;
+                ranges[2] = 1;
+                break;
+            case 5:
+                ranges[0] = 3;
+                ranges[1] = 2;
+                ranges[2] = 1;
+                break;
+            case 6:
+                ranges[0] = 3;
+                ranges[1] = 1;
+                ranges[2] = 2;
+                break;
+            case >= 7 and <= 15:
+                ranges[0] = 2;
+                ranges[1] = 1;
+                ranges[2] = 2;
+                break;
+            case >= 16 and <= 49:
+                ranges[0] = 1;
+                ranges[1] = 0;
+                ranges[2] = 3;
+                break;
+            default:
+                ranges[0] = 1;
+                ranges[1] = 0;
+                ranges[2] = 2;
+                break;
+        }
+
+        return ranges;
+    }
 }

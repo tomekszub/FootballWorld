@@ -50,6 +50,7 @@ public class CountryMaster : SerializedScriptableObject
         var countriesList = countries.ToList();
         return countriesList.Count > 0 ? countriesList[Random.Range(0, countriesList.Count)] : null;
     }
+    public Sprite GetFlagByName(string countryName) => _Countries.ContainsKey(countryName) ? _Countries[countryName].GetFlag() : null;
 
     List<(string, string)> GetRandomItems(TextAsset firstSet, TextAsset secondSet, int amount)
     {

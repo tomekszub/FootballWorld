@@ -8,7 +8,7 @@ public class SquadCell : MonoBehaviour, IPointerDownHandler
 
     Footballer playerOnPosition = null;
     static GameObject selectedFootballer = null;
-    // Start is called before the first frame update
+
     public void OnPointerDown(PointerEventData eventData)
     {
         if (selectedFootballer == null)

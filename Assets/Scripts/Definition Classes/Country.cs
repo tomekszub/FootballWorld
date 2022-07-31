@@ -13,4 +13,5 @@ public class Country
     public TextAsset GetClubNameSecondPart() => _ClubNameSecondParts;
     public TextAsset GetNames() => _Names;
     public TextAsset GetSurnames() => _Surnames;
+    public Sprite GetFlag() => _Flag;
 }
