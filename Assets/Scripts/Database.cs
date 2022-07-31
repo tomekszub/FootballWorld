@@ -21,6 +21,7 @@ public class Database : MonoBehaviour
     [SerializeField] CountryMaster _CountryMaster;
     [SerializeField] LeagueMaster _LeagueMaster;
     [SerializeField] LeagueGenerator _LeagueGenerator;
+
     void Awake () 
 	{
         if(Instance != null)
@@ -2706,69 +2707,6 @@ public class Database : MonoBehaviour
         footballersDB.Add(new Footballer(2558, "Calvin", "Miller", "Millera", "Szkocja", 3.5f, 1.5f, Footballer.Position.LO, 2.5f, 3.5f, 6f, 1f, 8f, 3.5f, 1998));
         footballersDB.Add(new Footballer(2559, "Mikey", "Johnston", "Johnstona", "Szkocja", 3f, 2f, Footballer.Position.LP, 3f, 1f, 6f, 2f, 8f, 3f, 1999));
         footballersDB.Add(new Footballer(2560, "Luca", "Connell", "Connella", "Irlandia", 1f, 1f, Footballer.Position.ŚPD, 1f, 1f, 6f, 1f, 6f, 1f, 2001));
-        // crvena
-        footballersDB.Add(new Footballer(2561, "Milan", "Borjan", "Borjana", "Kanada", 6f, 1f, Footballer.Position.BR, 1f, 1f, 7f, 1f, 2f, 5f, 1987));
-        footballersDB.Add(new Footballer(2562, "Milan", "Rodić", "Rodicia", "Serbia", 6f, 4f, Footballer.Position.LO, 5f, 6f, 8f, 3f, 7f, 6f, 1991));
-        footballersDB.Add(new Footballer(2563, "Milos", "Degenek", "Degeneka", "Australia", 6f, 2f, Footballer.Position.ŚO, 3f, 6f, 8f, 1f, 6f, 5f, 1994));
-        footballersDB.Add(new Footballer(2564, "Srdjan", "Babić", "Babicia", "Serbia", 5.5f, 1.5f, Footballer.Position.ŚO, 2.5f, 5.5f, 9f, 1f, 5f, 4.5f, 1996));
-        footballersDB.Add(new Footballer(2565, "Filip", "Stojković", "Stojkovicia", "Czarnogóra", 6f, 4f, Footballer.Position.PO, 5f, 6f, 7f, 3f, 8f, 6f, 1993));
-        footballersDB.Add(new Footballer(2566, "Dusan", "Jovancić", "Jovancicia", "Serbia", 6f, 3f, Footballer.Position.ŚPD, 3f, 5f, 8f, 2f, 5f, 5f, 1990));
-        footballersDB.Add(new Footballer(2567, "Branko", "Jovicić", "Jovicicia", "Serbia", 6f, 3f, Footballer.Position.ŚPD, 3f, 5f, 6f, 2f, 7f, 5f, 1993));
-        footballersDB.Add(new Footballer(2568, "Marko", "Marin", "Marina", "Niemcy", 6.5f, 5.5f, Footballer.Position.ŚPO, 5.5f, 2.5f, 5f, 5.5f, 8f, 6.5f, 1989));
-        footballersDB.Add(new Footballer(2569, "Mirko", "Ivanić", "Ivanicia", "Czarnogóra", 6f, 5f, Footballer.Position.ŚPO, 5f, 2f, 7f, 5f, 7f, 6f, 1993));
-        footballersDB.Add(new Footballer(2570, "El", "Fardou Ben", "Fardou Bena", "Komory", 6.5f, 5.5f, Footballer.Position.PP, 6.5f, 3.5f, 5f, 5.5f, 9f, 6.5f, 1989));
-        footballersDB.Add(new Footballer(2571, "Milan", "Pavkov", "Pavkova", "Serbia", 6.5f, 4.5f, Footballer.Position.N, 5.5f, 2.5f, 9f, 6.5f, 6f, 6.5f, 1994));
-        footballersDB.Add(new Footballer(2572, "Nikola", "Vasiljević", "Vasiljevicia", "Serbia", 5f, 1f, Footballer.Position.BR, 1f, 1f, 8f, 1f, 4f, 4f, 1996));
-        footballersDB.Add(new Footballer(2573, "Milan", "Gajić", "Gajicia", "Serbia", 6f, 4f, Footballer.Position.PO, 5f, 6f, 6f, 3f, 9f, 6f, 1996));
-        footballersDB.Add(new Footballer(2574, "Radovan", "Pankov", "Pankova", "Serbia", 5.5f, 1.5f, Footballer.Position.ŚO, 2.5f, 5.5f, 8f, 1f, 6f, 4.5f, 1995));
-        footballersDB.Add(new Footballer(2575, "José", "Alberto Cañas", "Alberto Cañasa", "Hiszpania", 5f, 2f, Footballer.Position.ŚPD, 2f, 4f, 6f, 1f, 5f, 4f, 1987));
-        footballersDB.Add(new Footballer(2576, "Lorenzo", "Ebecilio", "Ebecilio", "Holandia", 5.5f, 4.5f, Footballer.Position.ŚPO, 4.5f, 1.5f, 6f, 4.5f, 8f, 5.5f, 1991));
-        footballersDB.Add(new Footballer(2577, "Veljko", "Simić", "Simicia", "Serbia", 5.5f, 4.5f, Footballer.Position.LP, 5.5f, 2.5f, 7f, 4.5f, 9f, 5.5f, 1995));
-        footballersDB.Add(new Footballer(2578, "Richmond", "Boakye", "Boakye", "Ghana", 6f, 4f, Footballer.Position.N, 5f, 2f, 8f, 6f, 6f, 6f, 1993));
-        footballersDB.Add(new Footballer(2579, "", "Tomané", "Tomanéa", "Portugalia", 6f, 4f, Footballer.Position.N, 5f, 2f, 8f, 6f, 6f, 6f, 1992));
-        footballersDB.Add(new Footballer(2580, "Marko", "Gobeljić", "Gobeljicia", "Serbia", 5.5f, 3.5f, Footballer.Position.PO, 4.5f, 5.5f, 8f, 2.5f, 7f, 5.5f, 1992));
-        footballersDB.Add(new Footballer(2581, "Aleksa", "Vukanović", "Vukanovicia", "Serbia", 5.5f, 4.5f, Footballer.Position.LP, 5.5f, 2.5f, 8f, 4.5f, 7f, 5.5f, 1992));
-        footballersDB.Add(new Footballer(2582, "Nemanja", "Milunović", "Milunovicia", "Serbia", 5.5f, 1.5f, Footballer.Position.ŚO, 2.5f, 5.5f, 9f, 1f, 3f, 4.5f, 1989));
-        footballersDB.Add(new Footballer(2583, "Milos", "Vulić", "Vulicia", "Serbia", 5f, 3f, Footballer.Position.ŚP, 3f, 3f, 7f, 3f, 8f, 5f, 1996));
-        footballersDB.Add(new Footballer(2584, "Milan", "Jevtović", "Jevtovicia", "Serbia", 4.5f, 3.5f, Footballer.Position.LP, 4.5f, 1.5f, 7f, 3.5f, 8f, 4.5f, 1993));
-        footballersDB.Add(new Footballer(2585, "Zoran", "Popović", "Popovicia", "Serbia", 4.5f, 1f, Footballer.Position.BR, 1f, 1f, 6f, 1f, 4f, 3.5f, 1988));
-        footballersDB.Add(new Footballer(2586, "Nikola", "Krstović", "Krstovicia", "Czarnogóra", 4f, 2f, Footballer.Position.N, 3f, 1f, 6f, 4f, 7f, 4f, 2000));
-        footballersDB.Add(new Footballer(2587, "", "Jander", "Jandera", "Brazylia", 4f, 2f, Footballer.Position.LO, 3f, 4f, 6f, 1f, 6f, 4f, 1988));
-        footballersDB.Add(new Footballer(2588, "Veljko", "Nikolić", "Nikolicia", "Serbia", 2f, 1f, Footballer.Position.ŚPO, 1f, 1f, 6f, 1f, 7f, 2f, 1999));
-        // apoel
-        footballersDB.Add(new Footballer(2589, "Vid", "Belec", "Beleca", "Słowenia", 5f, 1f, Footballer.Position.BR, 1f, 1f, 7f, 1f, 4f, 4f, 1990));
-        footballersDB.Add(new Footballer(2590, "", "Joãozinho", "Joãozinho", "Portugalia", 5f, 3f, Footballer.Position.LO, 4f, 5f, 8f, 2f, 6f, 5f, 1989));
-        footballersDB.Add(new Footballer(2591, "Vujadin", "Savić", "Savicia", "Serbia", 6f, 2f, Footballer.Position.ŚO, 3f, 6f, 9f, 1f, 4f, 5f, 1990));
-        footballersDB.Add(new Footballer(2592, "Nikolas", "Ioannou", "Ioannou", "Cypr", 5f, 1f, Footballer.Position.ŚO, 2f, 5f, 7f, 1f, 7f, 4f, 1995));
-        footballersDB.Add(new Footballer(2593, "Praxitelis", "Vouros", "Vourosa", "Grecja", 5f, 1f, Footballer.Position.ŚO, 2f, 5f, 7f, 1f, 7f, 4f, 1995));
-        footballersDB.Add(new Footballer(2594, "Lucas", "Souza", "Souzy", "Brazylia", 5.5f, 2.5f, Footballer.Position.ŚPD, 2.5f, 4.5f, 8f, 1.5f, 5f, 4.5f, 1990));
-        footballersDB.Add(new Footballer(2595, "", "Alef", "Alefa", "Brazylia", 5f, 2f, Footballer.Position.ŚPD, 2f, 4f, 8f, 1f, 6f, 4f, 1995));
-        footballersDB.Add(new Footballer(2596, "Dragan", "Mihajlović", "Mihajlovicia", "Szwajcaria", 5f, 4f, Footballer.Position.LP, 5f, 2f, 6f, 4f, 9f, 5f, 1991));
-        footballersDB.Add(new Footballer(2597, "Musa", "Al-Taamari", "Al-Taamari", "Jordania", 6f, 5f, Footballer.Position.PP, 6f, 3f, 6f, 5f, 9f, 6f, 1997));
-        footballersDB.Add(new Footballer(2598, "Linus", "Hallenius", "Halleniusa", "Szwecja", 5f, 3f, Footballer.Position.N, 4f, 1f, 8f, 5f, 5f, 5f, 1989));
-        footballersDB.Add(new Footballer(2599, "Tomás", "De Vincenti", "De Vincenti", "Argentyna", 5f, 4f, Footballer.Position.ŚPO, 4f, 1f, 6f, 4f, 7f, 5f, 1989));
-        footballersDB.Add(new Footballer(2600, "Rafael", "Romo", "Romo", "Wenezuela", 5f, 1f, Footballer.Position.BR, 1f, 1f, 8f, 1f, 3f, 4f, 1990));
-        footballersDB.Add(new Footballer(2601, "Antonio", "Jakolis", "Jakolisa", "Chorwacja", 5f, 4f, Footballer.Position.PP, 5f, 2f, 6f, 4f, 9f, 5f, 1992));
-        footballersDB.Add(new Footballer(2602, "Kevin", "Lafrance", "Lafrance", "Haiti", 5f, 1f, Footballer.Position.ŚO, 2f, 5f, 8f, 1f, 5f, 4f, 1990));
-        footballersDB.Add(new Footballer(2603, "Savvas", "Gentsoglou", "Gentsoglou", "Grecja", 5f, 2f, Footballer.Position.ŚPD, 2f, 4f, 8f, 1f, 5f, 4f, 1990));
-        footballersDB.Add(new Footballer(2604, "André", "Vidigal", "Vidigala", "Portugalia", 5f, 4f, Footballer.Position.ŚPO, 4f, 1f, 6f, 4f, 9f, 5f, 1998));
-        footballersDB.Add(new Footballer(2605, "Georgios", "Efrem", "Efrema", "Cypr", 5f, 4f, Footballer.Position.PP, 5f, 2f, 5f, 4f, 9f, 5f, 1989));
-        footballersDB.Add(new Footballer(2606, "Reza", "Ghoochannejhad", "Ghoochannejhada", "Iran", 5f, 3f, Footballer.Position.N, 4f, 1f, 7f, 5f, 5f, 5f, 1987));
-        footballersDB.Add(new Footballer(2607, "Roman", "Bezjak", "Bezjaka", "Słowenia", 5f, 3f, Footballer.Position.N, 4f, 1f, 6f, 5f, 7f, 5f, 1989));
-        footballersDB.Add(new Footballer(2608, "Uros", "Matić", "Maticia", "Serbia", 5f, 3f, Footballer.Position.ŚP, 3f, 3f, 7f, 3f, 7f, 5f, 1990));
-        footballersDB.Add(new Footballer(2609, "Andrija", "Pavlović", "Pavlovicia", "Serbia", 5f, 3f, Footballer.Position.N, 4f, 1f, 8f, 5f, 6f, 5f, 1993));
-        footballersDB.Add(new Footballer(2610, "Minas", "Antoniou", "Antoniou", "Cypr", 4f, 3f, Footballer.Position.LP, 4f, 1f, 7f, 3f, 7f, 4f, 1994));
-        footballersDB.Add(new Footballer(2611, "Giorgos", "Merkis", "Merkisa", "Cypr", 4f, 1f, Footballer.Position.ŚO, 1f, 4f, 7f, 1f, 1f, 3f, 1984));
-        footballersDB.Add(new Footballer(2612, "Andreas", "Makris", "Makrisa", "Cypr", 4f, 3f, Footballer.Position.PP, 4f, 1f, 4f, 3f, 9f, 4f, 1995));
-        footballersDB.Add(new Footballer(2613, "Boy", "Waterman", "Watermana", "Holandia", 4f, 1f, Footballer.Position.BR, 1f, 1f, 5f, 1f, 1f, 3f, 1984));
-        footballersDB.Add(new Footballer(2614, "Efstathios", "Aloneftis", "Aloneftisa", "Cypr", 3.5f, 2.5f, Footballer.Position.LP, 3.5f, 1f, 3f, 2.5f, 3f, 3.5f, 1983));
-        footballersDB.Add(new Footballer(2615, "Michalis", "Charalampous", "Charalampousa", "Cypr", 3f, 1f, Footballer.Position.N, 2f, 1f, 6f, 3f, 7f, 3f, 1999));
-        footballersDB.Add(new Footballer(2616, "Andreas", "Paraskevas", "Paraskevasa", "Cypr", 3f, 1f, Footballer.Position.BR, 1f, 1f, 5f, 1f, 5f, 2f, 1998));
-        footballersDB.Add(new Footballer(2617, "Konstantinos", "Karagiannis", "Karagiannisa", "Cypr", 1f, 1f, Footballer.Position.LO, 1f, 1f, 6f, 1f, 8f, 1f, 2000));
-        footballersDB.Add(new Footballer(2618, "Paris", "Polykarpou", "Polykarpou", "Cypr", 1f, 1f, Footballer.Position.ŚP, 1f, 1f, 6f, 1f, 7f, 1f, 2000));
-        footballersDB.Add(new Footballer(2619, "Anastasios", "Okkaridis", "Okkaridisa", "Cypr", 1f, 1f, Footballer.Position.N, 1f, 1f, 6f, 1f, 7f, 1f, 1999));
-        footballersDB.Add(new Footballer(2620, "Christos", "Sielis", "Sielisa", "Cypr", 1f, 1f, Footballer.Position.ŚO, 1f, 1f, 6f, 1f, 6f, 1f, 2000));
-        footballersDB.Add(new Footballer(2621, "Andreas", "Artemiou", "Artemiou", "Cypr", 1f, 1f, Footballer.Position.N, 1f, 1f, 4f, 1f, 9f, 1f, 1999));
 
         #endregion
 
@@ -2866,8 +2804,6 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(88, "AIK Solna", "Szwecja", 4, "Friends Arena", 54329, "Rikard Norling", "3-4-1-2", 2481, 2506, new List<float>() { 0, 0, 0, 4.5f, 0 }));
         clubDB.Add(new Club(89, "Bate Borysów", "Białoruś", 4, "Borisov-Arena", 13126, "Aleksey Baga", "4-3-3", 2507, 2531, new List<float>() { 0, 0, 0, 21.5f, 0 }));
         clubDB.Add(new Club(90, "Celtic Glasgow", "Szkocja", 6, "Celtic Park", 60832, "Damien Duff", "4-3-1-2", 2532, 2560, new List<float>() { 0, 0, 0, 24, 0 }));
-        clubDB.Add(new Club(91, "Crvena Zvezda Belgrad", "Serbia", 6, "Rajko Mitić Stadium", 51755, "Vladan Milojević", "4-2-3-1", 2561, 2588, new List<float>() { 0, 0, 0, 16.75f, 0 }));
-        clubDB.Add(new Club(92, "APOEL Nikosia", "Cypr", 5, "GSP Stadium", 22859, "Paolo Tramezzani", "4-4-2", 2589, 2621, new List<float>() { 0, 0, 0, 20.5f, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
@@ -2886,8 +2822,8 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Croatia", 10);
         _LeagueGenerator.Generate("Denmark", 12);
         leagueDB.Add(new League_Old("Swiss League", "Szwajcaria", new List<Club>() { clubDB[49], clubDB[50] }, 26.900f));
-        leagueDB.Add(new League_Old("First Cyprus League", "Cypr", new List<Club>() { clubDB[92] }, 24.925f));
-        leagueDB.Add(new League_Old("Prva Serbska Liga", "Serbia", new List<Club>() { clubDB[91] }, 22.250f));
+        _LeagueGenerator.Generate("Cyprus", 14);
+        _LeagueGenerator.Generate("Serbia", 16);
         leagueDB.Add(new League_Old("Scottish Premier League", "Szkocja", new List<Club>() { clubDB[90] }, 22.125f));
         leagueDB.Add(new League_Old("Piersaja liha", "Białoruś", new List<Club>() { clubDB[89] }, 21.875f));
         leagueDB.Add(new League_Old("Första ligan", "Szwecja", new List<Club>() { clubDB[88] }, 20.900f));
