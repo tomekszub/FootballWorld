@@ -16,7 +16,7 @@ public class MyClub : MonoBehaviour
 	public List<Match> Matches { get; set; } = new List<Match>();
 
     [SerializeField] TextMeshProUGUI _DateText;
-    [SerializeField] GameObject _CalendarMatchEntry;
+    [SerializeField] CalendarEntry _CalendarMatchEntryPrefab;
     [SerializeField] GameObject _CalendarEntriesParent;
     [SerializeField] TextMeshProUGUI _ScorersText;
     [SerializeField] TextMeshProUGUI _OutputClubName;
@@ -500,40 +500,22 @@ public class MyClub : MonoBehaviour
             else
             {
                 if (Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Finished) 
-                    resultHelperString = " " + Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.HostGoals + " - " + Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.GuestGoals + " ";
+                    resultHelperString = Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.HostGoals + " - " + Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.GuestGoals;
                 else 
-                    resultHelperString = " - ";
-                child.GetComponentsInChildren<Text>()[1].text = GetClubNameByID(Matches[_firstMatchOfTheWeek + currMatchOfTheDay].FirstTeamId) + resultHelperString + GetClubNameByID(Matches[_firstMatchOfTheWeek + currMatchOfTheDay].SecondTeamId);
+                    resultHelperString = "-";
+                child.GetComponent<CalendarEntry>().SetData(Matches[_firstMatchOfTheWeek + currMatchOfTheDay].FirstTeamId, Matches[_firstMatchOfTheWeek + currMatchOfTheDay].SecondTeamId, resultHelperString);
                 currMatchOfTheDay++;
             }
         }
         for (int i = currMatchOfTheDay; i < todayMatches; i++)
         {
-            GameObject go = Instantiate(_CalendarMatchEntry, _CalendarEntriesParent.transform);
+            CalendarEntry entry = Instantiate(_CalendarMatchEntryPrefab, _CalendarEntriesParent.transform);
             if (Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Finished) 
-                resultHelperString = " " + Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.HostGoals + " - " + Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.GuestGoals + " ";
+                resultHelperString = Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.HostGoals + " - " + Matches[_firstMatchOfTheWeek + currMatchOfTheDay].Result.GuestGoals;
             else 
-                resultHelperString = " - ";
-            go.GetComponentsInChildren<Text>()[1].text = GetClubNameByID(Matches[_firstMatchOfTheWeek + i].FirstTeamId) + resultHelperString + GetClubNameByID(Matches[_firstMatchOfTheWeek + i].SecondTeamId);
+                resultHelperString = "-";
+            entry.SetData(Matches[_firstMatchOfTheWeek + i].FirstTeamId, Matches[_firstMatchOfTheWeek + i].SecondTeamId, resultHelperString);
         }
-    }
-
-    string GetClubNameByID(int id)
-    {
-        if (_clubs != null)
-        { 
-            foreach (var c in _clubs)
-            {
-                if (c.Id == id) 
-                    return c.Name;
-            }
-        }
-        //not found in the domestic clubs
-        Club cl = Database.GetClubByID(id);
-        if (cl != null) 
-            return cl.Name;
-        else 
-            return "";
     }
 
     void AddCupMatchesToCalendar(Match[] ms,int roundInd, DateTime firstLeg, DateTime secondLeg,bool twoLeg = true)
