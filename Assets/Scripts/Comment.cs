@@ -9,7 +9,6 @@ public class Comment : MonoBehaviour
 {
     public static Comment Instance;
 
-    [SerializeField] MyClub _MyClub;
     [SerializeField] TextMeshProUGUI _StartStopButton;
 
     float _time = 0.1f;
@@ -113,7 +112,7 @@ public class Comment : MonoBehaviour
         }
         if (_end)
         {
-            _MyClub.ProcesssMatchStats(_matchStats, _competitionName);
+            MyClub.Instance.ProcesssMatchStats(_matchStats, _competitionName);
             WindowsManager.Instance.ShowWindow("Club Menu");
         }
     }

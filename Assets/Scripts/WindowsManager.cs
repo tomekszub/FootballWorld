@@ -6,14 +6,12 @@ public class WindowsManager : MonoBehaviour
 {
     public static WindowsManager Instance;
 
-    [SerializeField] MyClub _MyClub;
-
     [SerializeField] GameObject TableWindow;
     [SerializeField] GameObject ClubMenuWindow;
     [SerializeField] GameObject MainMenuWindow;
     [SerializeField] GameObject SimulationWindow;
     [SerializeField] SquadListPanel SquadListWindow;
-    [SerializeField] GameObject SquadTacticWindow;
+    [SerializeField] SquadTacticPanel SquadTacticWindow;
     [SerializeField] GameObject ShopWindow;
     [HideInInspector]
     [SerializeField] List<GameObject> allWindows = new List<GameObject>();
@@ -36,7 +34,7 @@ public class WindowsManager : MonoBehaviour
         //allWindows.Add(SimulationWindow); 
         allWindows.Add(ShopWindow); 
         allWindows.Add(SquadListWindow.gameObject);
-        allWindows.Add(SquadTacticWindow);
+        allWindows.Add(SquadTacticWindow.gameObject);
         ShowWindow("Main Menu");
     }
     void HideAllWindows()
@@ -61,7 +59,7 @@ public class WindowsManager : MonoBehaviour
                 break;
             case "SquadTactic":
                 SquadTacticWindow.gameObject.SetActive(true);
-                _MyClub.SetUpSquadScreen();
+                SquadTacticWindow.SetUpSquadScreen();
                 break;
             case "Shop": ShopWindow.SetActive(true);break;
             default:
