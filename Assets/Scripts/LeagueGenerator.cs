@@ -47,7 +47,7 @@ public class LeagueGenerator : MonoBehaviour
         var formationInfo = GetRandomFormation();
 
         Club c = new Club(id, name, _country, rating, "Stadion", 410, coachName, formationInfo.Item1, startingID, startingID + FOOTBALLERS_PER_TEAM - 1, new List<float>() { 0, 0, 0, 0, 0 });
-        GenerateFootballers(startingID, formationInfo.Item2, rating);
+        GenerateFootballers(startingID, formationInfo.Item2, rating, id);
         Database.clubDB.Add(c);
         return c;
     }
@@ -141,7 +141,7 @@ public class LeagueGenerator : MonoBehaviour
         return ret;
     }
 
-    void GenerateFootballers(int startingDBIndex, List<Position> pos, int rating)
+    void GenerateFootballers(int startingDBIndex, List<Position> pos, int rating, int clubID)
     {
         int baseRating = rating;
         int randomPersonIndex;
@@ -171,7 +171,8 @@ public class LeagueGenerator : MonoBehaviour
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100), 
-                1996));
+                1996,
+                clubID));
         }
     }
 

@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
-public class Footballer 
+public class Footballer : IComparable<Footballer>
 {
 	public int Id;
 	public string Name;
 	public string Surname;
 	public string AlteredSurname;
 	public string Country;
-	public Sprite Flag;
 	public float Rating; // 1-10 1 amator, 2 pół-amator, 3 bardzo słaby, 4 słaby, 5 sredni, 6 niezły, 7 dobry, 8 bardzo dobry, 9 rewelacyjny, 10 klasa swiatowa
 	public float FreeKicks;// wykonywanie stałych fragmentów gry
 	public float Corner, Penalty;
 	Dictionary<string, PlayerStatistics> _statistics;
+	public int ClubID;
 	public enum Position
 	{
 		BR,PO,ŚO,LO,ŚPD,ŚP,PP,ŚPO,LP,N
@@ -30,14 +31,13 @@ public class Footballer
 			return Surname;
     }
 
-	public Footballer(int id, string name, string surname, string alteredSurname, string country, float rating, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear = 1995)
+	public Footballer(int id, string name, string surname, string alteredSurname, string country, float rating, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear = 1995, int clubID = -1)
 	{
 		Id = id;
 		Name = name;
 		Surname = surname;
 		AlteredSurname = alteredSurname;
 		Country = country;
-		Flag = Resources.Load<Sprite> ("Flags/" + country);
         switch (pos)
         {
             case Position.BR:
@@ -77,13 +77,13 @@ public class Footballer
 		Penalty = freeKicks + shoot;
         BirthYear = birthYear;
 		_statistics = new Dictionary<string, PlayerStatistics> ();
+		ClubID = clubID;
     }
     public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
 	{
 		Id = id;
 		Name = name;
 		Surname = surname;
-		Flag = Resources.Load<Sprite>("Flags/" + country);
 		_statistics = new Dictionary<string, PlayerStatistics>(matchStatistics);
 	}
 
@@ -134,6 +134,11 @@ public class Footballer
 			default:
 				break;
         }
+    }
+
+    public int CompareTo(Footballer f)
+    {
+        return f.Rating.CompareTo(Rating);
     }
 
     public class PlayerStatistics
