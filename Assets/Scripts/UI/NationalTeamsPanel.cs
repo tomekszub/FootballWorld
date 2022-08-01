@@ -13,6 +13,7 @@ public class NationalTeamsPanel : MonoBehaviour
 
     public void OnEnable()
     {
+        _ContinentDropdown.value = 0;
         UpdateCountries(_ContinentDropdown.options[0].text);
     }
 
