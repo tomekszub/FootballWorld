@@ -2567,7 +2567,6 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(78, "Ferencvárosi TC", "Węgry", 4, "Groupama Aréna", 23698, "Sergii Rebrov", "4-2-3-1", 1222, 1254, new List<float>() { 0, 0, 0, 3.5f, 0 }));
         clubDB.Add(new Club(79, "NK Maribor", "Słowenia", 4, "Ljudski Vrt", 12996, "Darko Milanić", "4-2-3-1", 1377, 1405, new List<float>() { 0, 0, 0, 18.5f, 0 }));
         clubDB.Add(new Club(80, "Slovan Bratysława", "Słowacja", 4, "Tehelne pole", 22500, "Xavier de Sousa Simoes", "4-1-4-1", 1617, 1645, new List<float>() { 0, 0, 0, 6, 0 }));
-        clubDB.Add(new Club(81, "CFR Cluj", "Rumunia",4, "Dr. Constantin Rădulescu", 23500, "Dan Petrescu", "4-2-3-1", 1732, 1761, new List<float>() { 0, 0, 0, 3.5f, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
@@ -2597,7 +2596,7 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Azerbaijan", 10);
         _LeagueGenerator.Generate("Israel", 12);
         _LeagueGenerator.Generate("Bulgaria", 10);
-        leagueDB.Add(new League_Old("Prima Liga", "Rumunia", new List<Club>() { clubDB[81], clubDB[55] }, 15.950f));
+        _LeagueGenerator.Generate("Romania", 12);
         leagueDB.Add(new League_Old("Prva superliga", "Słowacja", new List<Club>() { clubDB[80] }, 15.625f));
         leagueDB.Add(new League_Old("Prva slovenska liga", "Słowenia", new List<Club>() { clubDB[79] }, 15.000f));
         leagueDB.Add(new League_Old("Első Liga", "Węgry", new List<Club>() { clubDB[78] }, 10.500f));
@@ -2676,7 +2675,7 @@ public class Database : MonoBehaviour
 		go.transform.Find("Rate").GetComponent<Image>().sprite =  Resources.Load<Sprite>("Stars/" + (int)footballersDB[i].Rating);
 		go.transform.Find("Surname").GetComponent<Text>().text =  footballersDB[i].Surname;
 		go.transform.Find("FreeKicks").GetComponent<Text>().text =  "Stałe fragmenty gry: " + footballersDB[i].FreeKicks.ToString();
-		go.transform.Find("Flag").GetComponent<Image>().sprite =  footballersDB[i].Flag;
+		go.transform.Find("Flag").GetComponent<Image>().sprite =  _CountryMaster.GetFlagByName(footballersDB[i].Country);
 		go.transform.Find("Country").GetComponent<Text>().text =  footballersDB[i].Country;
 		go.transform.Find("Position").GetComponent<Text>().text =  footballersDB[i].Pos.ToString();
 		go.transform.Find("Stats1").GetComponent<Text>().text =  "Drybling: " + footballersDB[i].Dribling.ToString() + "\n";

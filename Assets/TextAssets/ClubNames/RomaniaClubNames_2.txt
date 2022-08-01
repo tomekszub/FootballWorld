@@ -1,0 +1,23 @@
+Bucharest
+Timişoara
+Cluj
+Braşov
+Iaşi
+Constanţa
+Craiova
+Galaţi
+Ploieşti
+Oradea
+Brăila
+Arad
+Piteşti
+Sibiu
+Bacău
+Târgu-Mureş
+Baia Mare
+Buzău
+Botoşani
+Satu Mare
+Râmnicu Vâlcea
+Tulcea
+Suceava

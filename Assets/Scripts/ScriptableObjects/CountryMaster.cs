@@ -9,6 +9,8 @@ public class CountryMaster : SerializedScriptableObject
 
     [SerializeField] Dictionary<string, HashSet<string>> _Regions;
 
+    [SerializeField] Dictionary<string, HashSet<string>> _Continents;
+
     public List<string> GetRandomClubNames(string countryName, int amount)
     {
         Country country = GetCountryByName(countryName);
@@ -51,6 +53,19 @@ public class CountryMaster : SerializedScriptableObject
         return countriesList.Count > 0 ? countriesList[Random.Range(0, countriesList.Count)] : null;
     }
     public Sprite GetFlagByName(string countryName) => _Countries.ContainsKey(countryName) ? _Countries[countryName].GetFlag() : null;
+    public HashSet<string> GetCountryListFromContinent(string continentName)
+    {
+        HashSet<string> result = new HashSet<string>();
+        var regions = _Continents[continentName];
+        foreach (var region in regions)
+        {
+            foreach (var country in _Regions[region])
+            {
+                result.Add(country);
+            }
+        }
+        return result;
+    }
 
     List<(string, string)> GetRandomItems(TextAsset firstSet, TextAsset secondSet, int amount)
     {
