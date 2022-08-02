@@ -23,6 +23,7 @@ public class NationalTeamsPanel : MonoBehaviour
     {
         var countries = Database.Instance.GetCountryMaster().GetCountryListFromContinent(continent);
         _countries = countries.ToList();
+        _countries.Sort();
         _currCountryIndex = 0;
         SetupSquad();
     }
