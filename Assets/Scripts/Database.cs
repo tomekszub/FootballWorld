@@ -2560,8 +2560,6 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(71, "FK Sarejevo", "Bośnia", 4, "Asim Ferhatović - Hase", 35130, "Husref Musemić", "4-2-3-1", 699, 729, new List<float>() { 0, 0, 0, 4.25f, 0 }));
         clubDB.Add(new Club(72, "Valur Reykjavík", "Islandia", 2, "Origo völlurinn", 3000, "Olafur johanesson", "4-1-4-1", 783, 805, new List<float>() { 0, 0, 0, 2.75f, 0 }));
         clubDB.Add(new Club(73, "HJK Helsinki", "Finlandia", 2, "Telia 5G Arena", 10770, "Toni Koskela", "4-2-3-1", 855, 878, new List<float>() { 0, 0, 0, 9, 0 }));
-        clubDB.Add(new Club(74, "Dundalk FC", "Irlandia", 1, "Oriel Park", 4500, "Vinny Perth", "4-3-1-2", 930, 954, new List<float>() { 0, 0, 0, 7, 0 }));
-        clubDB.Add(new Club(75, "FK Partizani", "Albania", 3, "Stadiumi Qemal Stafa", 16230, "Franco Lerda", "4-3-3", 1004, 1032, new List<float>() { 0, 0, 0, 3, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
@@ -2597,8 +2595,8 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Hungary", 10);
         _LeagueGenerator.Generate("Macedonia", 10);
         _LeagueGenerator.Generate("Moldova", 8);
-        leagueDB.Add(new League_Old("SuperLig", "Albania", new List<Club>() { clubDB[75] }, 7.500f));
-        leagueDB.Add(new League_Old("First Division", "Irlandia", new List<Club>() { clubDB[74] }, 7.450f));
+        _LeagueGenerator.Generate("Albania", 10);
+        _LeagueGenerator.Generate("Ireland", 8);
         leagueDB.Add(new League_Old("Fin One", "Finlandia", new List<Club>() { clubDB[73] }, 7.275f));
         leagueDB.Add(new League_Old("Úrvalsdeild", "Islandia", new List<Club>() { clubDB[72] }, 7.250f));
         leagueDB.Add(new League_Old("Premijer Bosniacka Liga", "Bośnia", new List<Club>() { clubDB[71] }, 7.125f));
