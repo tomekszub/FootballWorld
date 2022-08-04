@@ -2555,11 +2555,6 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(66, "Valetta United", "Malta", 2, "Malta National Arena", 17000, "Stefano Udine", "4-3-3", 350, 374, new List<float>() { 0, 0, 0, 0, 0 }));
         clubDB.Add(new Club(67, "FC Yerevan", "Armenia", 2, "Armenia Stadium", 1500, "Sislav Mikosyan", "4-2-3-1", 375, 401, new List<float>() { 0, 0, 0, 0, 0 }));
         clubDB.Add(new Club(68, "EschsurAlzette", "Luksemburg", 2, "Stade Diekrich", 2558, "Lehit Zeghdane", "4-4-2", 486, 520, new List<float>() { 0, 0, 0, 6.25f, 0 }));
-        clubDB.Add(new Club(69, "Ryga FK", "Łotwa", 3, "Latvian National Stadium", 8080, "Lukas Lilas", "4-3-3", 576, 602, new List<float>() { 0, 0, 0, 1, 0 }));
-        clubDB.Add(new Club(70, "Suduva Marijampole", "Litwa", 3, "ARVI Arena", 6250, "Vladimir Cheburin", "5-3-2", 658, 678, new List<float>() { 0, 0, 0, 4.25f, 0 }));
-        clubDB.Add(new Club(71, "FK Sarejevo", "Bośnia", 4, "Asim Ferhatović - Hase", 35130, "Husref Musemić", "4-2-3-1", 699, 729, new List<float>() { 0, 0, 0, 4.25f, 0 }));
-        clubDB.Add(new Club(72, "Valur Reykjavík", "Islandia", 2, "Origo völlurinn", 3000, "Olafur johanesson", "4-1-4-1", 783, 805, new List<float>() { 0, 0, 0, 2.75f, 0 }));
-        clubDB.Add(new Club(73, "HJK Helsinki", "Finlandia", 2, "Telia 5G Arena", 10770, "Toni Koskela", "4-2-3-1", 855, 878, new List<float>() { 0, 0, 0, 9, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
@@ -2597,11 +2592,11 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Moldova", 8);
         _LeagueGenerator.Generate("Albania", 10);
         _LeagueGenerator.Generate("Ireland", 8);
-        leagueDB.Add(new League_Old("Fin One", "Finlandia", new List<Club>() { clubDB[73] }, 7.275f));
-        leagueDB.Add(new League_Old("Úrvalsdeild", "Islandia", new List<Club>() { clubDB[72] }, 7.250f));
-        leagueDB.Add(new League_Old("Premijer Bosniacka Liga", "Bośnia", new List<Club>() { clubDB[71] }, 7.125f));
-        leagueDB.Add(new League_Old("Litevska Lyga", "Litwa", new List<Club>() { clubDB[70] }, 6.750f));
-        leagueDB.Add(new League_Old("Lotevska Liga", "Łotwa", new List<Club>() { clubDB[69] }, 5.625f));
+        _LeagueGenerator.Generate("Finland", 8);
+        _LeagueGenerator.Generate("Iceland", 8);
+        _LeagueGenerator.Generate("Bosnia", 10);
+        _LeagueGenerator.Generate("Lithuania", 8);
+        _LeagueGenerator.Generate("Latvia", 8);
         leagueDB.Add(new League_Old("Nationalliga", "Luksemburg", new List<Club>() { clubDB[68] }, 5.500f));
         leagueDB.Add(new League_Old("Arrajin liga", "Armenia", new List<Club>() { clubDB[67] }, 5.250f));
         leagueDB.Add(new League_Old("Malta League", "Malta", new List<Club>() { clubDB[66] }, 5.125f));
