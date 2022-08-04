@@ -2551,10 +2551,6 @@ public class Database : MonoBehaviour
         clubDB.Add(new Club(62, "Sandoy FC", "Wyspy Owcze", 1, "Sandoy Arena", 5000, "Thor Godjónsson", "4-4-2", 200, 221, new List<float>() { 0, 0, 0, 1.5f, 0 }));
         clubDB.Add(new Club(63, "Zeta Podgorica", "Czarnogóra", 2, "National Stadium", 5214, "Ivan Rajević", "4-2-3-1", 222, 245, new List<float>() { 0, 0, 0, 3, 0 }));
         clubDB.Add(new Club(64, "Kura Tibilisi", "Gruzja", 2, "Didube Arena", 24680, "Giorgi Kakirashvili", "4-2-3-1", 246, 268, new List<float>() { 0, 0, 0, 0, 0 }));
-        clubDB.Add(new Club(65, "Viktoria Talin", "Estonia", 2, "Talin National Stadium", 1000, "Roman Hladun", "4-2-3-1", 295, 318, new List<float>() { 0, 0, 0, 3.5f, 0 }));
-        clubDB.Add(new Club(66, "Valetta United", "Malta", 2, "Malta National Arena", 17000, "Stefano Udine", "4-3-3", 350, 374, new List<float>() { 0, 0, 0, 0, 0 }));
-        clubDB.Add(new Club(67, "FC Yerevan", "Armenia", 2, "Armenia Stadium", 1500, "Sislav Mikosyan", "4-2-3-1", 375, 401, new List<float>() { 0, 0, 0, 0, 0 }));
-        clubDB.Add(new Club(68, "EschsurAlzette", "Luksemburg", 2, "Stade Diekrich", 2558, "Lehit Zeghdane", "4-4-2", 486, 520, new List<float>() { 0, 0, 0, 6.25f, 0 }));
 
         _LeagueGenerator.Generate("Spain", 20);
         _LeagueGenerator.Generate("England", 20);
@@ -2597,10 +2593,10 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Bosnia", 10);
         _LeagueGenerator.Generate("Lithuania", 8);
         _LeagueGenerator.Generate("Latvia", 8);
-        leagueDB.Add(new League_Old("Nationalliga", "Luksemburg", new List<Club>() { clubDB[68] }, 5.500f));
-        leagueDB.Add(new League_Old("Arrajin liga", "Armenia", new List<Club>() { clubDB[67] }, 5.250f));
-        leagueDB.Add(new League_Old("Malta League", "Malta", new List<Club>() { clubDB[66] }, 5.125f));
-        leagueDB.Add(new League_Old("Esiliiga", "Estonia", new List<Club>() { clubDB[65] }, 5.000f));
+        _LeagueGenerator.Generate("Luxembourg", 8);
+        _LeagueGenerator.Generate("Armenia", 8);
+        _LeagueGenerator.Generate("Malta", 8);
+        _LeagueGenerator.Generate("Estonia", 8);
         leagueDB.Add(new League_Old("P’irveli liga", "Gruzja", new List<Club>() { clubDB[64] }, 4.750f));
         leagueDB.Add(new League_Old("Division One", "Walia", new List<Club>() { clubDB[59] }, 4.125f));
         leagueDB.Add(new League_Old("Prva czarnogora liga", "Czarnogóra", new List<Club>() { clubDB[63] }, 4.125f));
