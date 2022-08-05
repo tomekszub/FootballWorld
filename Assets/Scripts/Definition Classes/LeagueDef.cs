@@ -7,7 +7,7 @@ public class LeagueDef
     [SerializeField] string _Name;
     [SerializeField, Range(1,100)] int _Rating;
 
-    [SerializeField, ListDrawerSettings(ListElementLabelName = "RegionName")] 
+    [SerializeField, ListDrawerSettings(ListElementLabelName = "RegionName", AddCopiesLastElement = true)] 
     List<NationalityDistribution> _NationalityDistribution;
 
     public int Rating
