@@ -20,7 +20,7 @@ public class CupGroupStage : CupRound
     List<Club[]> group;
     List<List<Team>> groupTable;
     
-    public CupGroupStage(string competitionName,int roundIndex, DateTime start,int breakBetweenRounds, List<Club> clubs, List<Club> prevRoundClubs = null, int clubsInGroup = 4) : base(competitionName, clubs, prevRoundClubs, true, 0)
+    public CupGroupStage(string competitionName,int roundIndex, DateTime start,int breakBetweenRounds, List<Club> clubs, List<Club> prevRoundClubs = null, int clubsInGroup = 4, float participationRankingPoints = 0, float winRankingPoints = 0, float drawRankingPoints = 0) : base(competitionName, clubs, prevRoundClubs, true, 0, participationRankingPoints, winRankingPoints, drawRankingPoints)
     {
         ClubsInGroup = clubsInGroup;
         RoundIndex = roundIndex;
@@ -31,20 +31,20 @@ public class CupGroupStage : CupRound
     void CreateGroups()
     {
         group = new List<Club[]>();
-        int groupsCount = clubs.Count / ClubsInGroup;
+        int groupsCount = _clubs.Count / ClubsInGroup;
         for (int i = 0; i < groupsCount; i++)
         {
             group.Add(new Club[ClubsInGroup]);
         }
-        clubs = clubs.OrderByDescending(n => n.GetRankingPoints()).ToList();
-        List<List<Club>> pot = new List<List<Club>>();
+        _clubs = _clubs.OrderByDescending(n => n.RankingPoints).ToList();
+        List<Club>[] pot = new List<Club>[ClubsInGroup];
         for (int i = 0; i < ClubsInGroup; i++)
         {
-            pot.Add(new List<Club>());
+            pot[i] = new List<Club>();
         }
-        for (int i = 0; i < clubs.Count; i++)
+        for (int i = 0; i < _clubs.Count; i++)
         {
-            pot[i / groupsCount].Add(clubs[i]);
+            pot[i / groupsCount].Add(_clubs[i]);
         }
         int fuse = 3;
         bool ok;
@@ -56,7 +56,7 @@ public class CupGroupStage : CupRound
             {
                 group[GetRandomAvailableGroup(0, c.CountryName, true)][0] = c;
             }
-            for (int p = 1; p < pot.Count; p++)
+            for (int p = 1; p < pot.Length; p++)
             {
                 DrawFromAPot(p, pot[p]);
             }
@@ -95,10 +95,10 @@ public class CupGroupStage : CupRound
             {
                 t.Add(new Team(group[i][x].Id, group[i][x].Name));
             }
-            matches.AddRange(MatchCalendar.CreateGroupCalendar(competitionName,RoundIndex, group[i].ToList(), start, BreakBetweenRounds, group.Count / 4));
+            _matches.AddRange(MatchCalendar.CreateGroupCalendar(_competitionName,RoundIndex, group[i].ToList(), start, BreakBetweenRounds, group.Count / 4));
             groupTable.Add(t);
         }
-        matches = matches.ToArray().OrderBy(m => m.Date).ToList();
+        _matches = _matches.ToArray().OrderBy(m => m.Date).ToList();
     }
     int GetRandomAvailableGroup(int pot, string country, bool returnGroupIndex)
     {
@@ -160,32 +160,34 @@ public class CupGroupStage : CupRound
     }
     public override void SendMatchResult(Match m)
     {
-        finishedMatches++;
+        _finishedMatches++;
         int matchID = -1;
-        for (int i = 0; i < matches.Count; i++)
+        for (int i = 0; i < _matches.Count; i++)
         {
-            if (matches[i].FirstTeamId == m.FirstTeamId && matches[i].SecondTeamId == m.SecondTeamId)
+            if (_matches[i].FirstTeamId == m.FirstTeamId && _matches[i].SecondTeamId == m.SecondTeamId)
             {
-                matches[i].Result = m.Result;
+                _matches[i].Result = m.Result;
                 matchID = i;
                 break;
             }
         }
-        AdvanceDecider.WhoIsWinning who = AdvanceDecider.NormalMatch(matches[matchID].Result);
+        AdvanceDecider.WhoIsWinning who = AdvanceDecider.NormalMatch(_matches[matchID].Result);
         int groupID = -1;
         for (int i = 0; i < groupTable.Count; i++)
         {
             for (int c = 0; c < groupTable[i].Count; c++)
             {
-                if(matches[matchID].FirstTeamId == groupTable[i][c].Id)
+                if(_matches[matchID].FirstTeamId == groupTable[i][c].Id)
                 {
                     if (who == AdvanceDecider.WhoIsWinning.Host)
                     {
+                        Database.clubDB[m.FirstTeamId].AddRankingPoints(_winRankingPoints);
                         groupTable[i][c].Points += 3;
                         groupTable[i][c].Wins++;
                     }
                     else if (who == AdvanceDecider.WhoIsWinning.Draw)
                     {
+                        Database.clubDB[m.FirstTeamId].AddRankingPoints(_drawRankingPoints);
                         groupTable[i][c].Points += 1;
                         groupTable[i][c].Draws++;
                     }
@@ -194,23 +196,25 @@ public class CupGroupStage : CupRound
                         groupTable[i][c].Loses++;
                     }
                     groupTable[i][c].MatchesPlayed++;
-                    groupTable[i][c].ScoredGoals += matches[matchID].Result.HostGoals;
-                    groupTable[i][c].LostGoals += matches[matchID].Result.GuestGoals;
-                    groupTable[i][c].DifferenceGoals += matches[matchID].Result.HostGoals - matches[matchID].Result.GuestGoals;
+                    groupTable[i][c].ScoredGoals += _matches[matchID].Result.HostGoals;
+                    groupTable[i][c].LostGoals += _matches[matchID].Result.GuestGoals;
+                    groupTable[i][c].DifferenceGoals += _matches[matchID].Result.HostGoals - _matches[matchID].Result.GuestGoals;
                     if (groupID == -1) 
                         groupID = i;
                     else 
                         break;
                 }
-                else if(matches[matchID].SecondTeamId == groupTable[i][c].Id)
+                else if(_matches[matchID].SecondTeamId == groupTable[i][c].Id)
                 {
                     if (who == AdvanceDecider.WhoIsWinning.Guest)
                     {
+                        Database.clubDB[m.SecondTeamId].AddRankingPoints(_winRankingPoints);
                         groupTable[i][c].Points += 3;
                         groupTable[i][c].Wins++;
                     }
                     else if (who == AdvanceDecider.WhoIsWinning.Draw)
                     {
+                        Database.clubDB[m.SecondTeamId].AddRankingPoints(_drawRankingPoints);
                         groupTable[i][c].Points += 1;
                         groupTable[i][c].Draws++;
                     }
@@ -219,9 +223,9 @@ public class CupGroupStage : CupRound
                         groupTable[i][c].Loses++;
                     }
                     groupTable[i][c].MatchesPlayed++;
-                    groupTable[i][c].ScoredGoals += matches[matchID].Result.GuestGoals;
-                    groupTable[i][c].LostGoals += matches[matchID].Result.HostGoals;
-                    groupTable[i][c].DifferenceGoals += matches[matchID].Result.GuestGoals - matches[matchID].Result.HostGoals;
+                    groupTable[i][c].ScoredGoals += _matches[matchID].Result.GuestGoals;
+                    groupTable[i][c].LostGoals += _matches[matchID].Result.HostGoals;
+                    groupTable[i][c].DifferenceGoals += _matches[matchID].Result.GuestGoals - _matches[matchID].Result.HostGoals;
                     if (groupID == -1) 
                         groupID = i;
                     else 
@@ -237,17 +241,17 @@ public class CupGroupStage : CupRound
     bool DetermineWhoWon()
     {
         //check if all are finished
-        if (finishedMatches != matches.Count) 
+        if (_finishedMatches != _matches.Count) 
             return false;
-        winners.Clear();
+        _winners.Clear();
         for (int i = 0; i < groupTable.Count; i++)
         {
             for (int c = 0; c < group[i].Length; c++)
             {
                 if (group[i][c].Id == groupTable[i][0].Id || group[i][c].Id == groupTable[i][1].Id) 
-                    winners.Add(group[i][c]);
+                    _winners.Add(group[i][c]);
                 else if (group[i][c].Id == groupTable[i][2].Id) 
-                    loosers.Add(group[i][c]);
+                    _loosers.Add(group[i][c]);
             }
         }
         return true;

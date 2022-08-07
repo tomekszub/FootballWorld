@@ -46,7 +46,7 @@ public class LeagueGenerator : MonoBehaviour
         int startingID = Database.footballersDB.Count;
         var formationInfo = GetRandomFormation();
 
-        Club c = new Club(id, name, _country, rating, "Stadion", 410, coachName, formationInfo.Item1, startingID, startingID + FOOTBALLERS_PER_TEAM - 1, new List<float>() { 0, 0, 0, 0, 0 });
+        Club c = new Club(id, name, _country, rating, "Stadion", 410, coachName, formationInfo.Item1, startingID, startingID + FOOTBALLERS_PER_TEAM - 1);
         GenerateFootballers(startingID, formationInfo.Item2, rating, id);
         Database.clubDB.Add(c);
         return c;

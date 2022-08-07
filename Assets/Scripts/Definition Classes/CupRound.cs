@@ -4,56 +4,73 @@ using UnityEngine;
 
 public class CupRound
 {
-    protected bool twoLeg;
-    protected int numberOfBaskets;
-    protected List<Club> clubs;
-    protected List<Club> winners;
-    protected List<Club> loosers;
-    protected List<Match> matches;
-    protected int finishedMatches = 0;
-    protected string competitionName;
-    public CupRound(string competitionName, List<Club> clubs, List<Club> prevRoundClubs, bool twoLeg, int numberOfBaskets)
+    protected bool _twoLeg;
+    protected int _numberOfBaskets;
+    protected List<Club> _clubs;
+    protected List<Club> _winners;
+    protected List<Club> _loosers;
+    protected List<Match> _matches;
+    protected int _finishedMatches = 0;
+    protected string _competitionName;
+    protected float _winRankingPoints;
+    protected float _drawRankingPoints;
+    public CupRound(string competitionName, List<Club> clubs, List<Club> prevRoundClubs, bool twoLeg, int numberOfBaskets, float participationRankingPoints = 0, float winRankingPoints = 0, float drawRankingPoints = 0)
     {
-        this.competitionName = competitionName;
+        _winRankingPoints = winRankingPoints;
+        _drawRankingPoints = drawRankingPoints;
+        _competitionName = competitionName;
         if (clubs == null && prevRoundClubs == null)
         {
             Debug.LogError("Clubs and previousRoundClubs are empty. No clubs to play.");
             return;
         }
-        if (clubs != null) this.clubs = clubs;
-        else this.clubs = new List<Club>();
+
+        _clubs = clubs ?? new List<Club>();
+
         // add every club from previous round to the clubs
         if (prevRoundClubs != null)
-        {
-            foreach (var c in prevRoundClubs)
-            {
-                this.clubs.Add(c);
-            }
-        }
-        this.twoLeg = twoLeg;
-        this.numberOfBaskets = numberOfBaskets;
-        winners = new List<Club>();
-        loosers = new List<Club>();
-        matches = new List<Match>();
+            _clubs.AddRange(prevRoundClubs);
+
+        _twoLeg = twoLeg;
+        _numberOfBaskets = numberOfBaskets;
+        _winners = new List<Club>();
+        _loosers = new List<Club>();
+        _matches = new List<Match>();
+
+        // points for participation
+        if(participationRankingPoints > 0)
+            _clubs.ForEach(club => club.AddRankingPoints(participationRankingPoints));
     }
-    public Match[] GetMatches()
-    {
-        return matches.ToArray();
-    }
+    public Match[] GetMatches() => _matches.ToArray();
+
     // gets resut of the match and enters it into the list, return true if all matches finished 
     public virtual void SendMatchResult(Match m)
     {
-        //Debug.LogWarning("SMR");
-        finishedMatches++;
-        for (int i = 0; i < matches.Count; i++)
+        _finishedMatches++;
+        for (int i = 0; i < _matches.Count; i++)
         {
-            if (matches[i].FirstTeamId == m.FirstTeamId && matches[i].SecondTeamId == m.SecondTeamId)
+            if (_matches[i].FirstTeamId == m.FirstTeamId && _matches[i].SecondTeamId == m.SecondTeamId)
             {
-                matches[i].Result = m.Result;
+                _matches[i].Result = m.Result;
+                if (m.Result.HostGoals == m.Result.GuestGoals)
+                {
+                    if (_drawRankingPoints > 0)
+                    {
+                        Database.clubDB[m.FirstTeamId].AddRankingPoints(_drawRankingPoints);
+                        Database.clubDB[m.SecondTeamId].AddRankingPoints(_drawRankingPoints);
+                    }
+                }
+                else
+                {
+                    if (m.Result.HostGoals > m.Result.GuestGoals)
+                        Database.clubDB[m.FirstTeamId].AddRankingPoints(_winRankingPoints);
+                    else
+                        Database.clubDB[m.SecondTeamId].AddRankingPoints(_winRankingPoints);
+                }
                 break;
             }
         }
     }
-    public virtual List<Club> GetWinners() { return winners; }
+    public virtual List<Club> GetWinners() { return _winners; }
     
 }

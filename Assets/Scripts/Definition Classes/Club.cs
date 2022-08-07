@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 public class Club
 {
+    public float RankingPoints => _rankingPoints.Sum();
+
 	public int Id;
 	public string Name;
 	public int Rate;
@@ -13,12 +14,10 @@ public class Club
 	public string Formation;
 	public int StartingFootballerId, EndingFootballerId;
     public List<int> FootballersIDs;
-    //public float RankingPoints;
-    List<float> RankingPointsList;
-    float RankingPoints;
+    float[] _rankingPoints;
     public string CountryName;
 
-	public Club(int id, string name, string countryName, int rate, string stadium, int stadiumCapacity, string coach, string formation, int startingFootballerId, int endingFootballerId, List<float> rankingPointsList)
+	public Club(int id, string name, string countryName, int rate, string stadium, int stadiumCapacity, string coach, string formation, int startingFootballerId, int endingFootballerId)
 	{
 		Id = id;
 		Name = name;
@@ -35,38 +34,17 @@ public class Club
         {
             FootballersIDs.Add(i);
         }
-        RankingPointsList = rankingPointsList;
-        UpdateRankingPoints();
+        _rankingPoints = new float[] { 0,0,0,0,0};
 	}
-    public float GetRankingPoints()
-    {
-        return RankingPoints;
-    }
-    public void SetRankingPoints(float newValue)
-    {
-        if (newValue > RankingPoints) RankingPoints = newValue;
-    }
+
+    public void AddRankingPoints(float amount) => _rankingPoints[4] += amount;
     public void PrepareRankingPointsForNewSeason()
     {
-        RankingPointsList.RemoveAt(0);
-        RankingPointsList.Add(0);
-    }
-    public void InsertNewSeasonPoints(float amount)
-    {
-        RankingPointsList[4] = amount;
-    }
-    public void AddNewSeasonPoints(float amount)
-    {
-        RankingPointsList[4] += amount;
-    }
-    public void UpdateRankingPoints()
-    {
-        RankingPoints = 0;
-        foreach (float item in RankingPointsList)
+        for (int i = 0; i < 4; i--)
         {
-            RankingPoints += item;
+            _rankingPoints[i] = _rankingPoints[i + 1];
         }
-        RankingPoints /= 5;
+        _rankingPoints[4] = 0;
     }
 	
 }

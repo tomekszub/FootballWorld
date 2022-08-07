@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 public class CupKnockoutStage : CupRound
 {
     bool AfterGroupStage;
@@ -14,7 +13,7 @@ public class CupKnockoutStage : CupRound
     /// <param name="twoLeg"></param>
     /// <param name="numberOfBaskets"></param>
     /// <param name="afterGroupStage">If true clubs will be treated as teams returned by groupStage, meaning that 0,2,4,etc will be group winners, 1,3,5,etc 2nd place</param>
-    public CupKnockoutStage(string competitionName, List<Club> clubs, List<Club> prevRoundClubs = null, bool twoLeg = true, int numberOfBaskets = 0, bool afterGroupStage = false) : base(competitionName, clubs, prevRoundClubs, twoLeg, numberOfBaskets)
+    public CupKnockoutStage(string competitionName, List<Club> clubs, List<Club> prevRoundClubs = null, bool twoLeg = true, int numberOfBaskets = 0, bool afterGroupStage = false, float participationRankingPoints = 0, float winRankingPoints = 0, float drawRankingPoints = 0) : base(competitionName, clubs, prevRoundClubs, twoLeg, numberOfBaskets, participationRankingPoints, winRankingPoints, drawRankingPoints)
     {
         AfterGroupStage = afterGroupStage;
         CreateMatches();
@@ -22,157 +21,157 @@ public class CupKnockoutStage : CupRound
     void CreateMatches()
     {
         
-        if(numberOfBaskets < 2)
+        if(_numberOfBaskets < 2)
         {
             int r;
-            int clubsCount = clubs.Count;
-            for (int i = 0; i < clubsCount; i = i + 2)
+            int clubsCount = _clubs.Count;
+            for (int i = 0; i < clubsCount; i += 2)
             {
                 r = UnityEngine.Random.Range(0, clubsCount-i);
-                Match m = new Match("",DateTime.Now, 0, clubs[r].Id, 0);
+                Match m = new Match("",DateTime.Now, 0, _clubs[r].Id, 0);
                 // its just moving the r-th element to the end
-                clubs.Add(clubs[r]);
-                clubs.RemoveAt(r);
+                _clubs.Add(_clubs[r]);
+                _clubs.RemoveAt(r);
                 // now second team, PS. it ain't pretty but it's an honest work
                 r = UnityEngine.Random.Range(0, clubsCount - i - 1);
-                m.SecondTeamId = clubs[r].Id;
-                clubs.Add(clubs[r]);
-                clubs.RemoveAt(r);
-                m.CompetitionName = competitionName;
-                matches.Add(m);
+                m.SecondTeamId = _clubs[r].Id;
+                _clubs.Add(_clubs[r]);
+                _clubs.RemoveAt(r);
+                m.CompetitionName = _competitionName;
+                _matches.Add(m);
             }
         }
         else
         {
-            if(AfterGroupStage == false)clubs = clubs.ToArray().OrderByDescending(n => n.GetRankingPoints()).ToList();
+            if(AfterGroupStage == false)
+                _clubs = _clubs.ToArray().OrderByDescending(n => n.RankingPoints).ToList();
             else
             {
 
                 List<Club> winners = new List<Club>();
                 List<Club> secondPlace = new List<Club>();
-                for (int i = 0; i < clubs.Count; i++)
+                for (int i = 0; i < _clubs.Count; i++)
                 {
-                    if (i % 2 == 0) winners.Add(clubs[i]);
-                    else secondPlace.Add(clubs[i]);
+                    if (i % 2 == 0) 
+                        winners.Add(_clubs[i]);
+                    else 
+                        secondPlace.Add(_clubs[i]);
                 }
-                clubs.Clear();
-                clubs.AddRange(winners);
-                clubs.AddRange(secondPlace);
-            }
-            
-            foreach (Club c in clubs)
-            {
-                Debug.Log(c.Name + " :  " + c.GetRankingPoints());
+                _clubs = winners;
+                _clubs.AddRange(secondPlace);
             }
             
             int r, half;
-            int clubsCount = clubs.Count;
+            int clubsCount = _clubs.Count;
             for (int i = 0; i < clubsCount/2; i = i + 1)
             {
                 half = clubsCount / 2 - i;
                 r = UnityEngine.Random.Range(0, half);
-                //Debug.LogWarning("Mecz: " + r + " z range 0 - " + half);
-                Match m = new Match("", DateTime.Now, 0, clubs[r].Id, 0);
+                Match m = new Match("", DateTime.Now, 0, _clubs[r].Id, 0);
                 // its just moving the r-th element to the end
-                clubs.Add(clubs[r]);
-                clubs.RemoveAt(r);
+                _clubs.Add(_clubs[r]);
+                _clubs.RemoveAt(r);
                 // now second team, PS. it ain't pretty but it's an honest work
                 r = UnityEngine.Random.Range(half-1, clubsCount - i*2 - 1);
-                //Debug.LogWarning(r + " z range " + (half-1) + " - " + (clubsCount - i - 1));
-                m.SecondTeamId = clubs[r].Id;
-                clubs.Add(clubs[r]);
-                clubs.RemoveAt(r);
-                m.CompetitionName = competitionName;
-                matches.Add(m);
+                m.SecondTeamId = _clubs[r].Id;
+                _clubs.Add(_clubs[r]);
+                _clubs.RemoveAt(r);
+                m.CompetitionName = _competitionName;
+                _matches.Add(m);
             }
         }
         
-        if(twoLeg)
+        if(_twoLeg)
         {
-            int matchesCount = matches.Count;
+            int matchesCount = _matches.Count;
             // jesli final to nie bedize rewanzu
-            if (matchesCount == 1) return;
+            if (matchesCount == 1) 
+                return;
             for (int i = 0; i < matchesCount; i++)
             {
-                matches.Add(matches[i].InvertTeams());
+                _matches.Add(_matches[i].InvertTeams());
             }
         }
     }
     bool DetermineWhoWon()
     {
         //check if all are finished
-        if (finishedMatches != matches.Count) 
+        if (_finishedMatches != _matches.Count) 
             return false;
-        winners.Clear();
-        if (twoLeg)
+        _winners.Clear();
+        if (_twoLeg)
         {
-            int firstLegCount = matches.Count / 2;
+            int firstLegCount = _matches.Count / 2;
             bool oneFound = false;
             for (int i = 0; i < firstLegCount; i++)
             {
-                AdvanceDecider.WhoIsWinning who = AdvanceDecider.NormalTwoLeg(matches[i].Result, matches[firstLegCount + i].Result);
+                AdvanceDecider.WhoIsWinning who = AdvanceDecider.NormalTwoLeg(_matches[i].Result, _matches[firstLegCount + i].Result);
                 //TODO considering penalties normaltwoleg is invalid, for now penalties are offline so as below we have host winning when a draw happens
                 if (who == AdvanceDecider.WhoIsWinning.Draw || who == AdvanceDecider.WhoIsWinning.Host)
                 {
-                    foreach (var c in clubs)
+                    foreach (var c in _clubs)
                     {
-                        if (c.Id == matches[i].SecondTeamId)
+                        if (c.Id == _matches[i].SecondTeamId)
                         {
-                            winners.Add(c);
-                            if (oneFound) break;
+                            _winners.Add(c);
+                            if (oneFound) 
+                                break;
                             oneFound = true;
                         }
-                        else if (c.Id == matches[i].FirstTeamId)
+                        else if (c.Id == _matches[i].FirstTeamId)
                         {
-                            loosers.Add(c);
-                            if (oneFound) break;
+                            _loosers.Add(c);
+                            if (oneFound) 
+                                break;
                             oneFound = true;
                         }
                     }
                 }
                 else
                 {
-                    foreach (var c in clubs)
+                    foreach (var c in _clubs)
                     {
-                        if (c.Id == matches[i].FirstTeamId)
+                        if (c.Id == _matches[i].FirstTeamId)
                         {
-                            winners.Add(c);
-                            if (oneFound) break;
+                            _winners.Add(c);
+                            if (oneFound) 
+                                break;
                             oneFound = true;
                         }
-                        else if (c.Id == matches[i].SecondTeamId)
+                        else if (c.Id == _matches[i].SecondTeamId)
                         {
-                            loosers.Add(c);
-                            if (oneFound) break;
+                            _loosers.Add(c);
+                            if (oneFound) 
+                                break;
                             oneFound = true;
                         }
                     }
                 }
                 oneFound = false;
                 // przenoszenie rozstawienia (wspolczynnika rankingowego, ranking points)
-                winners.Last().SetRankingPoints(loosers.Last().GetRankingPoints());
+                //winners.Last().SetRankingPoints(loosers.Last().GetRankingPoints());
             }
         }
         else
         {
-            int matchesCount = matches.Count;
+            int matchesCount = _matches.Count;
             bool oneFound = false;
             for (int i = 0; i < matchesCount; i++)
             {
                 // TODO: same situation, right now we dont have penalties so draw is a host win
-                if (matches[i].Result.HostGoals > matches[i].Result.GuestGoals || matches[i].Result.HostGoals == matches[i].Result.GuestGoals)
+                if (_matches[i].Result.HostGoals > _matches[i].Result.GuestGoals || _matches[i].Result.HostGoals == _matches[i].Result.GuestGoals)
                 {
-                    foreach (var c in clubs)
+                    foreach (var c in _clubs)
                     {
-                        if (c.Id == matches[i].FirstTeamId)
+                        if (c.Id == _matches[i].FirstTeamId)
                         {
-                            winners.Add(c);
+                            _winners.Add(c);
                             if (oneFound) break;
                             oneFound = true;
                         }
-                        else if (c.Id == matches[i].SecondTeamId)
+                        else if (c.Id == _matches[i].SecondTeamId)
                         {
-                            loosers.Add(c);
+                            _loosers.Add(c);
                             if (oneFound) break;
                             oneFound = true;
                         }
@@ -180,35 +179,27 @@ public class CupKnockoutStage : CupRound
                 }
                 else
                 {
-                    foreach (var c in clubs)
+                    foreach (var c in _clubs)
                     {
-                        if (c.Id == matches[i].SecondTeamId)
+                        if (c.Id == _matches[i].SecondTeamId)
                         {
-                            winners.Add(c);
+                            _winners.Add(c);
                             if (oneFound) break;
                             oneFound = true;
                         }
-                        else if (c.Id == matches[i].FirstTeamId)
+                        else if (c.Id == _matches[i].FirstTeamId)
                         {
-                            loosers.Add(c);
+                            _loosers.Add(c);
                             if (oneFound) break;
                             oneFound = true;
                         }
                     }
                 }
                 oneFound = false;
-                winners.Last().SetRankingPoints(loosers.Last().GetRankingPoints());
+                //winners.Last().SetRankingPoints(loosers.Last().GetRankingPoints());
             }
         }
         return true;
     }
-    public override List<Club> GetWinners()
-    {
-        if (!DetermineWhoWon()) return null; 
-        return base.GetWinners();
-    }
-    public override void SendMatchResult(Match m)
-    {
-        base.SendMatchResult(m);
-    }
+    public override List<Club> GetWinners() =>  DetermineWhoWon() ? base.GetWinners() : null;
 }
