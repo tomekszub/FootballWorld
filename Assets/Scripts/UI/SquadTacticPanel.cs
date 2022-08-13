@@ -12,7 +12,7 @@ public class SquadTacticPanel : MonoBehaviour
         UpdateSquadScreen(_FormationDropDown.options[val].text);
     }
 
-    public void SetUpSquadScreen()
+    void OnEnable()
     {
         // set dropdown value to current formation
         for (int i = 0; i < _FormationDropDown.options.Count; i++)
@@ -353,7 +353,7 @@ public class SquadTacticPanel : MonoBehaviour
             }
         }
         Database.clubDB[MyClub.Instance.MyClubID].Formation = formation;
-        WindowsManager.Instance.ShowWindow("Club Menu");
+        WindowsManager.Instance.ShowWindow("Club");
     }
 
     void ClearSquadCells()

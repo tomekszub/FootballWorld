@@ -113,7 +113,7 @@ public class Comment : MonoBehaviour
         if (_end)
         {
             MyClub.Instance.ProcesssMatchStats(_matchStats, _competitionName);
-            WindowsManager.Instance.ShowWindow("Club Menu");
+            WindowsManager.Instance.ShowWindow("Club");
         }
     }
     // główna pętla

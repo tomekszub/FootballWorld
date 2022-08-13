@@ -17,7 +17,7 @@ public class SquadListPanel : MonoBehaviour
         _currLeagueTeamIndex = MyClub.Instance.MyInLeagueIndex;
     }
 
-    public void Init()
+    void OnEnable()
     {
         _TournamentSelectionDropdown.ClearOptions();
         var tournaments = new List<string>(MyClub.Instance.MyTournaments);

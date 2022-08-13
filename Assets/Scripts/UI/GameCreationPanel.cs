@@ -9,6 +9,7 @@ public class GameCreationPanel : MonoBehaviour
     public void StartGame()
     {
         MyClub.Instance.CreateTeam(leagueDropDown.value, clubDropDown.value);
+        WindowsManager.Instance.ShowWindow("Club");
     }
 
     public void UpdateClubsList(int chosenLeague)

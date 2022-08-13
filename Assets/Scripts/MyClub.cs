@@ -82,8 +82,6 @@ public class MyClub : MonoBehaviour
         CreateChampionsLeagueCalendar();
         MyTournaments.Add("Champions Cup");
         UpdateCalendar();
-
-        _MainMenuPanel.SetActive(false);
         UpdateCurrentDateUI();
     }
 
@@ -138,7 +136,7 @@ public class MyClub : MonoBehaviour
         }
         while (hostId != MyClubID && guestId != MyClubID);
 
-        _ClubMenuPanel.SetActive(false);
+        WindowsManager.Instance.ShowWindow("Simulation");
         Comment.Instance.Init(hostId, guestId, Matches[_currentMatch].CompetitionName);
     }
 
@@ -469,10 +467,7 @@ public class MyClub : MonoBehaviour
         }
     }
 
-    void UpdateCurrentDateUI()
-    {
-        _DateText.text = _currDate.Day + "/" + _currDate.Month;
-    }
+    void UpdateCurrentDateUI() => _DateText.text = _currDate.Day + "/" + _currDate.Month;
 
     void UpdateCalendar()
     {

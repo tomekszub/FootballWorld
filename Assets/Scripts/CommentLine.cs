@@ -17,7 +17,7 @@ public class CommentLine : MonoBehaviour
     readonly string[] _left_right_direction_string = { "lewo","prawo"};
 
     public static CommentLine Instance;
-    void Start()
+    void Awake()
     {
         if (Instance == null)
             Instance = this;
