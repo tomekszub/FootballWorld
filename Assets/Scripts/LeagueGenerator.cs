@@ -5,6 +5,8 @@ using static Footballer;
 
 public class LeagueGenerator : MonoBehaviour
 {
+    [SerializeField] bool _TeducedTeamAmount_TEST = false;
+
     [SerializeField] CountryMaster _CountryMaster;
     [SerializeField] LeagueMaster _LeagueMaster;
 
@@ -16,6 +18,8 @@ public class LeagueGenerator : MonoBehaviour
     List<Credentials> _people = new List<Credentials>();
     public void Generate(string country, int clubAmount)
     {
+        if (_TeducedTeamAmount_TEST)
+            clubAmount = 2;
         // TODO: cash every name data in a dictionary for the time of creating db
 
         _leagueDef = _LeagueMaster.GetLeagueDefinition(country);

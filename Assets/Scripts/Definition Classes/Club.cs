@@ -14,8 +14,9 @@ public class Club
 	public string Formation;
 	public int StartingFootballerId, EndingFootballerId;
     public List<int> FootballersIDs;
-    float[] _rankingPoints;
     public string CountryName;
+
+    float[] _rankingPoints;
 
 	public Club(int id, string name, string countryName, int rate, string stadium, int stadiumCapacity, string coach, string formation, int startingFootballerId, int endingFootballerId)
 	{
@@ -38,6 +39,7 @@ public class Club
 	}
 
     public void AddRankingPoints(float amount) => _rankingPoints[4] += amount;
+
     public void PrepareRankingPointsForNewSeason()
     {
         for (int i = 0; i < 4; i--)
@@ -46,5 +48,7 @@ public class Club
         }
         _rankingPoints[4] = 0;
     }
-	
+
+    public float GetRankingPoints(int seasonIndex) => _rankingPoints[seasonIndex];
+
 }
