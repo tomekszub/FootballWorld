@@ -21,13 +21,8 @@ Zabrze
 Olsztyn
 Bielsko-Biała
 Bytom
-Rybnik
-Ruda Śląska
-Zielona Góra
 Tychy
 Opole
-Gorzów Wielkopolski
-Dąbrowa Górnicza
 Płock
 Elbląg
 Wałbrzych
@@ -38,31 +33,7 @@ Kalisz
 Legnica
 Włocławek
 Grudziądz
-Jaworzno
-Jelenia Góra
-Siedlce
-Mysłowice
-Piotrków Trybunalski
-Konin
-Inowrocław
-Ostrowiec Świętokrzyski
-Suwałki
-Gniezno
-Przemyśl
-Głogów
-Zamość
-Leszno
-Łomża
-Chełm
-Pruszków
 Mielec
 Bełchatów
-Świdnica
-Biała Podlaska
-Legionowo
-Puławy
-Skierniewice
-Tarnobrzeg
-Nysa
 Kołobrzeg
 Świnoujście

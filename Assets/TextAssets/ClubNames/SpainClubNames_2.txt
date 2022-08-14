@@ -4,7 +4,6 @@ Sevilla
 Málaga
 Valencia
 Zaragoza
-Palma
 Murcia
 Las Palmas
 A Coruña
@@ -16,13 +15,10 @@ Vigo
 Gijón
 Elche
 Granada
-Tarrasa
 Badalona
 Oviedo
-Petrel
 Sabadell
 Cartagena
-Santa Cruz
 Pamplona
 León
 Almería
@@ -39,8 +35,6 @@ Salamanca
 Huelva
 Algeciras
 Cádiz
-Jaén
-Reus
 Girona
 Lugo
 Toledo

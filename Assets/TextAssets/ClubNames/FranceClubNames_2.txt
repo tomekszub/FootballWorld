@@ -12,8 +12,6 @@ Strasbourg
 Nancy
 Metz
 Brest
-Mulhouse
-Limoges
 Orléans
 Bordeaux
 Le Havre
@@ -29,16 +27,12 @@ Clermont-Ferrand
 Le Mans
 Amiens
 Tours
-Boulogne-sur-Mer
 Annecy
-Perpignan
 Besançon
 Belfort
 Saint-Denis
 Argenteuil
-Montreuil
 Caen
 Roubaix
-Tourcoing
 Nanterre
 Avignon

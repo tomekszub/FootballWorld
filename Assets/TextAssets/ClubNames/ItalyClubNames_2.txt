@@ -13,13 +13,9 @@ Verona
 Messina
 Padova
 Trieste
-Taranto
 Brescia
 Parma
-Prato
 Modena
-Reggio di Calabria
-Reggio Emilia
 Perugia
 Ravenna
 Livorno
@@ -28,9 +24,7 @@ Foggia
 Rimini
 Salerno
 Ferrara
-Latina
 Monza
-Siracusa
 Bergamo
 Pescara
 Trento
@@ -41,9 +35,6 @@ Terni
 Bolzano
 Novara
 Piacenza
-Ancona
-Andria
 Udine
-Arezzo
 Cesena
 Lecce
