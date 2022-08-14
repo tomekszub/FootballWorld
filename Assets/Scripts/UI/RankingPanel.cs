@@ -10,16 +10,16 @@ public class RankingPanel : MonoBehaviour
     {
         //var countries = Database.clubDB.GroupBy(c => c.CountryName).OrderBy(c => c.Key);
         var query = from c in Database.clubDB
-                    group c by c.CountryName into countries
+                    group c by c.CountryName into clubs
                     select new
                     {
-                        Country = countries.Key,
-                        TotalPoints = countries.Sum(x => x.RankingPoints),
-                        Season1Points = countries.Sum(x => x.GetRankingPoints(0)),
-                        Season2Points = countries.Sum(x => x.GetRankingPoints(1)),
-                        Season3Points = countries.Sum(x => x.GetRankingPoints(2)),
-                        Season4Points = countries.Sum(x => x.GetRankingPoints(3)),
-                        Season5Points = countries.Sum(x => x.GetRankingPoints(4))
+                        Country = clubs.Key,
+                        TotalPoints = clubs.Sum(x => x.RankingPoints),
+                        Season1Points = clubs.Sum(x => x.GetRankingPoints(0)),
+                        Season2Points = clubs.Sum(x => x.GetRankingPoints(1)),
+                        Season3Points = clubs.Sum(x => x.GetRankingPoints(2)),
+                        Season4Points = clubs.Sum(x => x.GetRankingPoints(3)),
+                        Season5Points = clubs.Sum(x => x.GetRankingPoints(4))
                     };
 
         query = query.OrderByDescending(query => query.TotalPoints);

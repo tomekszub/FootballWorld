@@ -17,11 +17,11 @@ public class RankingElement : MonoBehaviour
     {
         _Name.text = country;
         _Flag.sprite = Database.Instance.GetCountryMaster().GetFlagByName(country);
-        _TotalPoints.text = totalPoints.ToString();
-        _Season1Points.text = season1Points.ToString();
-        _Season2Points.text = season2Points.ToString();
-        _Season3Points.text = season3Points.ToString();
-        _Season4Points.text = season4Points.ToString();
-        _Season5Points.text = season5Points.ToString();
+        _TotalPoints.text = totalPoints.ToString("F3");
+        _Season1Points.text = season1Points.ToString("F3");
+        _Season2Points.text = season2Points.ToString("F3");
+        _Season3Points.text = season3Points.ToString("F3");
+        _Season4Points.text = season4Points.ToString("F3");
+        _Season5Points.text = season5Points.ToString("F3");
     }
 }

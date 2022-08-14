@@ -38,7 +38,7 @@ public class Club
         _rankingPoints = new float[] { 0,0,0,0,0};
 	}
 
-    public void AddRankingPoints(float amount) => _rankingPoints[4] += amount;
+    public void AddRankingPoints(float amount) => _rankingPoints[4] += amount / League_Old.GetNumberOfClubsInEuropaCups(MyClub.Instance.CurrFederationRankingCountryName[CountryName]);
 
     public void PrepareRankingPointsForNewSeason()
     {

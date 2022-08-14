@@ -8,7 +8,7 @@ public class GameCreationPanel : MonoBehaviour
     [SerializeField] Dropdown leagueDropDown, clubDropDown;
     public void StartGame()
     {
-        MyClub.Instance.CreateTeam(leagueDropDown.value, clubDropDown.value);
+        MyClub.Instance.GenerateGameData(leagueDropDown.value, clubDropDown.value);
         WindowsManager.Instance.ShowWindow("Club");
     }
 

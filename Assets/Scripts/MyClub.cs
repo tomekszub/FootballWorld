@@ -14,6 +14,8 @@ public class MyClub : MonoBehaviour
     public int MyClubID { get; private set; }
     public HashSet<string> MyTournaments { get; private set; } = new HashSet<string>();
 	public List<Match> Matches { get; set; } = new List<Match>();
+	public int[] CurrFederationRankingLeagueIndex { get; private set; } = new int[54];
+    public Dictionary<string, int> CurrFederationRankingCountryName { get; private set; } = new Dictionary<string, int>();
 
     [SerializeField] TextMeshProUGUI _DateText;
     [SerializeField] CalendarEntry _CalendarMatchEntryPrefab;
@@ -25,6 +27,7 @@ public class MyClub : MonoBehaviour
 	[SerializeField] Table _TableScript;
 
     string _leagueName;
+    int _myLeagueRankingPos;
     DateTime _startOfTheSeason = new DateTime(2018, 8, 17);
     DateTime _currDate = new DateTime(2018, 6, 24);
     readonly DateTime[] _cupDates = { new DateTime(2018, 9, 4), new DateTime(2018, 10, 16), new DateTime(2018, 10, 30), new DateTime(2019, 1, 8), new DateTime(2019, 1, 22), new DateTime(2019, 2, 5), new DateTime(2019, 5, 21)};
@@ -37,7 +40,7 @@ public class MyClub : MonoBehaviour
     int _currCupRound = 0, _currCLRound = 0;
     MatchStats _leagueScorers = new MatchStats(new List<Scorer>());
 
-    private void Awake()
+    void Awake()
     {
         if (Instance != null)
         {
@@ -53,7 +56,7 @@ public class MyClub : MonoBehaviour
         _startOfTheSeason = _startOfTheSeason.AddDays(1);
     }
 
-	public void CreateTeam(int leagueID, int inLeagueIndex)
+	public void GenerateGameData(int leagueID, int inLeagueIndex)
     {
         MyLeagueID = leagueID;
         _teamsNumber = Database.leagueDB[MyLeagueID].Teams.Count;
@@ -77,17 +80,27 @@ public class MyClub : MonoBehaviour
         // -1 oznacza ze numer rundy ma byc automatyczny, to znaczy kazda runda inny id rundy (dla ligi jest ok, np dla fazy gr lm trzeba to ustawic)
         MatchCalendar.CreateGroupCalendar(Database.leagueDB[MyLeagueID].Name, -1, _clubs, _startOfTheSeason);
         MyTournaments.Add(Database.leagueDB[MyLeagueID].Name);
+
         CreateCupCalendar();
         MyTournaments.Add("National Cup");
+
+        // at the start of the career, ranking is inferred from order in leagueDB which starts form 0)
+        CurrFederationRankingLeagueIndex = Enumerable.Range(0, 54).ToArray();
+        for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
+        {
+            CurrFederationRankingCountryName.Add(Database.leagueDB[CurrFederationRankingLeagueIndex[i]].Country, i);
+        }
+        _myLeagueRankingPos = MyLeagueID;
         CreateChampionsLeagueCalendar();
         MyTournaments.Add("Champions Cup");
+
         UpdateCalendar();
         UpdateCurrentDateUI();
     }
 
     public void ShowLeagueTable()
     {
-        _TableScript.ShowTable(_leagueTeams, Database.leagueDB[MyLeagueID].GetPositionRanges(MyLeagueID + 1));
+        _TableScript.ShowTable(_leagueTeams, League_Old.GetPositionRanges(_myLeagueRankingPos));
     }
 
     public void NextMatch()
@@ -261,9 +274,9 @@ public class MyClub : MonoBehaviour
                 if (_currCLRound == 0)
                 {
                     List<Club> cs = new List<Club>();
-                    for (int i = 0; i < Database.leagueDB.Count; i++)
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
                     {
-                        Club c = Database.leagueDB[i].GetFirstQ_CL_Clubs(i + 1);
+                        Club c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetFirstQ_CL_Clubs(i);
                         if (c != null) cs.Add(c);
                     }
                     if (cs.Count != 33)
@@ -279,9 +292,9 @@ public class MyClub : MonoBehaviour
                 else if (_currCLRound == 1)
                 {
                     List<Club> cs = new List<Club>();
-                    for (int i = 0; i < Database.leagueDB.Count; i++)
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
                     {
-                        Club c = Database.leagueDB[i].GetSecondChampionsPathQ_CL_Clubs(i + 1);
+                        Club c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetSecondChampionsPathQ_CL_Clubs(i);
                         if (c != null) cs.Add(c);
                     }
                     if (cs.Count != 3)
@@ -293,9 +306,9 @@ public class MyClub : MonoBehaviour
                     _currCLRound++;
                     // league path
                     cs = new List<Club>();
-                    for (int i = 0; i < Database.leagueDB.Count; i++)
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
                     {
-                        Club c = Database.leagueDB[i].GetSecondLeaguePathQ_CL_Clubs(i + 1);
+                        Club c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetSecondLeaguePathQ_CL_Clubs(i);
                         if (c != null) cs.Add(c);
                     }
                     if (cs.Count != 6)
@@ -313,9 +326,9 @@ public class MyClub : MonoBehaviour
                 else if (_currCLRound == 3)
                 {
                     List<Club> cs = new List<Club>();
-                    for (int i = 0; i < Database.leagueDB.Count; i++)
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
                     {
-                        Club c = Database.leagueDB[i].GetThirdChampionsPathQ_CL_Clubs(i + 1);
+                        Club c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetThirdChampionsPathQ_CL_Clubs(i);
                         if (c != null) cs.Add(c);
                     }
                     if (cs.Count != 2)
@@ -326,9 +339,9 @@ public class MyClub : MonoBehaviour
                     _qualCL.Add(new CupKnockoutStage("Champions Cup", cs, _qualCL[2].GetWinners(), true, 2, false, 0, 1, .5f));
                     _currCLRound++;
                     cs = new List<Club>();
-                    for (int i = 0; i < Database.leagueDB.Count; i++)
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
                     {
-                        Club c = Database.leagueDB[i].GetThirdLeaguePathQ_CL_Clubs(i + 1);
+                        Club c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetThirdLeaguePathQ_CL_Clubs(i);
                         if (c != null) cs.Add(c);
                     }
                     if (cs.Count != 5)
@@ -346,9 +359,9 @@ public class MyClub : MonoBehaviour
                 else if (_currCLRound == 5)
                 {
                     List<Club> cs = new List<Club>();
-                    for (int i = 0; i < Database.leagueDB.Count; i++)
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
                     {
-                        Club c = Database.leagueDB[i].GetPlayOffsChampionsPathQ_CL_Clubs(i + 1);
+                        Club c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetPlayOffsChampionsPathQ_CL_Clubs(i);
                         if (c != null) cs.Add(c);
                     }
                     if (cs.Count != 2)
@@ -369,9 +382,9 @@ public class MyClub : MonoBehaviour
                 else if(_currCLRound == 7)
                 {
                     List<Club> cs = new List<Club>();
-                    for (int i = 0; i < Database.leagueDB.Count; i++)
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
                     {
-                        List<Club> c = Database.leagueDB[i].GetGroupStage_CL_Clubs(i + 1);
+                        List<Club> c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetGroupStage_CL_Clubs(i);
                         if (c != null) cs.AddRange(c);
                     }
                     if (cs.Count != 26)
@@ -422,9 +435,9 @@ public class MyClub : MonoBehaviour
     void CreateChampionsLeagueCalendar()
     {
         List<Club> cs = new List<Club>();
-        for (int i = 0; i < Database.leagueDB.Count; i++)
+        for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
         {
-            Club c = Database.leagueDB[i].GetPreeliminary_CL_Clubs(i + 1);
+            Club c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetPreeliminary_CL_Clubs(i);
             if(c != null)
                 cs.Add(c);
         }
