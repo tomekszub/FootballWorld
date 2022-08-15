@@ -105,6 +105,17 @@ public class MyClub : MonoBehaviour
     }
 
     public void NextMatch()
+    {
+        while(_currDate != Matches[_currentMatch].Date)
+        {
+            if (_currentMatch >= Matches.Count)
+                break;
+
+            NextDay();
+        }
+    }
+
+    public void NextDay()
 	{
         _CalendarEntriesParent.GetComponentInParent<ScrollRect>().verticalNormalizedPosition = 1;
         if (_currentMatch >= Matches.Count)
@@ -146,7 +157,7 @@ public class MyClub : MonoBehaviour
             guestId = Matches[_currentMatch].SecondTeamId;
             if (hostId != MyClubID && guestId != MyClubID)
             {
-                MatchStats[] ms = Simulation.SimulationStart(hostId, guestId, Matches[_currentMatch].CompetitionName);
+                MatchStats[] ms = Simulation.StartSimulation(hostId, guestId, Matches[_currentMatch].CompetitionName);
                 ProcesssMatchStats(ms, Matches[_currentMatch].CompetitionName);
                 if (endOfRound)
                 {
