@@ -11,8 +11,6 @@ public class Comment : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI _StartStopButton;
 
-    float BASE_FATIGUE = 0.41f;
-
     float _time = 0.1f;
     bool _isPlaying = false;
     int _minute = 0;
@@ -486,7 +484,7 @@ public class Comment : MonoBehaviour
         {
             for (int i = 0; i < _teams[j].Count; i++)
             {
-                _teams[j][i].GainFatigue(BASE_FATIGUE);
+                _teams[j][i].GainFatigue(i == 0);
             }
         }
     }

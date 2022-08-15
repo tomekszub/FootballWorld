@@ -150,6 +150,7 @@ public class LeagueGenerator : MonoBehaviour
         int baseRating = rating;
         int randomPersonIndex;
         int minSkill;
+        int enduranceMin;
         float freeKickSkill;
         Credentials person;
         for (int i = 0; i < FOOTBALLERS_PER_TEAM; i++)
@@ -160,6 +161,8 @@ public class LeagueGenerator : MonoBehaviour
             _people.RemoveAt(randomPersonIndex);
             minSkill = Random.Range(0, 5) * 20;
             freeKickSkill = Random.Range(minSkill, minSkill + 20) / 10;
+            enduranceMin = (int)(10 + baseRating * 0.5f);
+
             Database.footballersDB.Add(new Footballer(
                 startingDBIndex + i, 
                 person.Name, 
@@ -176,6 +179,7 @@ public class LeagueGenerator : MonoBehaviour
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100), 
                 1996,
+                Mathf.Clamp(Random.Range(enduranceMin, enduranceMin + 40), 1, 100),
                 clubID));
         }
     }

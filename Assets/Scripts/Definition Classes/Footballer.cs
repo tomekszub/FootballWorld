@@ -6,7 +6,13 @@ using System;
 public class Footballer : IComparable<Footballer>
 {
 	const float BASE_FATIGUE_LOSS = 10;
-	const float BASE_FATIGUE_GAIN_PER_MATCH = 0.12f;
+	const float BASE_REST_VALUE_LOSS_PER_MATCH = 0.12f;
+	const float MAX_FATIGUE_LOSS_ENDURANCE = 0.4f;
+	const float BASE_FATIGUE_LOSS_PER_ENDURANCE = 0.04f;
+
+	const float BASE_FATIGUE_GAIN = 0.41f;
+	const float MAX_FATIGUE_GAIN_ENDURANCE = 0.3f;
+	const float BASE_FATIGUE_GAIN_PER_ENDURANCE = 0.003f;
 
 	public enum Position
 	{
@@ -25,6 +31,7 @@ public class Footballer : IComparable<Footballer>
 	public Position Pos;
 	public float Dribling, Tackle, Heading, Shoot, Speed, Pass;
     public int BirthYear;
+	public int Endurance;
 
 	public float Condition
     {
@@ -40,7 +47,7 @@ public class Footballer : IComparable<Footballer>
 
 	public string GetFullName() => Name != "" ? $"{Name} {Surname}" : Surname;
 
-	public Footballer(int id, string name, string surname, string alteredSurname, string country, float rating, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear = 1995, int clubID = -1)
+	public Footballer(int id, string name, string surname, string alteredSurname, string country, float rating, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear, int ednurance, int clubID = -1)
 	{
 		Id = id;
 		Name = name;
@@ -88,6 +95,7 @@ public class Footballer : IComparable<Footballer>
 		_statistics = new Dictionary<string, PlayerStatistics> ();
 		ClubID = clubID;
 		Condition = 100;
+		Endurance = ednurance;
     }
     public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
 	{
@@ -192,9 +200,15 @@ public class Footballer : IComparable<Footballer>
         }
     }
 
-    public void LoseFatigue() => Condition += BASE_FATIGUE_LOSS - (GetTotalMatchesPlayed() * BASE_FATIGUE_GAIN_PER_MATCH);
+	public void LoseFatigue()
+	{
+		Condition += BASE_FATIGUE_LOSS + (MAX_FATIGUE_LOSS_ENDURANCE - (Endurance * BASE_FATIGUE_LOSS_PER_ENDURANCE)) - (GetTotalMatchesPlayed() * BASE_REST_VALUE_LOSS_PER_MATCH);
+	}
 
-	public void GainFatigue(float amount) => Condition -= amount;
+	public void GainFatigue(bool goalkeeper)
+	{
+		Condition -= (BASE_FATIGUE_GAIN + (MAX_FATIGUE_GAIN_ENDURANCE - (Endurance * BASE_FATIGUE_GAIN_PER_ENDURANCE))) * (goalkeeper ? 0.6f : 1f);
+	}
 
 	int GetTotalMatchesPlayed()
     {
