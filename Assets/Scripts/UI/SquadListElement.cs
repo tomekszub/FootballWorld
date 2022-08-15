@@ -23,7 +23,7 @@ public class SquadListElement : MonoBehaviour
         _NameText.text = f.GetFullName();
         _RatingText.text = f.Rating.ToString();
         _RatingImage.sprite = Resources.Load<Sprite>("Stars/" + (int)f.Rating);
-        _FlagImage.sprite = Resources.Load<Sprite>("Flags/" + f.Country);
+        _FlagImage.sprite = Database.Instance.GetCountryMaster().GetFlagByName(f.Country);
         _AttributesText[0].text = f.FreeKicks.ToString();
         _AttributesText[1].text = f.Dribling.ToString();
         _AttributesText[2].text = f.Tackle.ToString();
