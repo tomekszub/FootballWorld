@@ -39,6 +39,7 @@ public class MyClub : MonoBehaviour
 	int _teamsNumber;
     int _currCupRound = 0, _currCLRound = 0;
     MatchStats _leagueScorers = new MatchStats(new List<Scorer>());
+    bool _restAvailable = true;
 
     void Awake()
     {
@@ -111,8 +112,17 @@ public class MyClub : MonoBehaviour
             Debug.Log("Koniec meczów!");
             return;
         }
+
+        if (_restAvailable)
+        {
+            // resting - fatigue loss - probably should be calculating at the next match, not at every day
+            Database.footballersDB.ForEach(f => f.LoseFatigue());
+            _restAvailable = false;
+        }
+
         if (Matches[_currentMatch].Date != _currDate)
         {
+            _restAvailable = true;
             _currDate = _currDate.AddDays(1);
             UpdateCurrentDateUI();
             UpdateCalendar();

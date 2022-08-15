@@ -12,6 +12,7 @@ public class SquadListElement : MonoBehaviour
     [SerializeField] Image _RatingImage;
     [SerializeField] List<TextMeshProUGUI> _AttributesText;
     [SerializeField] List<TextMeshProUGUI> _StatisticksText;
+    [SerializeField] Image _FatigueImage;
 
     Footballer _footballer;
 
@@ -30,6 +31,7 @@ public class SquadListElement : MonoBehaviour
         _AttributesText[4].text = f.Shoot.ToString();
         _AttributesText[5].text = f.Speed.ToString();
         _AttributesText[6].text = f.Pass.ToString();
+        _FatigueImage.fillAmount = f.Condition / 100.0f;
         UpdateStatistics(tournamentFilter);
     }
 

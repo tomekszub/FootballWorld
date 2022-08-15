@@ -5,6 +5,14 @@ using System;
 
 public class Footballer : IComparable<Footballer>
 {
+	const float BASE_FATIGUE_LOSS = 10;
+	const float BASE_FATIGUE_GAIN_PER_MATCH = 0.12f;
+
+	public enum Position
+	{
+		BR,PO,ŚO,LO,ŚPD,ŚP,PP,ŚPO,LP,N
+	}
+
 	public int Id;
 	public string Name;
 	public string Surname;
@@ -13,23 +21,24 @@ public class Footballer : IComparable<Footballer>
 	public float Rating; // 1-10 1 amator, 2 pół-amator, 3 bardzo słaby, 4 słaby, 5 sredni, 6 niezły, 7 dobry, 8 bardzo dobry, 9 rewelacyjny, 10 klasa swiatowa
 	public float FreeKicks;// wykonywanie stałych fragmentów gry
 	public float Corner, Penalty;
-	Dictionary<string, PlayerStatistics> _statistics;
 	public int ClubID;
-	public enum Position
-	{
-		BR,PO,ŚO,LO,ŚPD,ŚP,PP,ŚPO,LP,N
-	}
 	public Position Pos;
 	public float Dribling, Tackle, Heading, Shoot, Speed, Pass;
     public int BirthYear;
 
-	public string GetFullName()
+	public float Condition
     {
-		if (Name != "")
-			return $"{Name} {Surname}";
-		else
-			return Surname;
+		get { return _fatigue; }
+		private set
+		{ 
+			_fatigue = Math.Clamp(value, 0, 100);
+		}
     }
+
+	float _fatigue;
+	Dictionary<string, PlayerStatistics> _statistics;
+
+	public string GetFullName() => Name != "" ? $"{Name} {Surname}" : Surname;
 
 	public Footballer(int id, string name, string surname, string alteredSurname, string country, float rating, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear = 1995, int clubID = -1)
 	{
@@ -78,6 +87,7 @@ public class Footballer : IComparable<Footballer>
         BirthYear = birthYear;
 		_statistics = new Dictionary<string, PlayerStatistics> ();
 		ClubID = clubID;
+		Condition = 100;
     }
     public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
 	{
@@ -180,5 +190,18 @@ public class Footballer : IComparable<Footballer>
         {
 			return new PlayerStatistics(p1.MatchesPlayed + p2.MatchesPlayed, p1.Goals + p2.Goals, p1.Assists + p2.Assists, p1.CleanSheet + p2.CleanSheet);
         }
+    }
+
+    public void LoseFatigue() => Condition += BASE_FATIGUE_LOSS - (GetTotalMatchesPlayed() * BASE_FATIGUE_GAIN_PER_MATCH);
+
+	public void GainFatigue(float amount) => Condition -= amount;
+
+	int GetTotalMatchesPlayed()
+    {
+		var stats = GetPlayerStatistics("");
+		if(stats == null)
+			return 0;
+		
+		return stats.MatchesPlayed;
     }
 }
