@@ -22,9 +22,8 @@ public class MyClub : MonoBehaviour
     [SerializeField] GameObject _CalendarEntriesParent;
     [SerializeField] TextMeshProUGUI _ScorersText;
     [SerializeField] TextMeshProUGUI _OutputClubName;
-    [SerializeField] GameObject _MainMenuPanel;
-    [SerializeField] GameObject _ClubMenuPanel;
 	[SerializeField] Table _TableScript;
+    [SerializeField] TextMeshProUGUI _NextMatchInfoText;
 
     string _leagueName;
     int _myLeagueRankingPos;
@@ -57,7 +56,7 @@ public class MyClub : MonoBehaviour
         _startOfTheSeason = _startOfTheSeason.AddDays(1);
     }
 
-	public void GenerateGameData(int leagueID, int inLeagueIndex)
+    public void GenerateGameData(int leagueID, int inLeagueIndex)
     {
         MyLeagueID = leagueID;
         _teamsNumber = Database.leagueDB[MyLeagueID].Teams.Count;
@@ -97,6 +96,7 @@ public class MyClub : MonoBehaviour
 
         UpdateCalendar();
         UpdateCurrentDateUI();
+        UpdateNextMatchInfo();
     }
 
     public void ShowLeagueTable()
@@ -133,6 +133,7 @@ public class MyClub : MonoBehaviour
 
         if (Matches[_currentMatch].Date != _currDate)
         {
+            UpdateNextMatchInfo();
             _restAvailable = true;
             _currDate = _currDate.AddDays(1);
             UpdateCurrentDateUI();
@@ -146,6 +147,7 @@ public class MyClub : MonoBehaviour
             if (_currentMatch >= Matches.Count)
             {
                 Debug.Log("Koniec meczów!");
+                UpdateNextMatchInfo("Koniec sezonu");
                 return;
             }
             if((_currentMatch+1 < Matches.Count && Matches[_currentMatch].Date < Matches[_currentMatch+1].Date) || _currentMatch == Matches.Count-1)
@@ -545,6 +547,11 @@ public class MyClub : MonoBehaviour
                 resultHelperString = "-";
             entry.SetData(Matches[_firstMatchOfTheWeek + i].FirstTeamId, Matches[_firstMatchOfTheWeek + i].SecondTeamId, resultHelperString);
         }
+    }
+
+    void UpdateNextMatchInfo(string alternativeText = "")
+    {
+        _NextMatchInfoText.text = alternativeText != "" ? alternativeText : Matches[_currentMatch].Date.Day + "/" + Matches[_currentMatch].Date.Month + " " + Matches[_currentMatch].CompetitionName;
     }
 
     void AddCupMatchesToCalendar(Match[] ms,int roundInd, DateTime firstLeg, DateTime secondLeg,bool twoLeg = true)
