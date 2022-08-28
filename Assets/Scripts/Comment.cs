@@ -78,8 +78,11 @@ public class Comment : MonoBehaviour
 
     public void SimulateMatch()
     {
-        _time = 0;
-        StartCoroutine(CommentStart());
+        if(!_end)
+        {
+            _time = 0;
+            StartCoroutine(CommentStart());
+        }
     }
 
     void PrepareNextMatch()
