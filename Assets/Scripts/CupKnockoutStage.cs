@@ -9,26 +9,29 @@ public class CupKnockoutStage : CupRound
     /// </summary>
     /// <param name="competitionName"></param>
     /// <param name="clubs"></param>
-    /// <param name="prevRoundClubs"></param>
+    /// <param name="higherCupClubs">Loosers from higher tier cups</param>
     /// <param name="twoLeg"></param>
     /// <param name="numberOfBaskets"></param>
     /// <param name="afterGroupStage">If true clubs will be treated as teams returned by groupStage, meaning that 0,2,4,etc will be group winners, 1,3,5,etc 2nd place</param>
-    public CupKnockoutStage(string competitionName, List<Club> clubs, List<Club> prevRoundClubs = null, bool twoLeg = true, int numberOfBaskets = 0, bool afterGroupStage = false, float participationRankingPoints = 0, float winRankingPoints = 0, float drawRankingPoints = 0) : base(competitionName, clubs, prevRoundClubs, twoLeg, numberOfBaskets, participationRankingPoints, winRankingPoints, drawRankingPoints)
+    public CupKnockoutStage(string competitionName, List<Club> clubs, EuropaTournamentData tournamentData, List<Club> higherCupClubs = null, bool afterGroupStage = false): base(competitionName, clubs, tournamentData)
     {
         AfterGroupStage = afterGroupStage;
-        CreateMatches();
+        CreateMatches(higherCupClubs);
     }
-    void CreateMatches()
+    void CreateMatches(List<Club> higherCupClubs = null)
     {
-        
+        if(higherCupClubs == null)
+            higherCupClubs= new List<Club>();
+
         if(_numberOfBaskets < 2)
         {
+            _clubs.AddRange(higherCupClubs);
             int r;
             int clubsCount = _clubs.Count;
             for (int i = 0; i < clubsCount; i += 2)
             {
                 r = UnityEngine.Random.Range(0, clubsCount-i);
-                Match m = new Match("",DateTime.Now, 0, _clubs[r].Id, 0);
+                Match m = new Match(_competitionName, DateTime.Now, 0, _clubs[r].Id, 0);
                 // its just moving the r-th element to the end
                 _clubs.Add(_clubs[r]);
                 _clubs.RemoveAt(r);
@@ -37,28 +40,39 @@ public class CupKnockoutStage : CupRound
                 m.SecondTeamId = _clubs[r].Id;
                 _clubs.Add(_clubs[r]);
                 _clubs.RemoveAt(r);
-                m.CompetitionName = _competitionName;
                 _matches.Add(m);
             }
         }
         else
         {
-            if(AfterGroupStage == false)
-                _clubs = _clubs.ToArray().OrderByDescending(n => n.RankingPoints).ToList();
+            if (AfterGroupStage == false)
+            {
+                _clubs.AddRange(higherCupClubs);
+                _clubs = _clubs.OrderByDescending(n => n.RankingPoints).ToList();
+            }
             else
             {
-
-                List<Club> winners = new List<Club>();
-                List<Club> secondPlace = new List<Club>();
-                for (int i = 0; i < _clubs.Count; i++)
+                // playoffs after grup stage
+                if (higherCupClubs.Count > 0)
                 {
-                    if (i % 2 == 0) 
-                        winners.Add(_clubs[i]);
-                    else 
-                        secondPlace.Add(_clubs[i]);
+                    _clubs = _clubs.OrderByDescending(n => n.RankingPoints).ToList();
+                    higherCupClubs = higherCupClubs.OrderByDescending(n => n.RankingPoints).ToList();
+                    _clubs.AddRange(higherCupClubs);
                 }
-                _clubs = winners;
-                _clubs.AddRange(secondPlace);
+                else // normal after group knockout
+                {
+                    List<Club> winners = new List<Club>();
+                    List<Club> secondPlace = new List<Club>();
+                    for (int i = 0; i < _clubs.Count; i++)
+                    {
+                        if (i % 2 == 0)
+                            winners.Add(_clubs[i]);
+                        else
+                            secondPlace.Add(_clubs[i]);
+                    }
+                    _clubs = winners;
+                    _clubs.AddRange(secondPlace);
+                }
             }
             
             int r, half;

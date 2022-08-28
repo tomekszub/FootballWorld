@@ -4,6 +4,24 @@ using UnityEngine;
 
 public class CupRound
 {
+    public class EuropaTournamentData
+    {
+        public bool TwoLeg;
+        public int NumberOfBaskets;
+        public float ParticipationRankingPoints;
+        public float WinRankingPoints;
+        public float DrawRankingPoints;
+
+        public EuropaTournamentData(bool twoLeg = true, int numberOfBaskets = 1, float participationRankingPoints = 0, float winRankingPoints = 0, float drawRankingPoints = 0)
+        {
+            TwoLeg = twoLeg;
+            NumberOfBaskets = numberOfBaskets;
+            ParticipationRankingPoints = participationRankingPoints;
+            WinRankingPoints = winRankingPoints;
+            DrawRankingPoints = drawRankingPoints;
+        }
+    }
+
     protected bool _twoLeg;
     protected int _numberOfBaskets;
     protected List<Club> _clubs;
@@ -14,32 +32,27 @@ public class CupRound
     protected string _competitionName;
     protected float _winRankingPoints;
     protected float _drawRankingPoints;
-    public CupRound(string competitionName, List<Club> clubs, List<Club> prevRoundClubs, bool twoLeg, int numberOfBaskets, float participationRankingPoints = 0, float winRankingPoints = 0, float drawRankingPoints = 0)
+    public CupRound(string competitionName, List<Club> clubs, EuropaTournamentData tournamentData)
     {
-        _winRankingPoints = winRankingPoints;
-        _drawRankingPoints = drawRankingPoints;
+        _winRankingPoints = tournamentData.WinRankingPoints;
+        _drawRankingPoints = tournamentData.DrawRankingPoints;
         _competitionName = competitionName;
-        if (clubs == null && prevRoundClubs == null)
+        if (clubs == null)
         {
-            Debug.LogError("Clubs and previousRoundClubs are empty. No clubs to play.");
+            Debug.LogError("Clubs are empty. No clubs to play.");
             return;
         }
+        _clubs = clubs;
 
-        _clubs = clubs ?? new List<Club>();
-
-        // add every club from previous round to the clubs
-        if (prevRoundClubs != null)
-            _clubs.AddRange(prevRoundClubs);
-
-        _twoLeg = twoLeg;
-        _numberOfBaskets = numberOfBaskets;
+        _twoLeg = tournamentData.TwoLeg;
+        _numberOfBaskets = tournamentData.NumberOfBaskets;
         _winners = new List<Club>();
         _loosers = new List<Club>();
         _matches = new List<Match>();
 
         // points for participation
-        if(participationRankingPoints > 0)
-            _clubs.ForEach(club => club.AddRankingPoints(participationRankingPoints));
+        if(tournamentData.ParticipationRankingPoints > 0)
+            _clubs.ForEach(club => club.AddRankingPoints(tournamentData.ParticipationRankingPoints));
     }
     public Match[] GetMatches() => _matches.ToArray();
 

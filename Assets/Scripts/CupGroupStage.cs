@@ -20,7 +20,7 @@ public class CupGroupStage : CupRound
     List<Club[]> group;
     List<List<Team>> groupTable;
     
-    public CupGroupStage(string competitionName,int roundIndex, DateTime start,int breakBetweenRounds, List<Club> clubs, List<Club> prevRoundClubs = null, int clubsInGroup = 4, float participationRankingPoints = 0, float winRankingPoints = 0, float drawRankingPoints = 0) : base(competitionName, clubs, prevRoundClubs, true, 0, participationRankingPoints, winRankingPoints, drawRankingPoints)
+    public CupGroupStage(string competitionName,int roundIndex, DateTime start, int breakBetweenRounds, List<Club> clubs, EuropaTournamentData tournamentData, int clubsInGroup = 4) : base(competitionName, clubs, tournamentData)
     {
         ClubsInGroup = clubsInGroup;
         RoundIndex = roundIndex;
