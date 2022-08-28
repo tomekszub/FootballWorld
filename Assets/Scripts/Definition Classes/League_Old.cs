@@ -4,6 +4,13 @@ using System.Collections.Generic;
 
 public class League_Old 
 {
+    public enum EuropaTournamentType
+    {
+        ChampionsCup,
+        EuropaCup,
+        EuropaTrophy
+    }
+
 	public string Name, Country;
 	public List<Club> Teams = new List<Club>();
     public float RankingPoints;
@@ -20,82 +27,7 @@ public class League_Old
         else 
             CupWInnerID = cupWInnerID;
     }
-    public Club GetPreeliminary_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 53)
-            return Teams[0];
-        else 
-            return null;
-    }
-    public Club GetFirstQ_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 20 && rankingPos <= 52)
-            return Teams[0];
-        else 
-            return null;
-    }
-    public Club GetSecondChampionsPathQ_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 17 && rankingPos <= 19)
-            return Teams[0];
-        else 
-            return null;
-    }
-    public Club GetSecondLeaguePathQ_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 10 && rankingPos <= 15)
-            return Teams[1];
-        else 
-            return null;
-    }
-    public Club GetThirdChampionsPathQ_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 15 && rankingPos <= 16)
-            return Teams[0];
-        else 
-            return null;
-    }
-    public Club GetThirdLeaguePathQ_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 7 && rankingPos <= 9)
-            return Teams[1];
-        else if(rankingPos >= 5 && rankingPos <= 6)
-            return Teams[2];
-        else 
-            return null;
-    }
-    public Club GetPlayOffsChampionsPathQ_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 13 && rankingPos <= 14)
-            return Teams[0];
-        else 
-            return null;
-    }
-    public List<Club> GetGroupStage_CL_Clubs(int rankingPos)
-    {
-        rankingPos++;
-        if (rankingPos >= 7 && rankingPos <= 12)
-        {
-            return new List<Club>() { Teams[0] };
-        }
-        else if (rankingPos >= 5 && rankingPos <= 6)
-        {
-            return new List<Club>() { Teams[0], Teams[1] };
-        }
-        else if (rankingPos >= 1 && rankingPos <= 4)
-        {
-            return new List<Club>() { Teams[0], Teams[1], Teams[2], Teams[3] };
-        }
-        else 
-            return null;
-    }
+
     public Club GetCupWinnerIndex(int rankingPos)
     {
         if (rankingPos > 15)
@@ -144,6 +76,209 @@ public class League_Old
         }
     }
 
+    public List<Club> GetClubsForEuropaTournament(int rankingPosition, EuropaTournamentType tournamentType, int roundIndex)
+    {
+        rankingPosition++;
+        if(tournamentType == EuropaTournamentType.ChampionsCup)
+        {
+            switch (roundIndex)
+            { 
+                case 0:
+                    return null;
+                case 1:
+                    switch(rankingPosition)
+                    {
+                        case >= 35:
+                            return new List<Club>() { Teams[0] };
+                        default: 
+                            return null;
+                    }
+                case 2:
+                    switch (rankingPosition)
+                    {
+                        case >= 17 and <= 34:
+                            return new List<Club>() { Teams[0] };
+                        default:
+                            return null;
+                    }
+                case 3:
+                    switch (rankingPosition)
+                    {
+                        case >= 11 and <= 16:
+                            return new List<Club>() { Teams[0] };
+                        default:
+                            return null;
+                    }
+                case 4:
+                    switch (rankingPosition)
+                    {
+                        case >= 5 and <= 6:
+                            return new List<Club>() { Teams[2] };
+                        case >= 7 and <= 10:
+                            return new List<Club>() { Teams[1] };
+                        default:
+                            return null;
+                    }
+                case 5:  // group phase
+                    switch (rankingPosition)
+                    {
+                        case >= 1 and <= 4:
+                            return new List<Club>() { Teams[0], Teams[1], Teams[2], Teams[3] };
+                        case >= 5 and <= 6:
+                            return new List<Club>() { Teams[0], Teams[1] };
+                        case >= 7 and <= 10:
+                            return new List<Club>() { Teams[0] };
+                        default:
+                            return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+        else if (tournamentType == EuropaTournamentType.EuropaCup)
+        {
+            switch (roundIndex)
+            {
+                case 0:
+                    switch (rankingPosition)
+                    {
+                        case >= 53:
+                            return new List<Club>() { Teams[1] };
+                        default:
+                            return null;
+                    }
+                case 1:
+                    switch (rankingPosition)
+                    {
+                        case >= 24 and <= 52:
+                            return new List<Club>() { Teams[1] };
+                        default:
+                            return null;
+                    }
+                case 2:
+                    switch (rankingPosition)
+                    {
+                        case >= 17 and <= 23:
+                            return new List<Club>() { Teams[1] };
+                        case 16:
+                            return new List<Club>() { Teams[1], Teams[2] };
+                        case >= 11 and <= 15:
+                            return new List<Club>() { Teams[2] };
+                        case >= 8 and <= 10:
+                            return new List<Club>() { Teams[3] };
+                        default:
+                            return null;
+                    }
+                case 3:
+                    switch (rankingPosition)
+                    {
+                        case >= 11 and <= 15:
+                            return new List<Club>() { Teams[1] };
+                        case >= 8 and <= 10:
+                            return new List<Club>() { Teams[2] };
+                        case 7:
+                            return new List<Club>() { Teams[3] };
+                        case >= 5 and <= 6:
+                            return new List<Club>() { Teams[4] };
+                        default:
+                            return null;
+                    }
+                case 4:
+                    switch (rankingPosition)
+                    {
+                        case 7:
+                            return new List<Club>() { Teams[2] };
+                        case >= 5 and <= 6:
+                            return new List<Club>() { Teams[3] };
+                        case >= 1 and <= 4:
+                            return new List<Club>() { Teams[5] };
+                        default:
+                            return null;
+                    }
+                case 5:  // group phase
+                    switch (rankingPosition)
+                    {
+                        case >= 1 and <= 4:
+                            return new List<Club>() { Teams[4] };
+                        default:
+                            return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+        else
+        {
+            switch (roundIndex)
+            {
+                case 0:
+                    switch (rankingPosition)
+                    {
+                        case >= 37:
+                            return new List<Club>() { Teams[3] };
+                        default:
+                            return null;
+                    }
+                case 1:
+                    switch (rankingPosition)
+                    {
+                        case >= 37:
+                            return new List<Club>() { Teams[2] };
+                        case >= 26 and <= 36:
+                            return new List<Club>() { Teams[2], Teams[3] };
+                        case >= 17 and <= 25:
+                            return new List<Club>() { Teams[3]};
+                        case 16:
+                            return new List<Club>() { Teams[4]};
+                        default:
+                            return null;
+                    }
+                case 2:
+                    switch (rankingPosition)
+                    {
+                        case >= 17 and <= 25:
+                            return new List<Club>() { Teams[2] };
+                        case 16:
+                            return new List<Club>() { Teams[3] };
+                        case >= 11 and <= 15:
+                            return new List<Club>() { Teams[4] };
+                        default:
+                            return null;
+                    }
+                case 3:
+                    switch (rankingPosition)
+                    {
+                        case >= 11 and <= 15:
+                            return new List<Club>() { Teams[3] };
+                        case >= 9 and <= 10:
+                            return new List<Club>() { Teams[4] };
+                        default:
+                            return null;
+                    }
+                case 4:
+                    switch (rankingPosition)
+                    {
+                        case >= 7 and <= 8:
+                            return new List<Club>() { Teams[4] };
+                        default:
+                            return null;
+                    }
+                case 5:  // group phase
+                    switch (rankingPosition)
+                    {
+                        case >= 5 and <= 6:
+                            return new List<Club>() { Teams[5] };
+                        case >= 1 and <= 4:
+                            return new List<Club>() { Teams[6] };
+                        default:
+                            return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+    }
+
     public static int[] GetPositionRanges(int rankingPos)
     {
         rankingPos++;
@@ -158,29 +293,24 @@ public class League_Old
                 ranges[1] = 2;
                 ranges[2] = 1;
                 break;
-            case 5:
+            case >= 5 and <= 6:
                 ranges[0] = 3;
                 ranges[1] = 2;
                 ranges[2] = 1;
                 break;
-            case 6:
-                ranges[0] = 3;
-                ranges[1] = 1;
-                ranges[2] = 2;
-                break;
-            case >= 7 and <= 15:
+            case >= 7 and <= 10:
                 ranges[0] = 2;
-                ranges[1] = 1;
-                ranges[2] = 2;
+                ranges[1] = 2;
+                ranges[2] = 1;
                 break;
-            case >= 16 and <= 49:
+            case >= 11 and <= 16:
                 ranges[0] = 1;
-                ranges[1] = 0;
-                ranges[2] = 3;
+                ranges[1] = 2;
+                ranges[2] = 2;
                 break;
             default:
                 ranges[0] = 1;
-                ranges[1] = 0;
+                ranges[1] = 1;
                 ranges[2] = 2;
                 break;
         }
