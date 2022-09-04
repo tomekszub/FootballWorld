@@ -244,16 +244,20 @@ public class CupGroupStage : CupRound
         if (_finishedMatches != _matches.Count) 
             return false;
         _winners.Clear();
+        _loosers.Clear();
         for (int i = 0; i < groupTable.Count; i++)
         {
             for (int c = 0; c < group[i].Length; c++)
             {
-                if (group[i][c].Id == groupTable[i][0].Id || group[i][c].Id == groupTable[i][1].Id) 
+                if (group[i][c].Id == groupTable[i][0].Id) 
+                    _winners.Insert(0, group[i][c]);
+                else if(group[i][c].Id == groupTable[i][1].Id)
                     _winners.Add(group[i][c]);
                 else if (group[i][c].Id == groupTable[i][2].Id) 
                     _loosers.Add(group[i][c]);
             }
         }
+        DebugGroups();
         return true;
     }
     public override List<Club> GetWinners()
