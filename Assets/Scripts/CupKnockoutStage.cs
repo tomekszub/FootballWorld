@@ -59,20 +59,6 @@ public class CupKnockoutStage : CupRound
                     higherCupClubs = higherCupClubs.OrderByDescending(n => n.RankingPoints).ToList();
                     _clubs.AddRange(higherCupClubs);
                 }
-                else // normal after group knockout
-                {
-                    List<Club> winners = new List<Club>();
-                    List<Club> secondPlace = new List<Club>();
-                    for (int i = 0; i < _clubs.Count; i++)
-                    {
-                        if (i % 2 == 0)
-                            winners.Add(_clubs[i]);
-                        else
-                            secondPlace.Add(_clubs[i]);
-                    }
-                    _clubs = winners;
-                    _clubs.AddRange(secondPlace);
-                }
             }
             
             int r, half;
@@ -98,9 +84,6 @@ public class CupKnockoutStage : CupRound
         if(_twoLeg)
         {
             int matchesCount = _matches.Count;
-            // jesli final to nie bedize rewanzu
-            if (matchesCount == 1) 
-                return;
             for (int i = 0; i < matchesCount; i++)
             {
                 _matches.Add(_matches[i].InvertTeams());
