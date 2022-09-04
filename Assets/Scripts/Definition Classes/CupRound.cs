@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CupRound
@@ -85,5 +84,6 @@ public class CupRound
         }
     }
     public virtual List<Club> GetWinners() { return _winners; }
+    public virtual List<Club> GetLoosers() { return _loosers; }
     
 }
