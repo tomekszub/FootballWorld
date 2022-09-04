@@ -12,8 +12,8 @@ Braila
 Arad
 Piteşti
 Sibiu
-Bacău
-Târgu-Mureş
+Bacau
+Targu-Mureş
 Baia Mare
 Buzau
 Botoşani

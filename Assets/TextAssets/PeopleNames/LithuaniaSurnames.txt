@@ -17,8 +17,7 @@ Petraitis
 Mikalauskas
 Baranauskas
 Kairys
-Ivanova
-žemaitis
+Žemaitis
 Bagdonas
 Ivanauskas
 Mockus
@@ -49,7 +48,7 @@ Rakauskas
 Banys
 Barkauskas
 Bartkus
-šidlauskas
+Šidlauskas
 Martinkus
 Ivanov
 Balsys
@@ -71,16 +70,11 @@ Buivydas
 Valaitis
 Grigaitis
 Brazauskas
-Vasiljeva
 Remeika
-Sokolova
 Karalius
 Ramonas
 Laurinaitis
-Popova
 Milašius
-Novikova
-Kuznecova
 Petrulis
 Moroz
 Katinas
@@ -88,9 +82,7 @@ Janulis
 Burba
 Grigonis
 Molis
-Lebedeva
 Jasaitis
-Smirnova
 Tamulis
 Sutkus
 Rudys
