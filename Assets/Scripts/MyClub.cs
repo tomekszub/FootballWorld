@@ -31,14 +31,15 @@ public class MyClub : MonoBehaviour
     int _myLeagueRankingPos;
     DateTime _startOfTheSeason = new DateTime(2018, 8, 17);
     DateTime _currDate = new DateTime(2018, 6, 24);
-    readonly DateTime[] _cupDates = { new DateTime(2018, 9, 4), new DateTime(2018, 11, 24), new DateTime(2019, 1, 8), new DateTime(2019, 1, 22), new DateTime(2019, 3, 6), new DateTime(2019, 4, 24), new DateTime(2019, 5, 18)};
+    readonly DateTime[] _cupDates = { new DateTime(2018, 9, 4), new DateTime(2018, 11, 4), new DateTime(2019, 1, 1), new DateTime(2019, 3, 19), new DateTime(2019, 5, 15)};
     int _currentMatch = 0, _firstMatchOfTheWeek = 0;
     List<CupKnockoutStage> _nationalCup = new List<CupKnockoutStage>();
     List<CupRound> _championsCupRounds = new List<CupRound>();
     List<CupRound> _europaCupRounds = new List<CupRound>();
+    List<CupRound> _europaTrophyRounds = new List<CupRound>();
     List<Team> _leagueTeams = new List<Team>();
     List<Club> _clubs;
-    int _currCupRound = 0, _currChampionsCupRound = 0, _currEuropaCupRound = 0;
+    int _currCupRound = 0, _currChampionsCupRound = 0, _currEuropaCupRound = 0, _currEuropaTrophyRound = 0;
 	int _teamsNumber;
     MatchStats _leagueScorers = new MatchStats(new List<Scorer>());
     bool _restAvailable = true;
@@ -74,7 +75,7 @@ public class MyClub : MonoBehaviour
 			    (new EuropaTournamentData( true, 1, 3, 2, 1f), new DateTime(2019, 2, 20), new DateTime(2019, 3, 13)),	// 1/8
 			    (new EuropaTournamentData( true, 1, 1, 2, 1f), new DateTime(2019, 4, 10), new DateTime(2019, 4, 17)),
                 (new EuropaTournamentData( true, 1, 1, 2, 1f), new DateTime(2019, 5, 1), new DateTime(2019, 5, 8)),
-                (new EuropaTournamentData( false, 1, 1, 2, 1f), new DateTime(2019, 5, 21), new DateTime())
+                (new EuropaTournamentData( false, 1, 1, 2, 1f), new DateTime(2019, 5, 22), new DateTime())
             }
         },
         {
@@ -91,7 +92,7 @@ public class MyClub : MonoBehaviour
 			    (new EuropaTournamentData( true, 1, 1.5f, 2, 1f), new DateTime(2019, 2, 21), new DateTime(2019, 3, 14)),	// 1/8
 			    (new EuropaTournamentData( true, 1, 0, 2, 1f), new DateTime(2019, 4, 11), new DateTime(2019, 4, 18)),
                 (new EuropaTournamentData( true, 1, 1, 2, 1f), new DateTime(2019, 5, 2), new DateTime(2019, 5, 9)),
-                (new EuropaTournamentData( false, 1, 1, 2, 1f), new DateTime(2019, 5, 22), new DateTime())
+                (new EuropaTournamentData( false, 1, 1, 2, 1f), new DateTime(2019, 5, 23), new DateTime())
             }
         }
     };
@@ -150,6 +151,7 @@ public class MyClub : MonoBehaviour
         CreateEuropaTournamentsCalendar();
         MyTournaments.Add("Champions Cup");
         MyTournaments.Add("Europa Cup");
+        MyTournaments.Add("Europa Trophy");
 
         UpdateCalendar();
         UpdateCurrentDateUI();
@@ -341,7 +343,7 @@ public class MyClub : MonoBehaviour
                 {
                     _nationalCup.Add(new CupKnockoutStage("National Cup", winners, new EuropaTournamentData(twoLeg: winners.Count != 2)));
                     _currCupRound++;
-                    AddCupMatchesToCalendar(_nationalCup[_currCupRound].GetMatches(), _currCupRound, _cupDates[_currCupRound], _cupDates[_currCupRound].AddDays(7), winners.Count != 2);
+                    AddCupMatchesToCalendar(_nationalCup[_currCupRound].GetMatches(), _currCupRound, _cupDates[_currCupRound], _cupDates[_currCupRound].AddDays(14), winners.Count != 2);
                 }
             }
         }
@@ -470,6 +472,68 @@ public class MyClub : MonoBehaviour
                 }
             }
         }
+        else if (competitionName == "Europa Trophy")
+        {
+            _europaTrophyRounds[Matches[_currentMatch].RoundIndex].SendMatchResult(Matches[_currentMatch]);
+            var winners = _europaTrophyRounds[_currEuropaTrophyRound].GetWinners();
+            if (winners != null)
+            {
+                if (_currEuropaTrophyRound < 5)  // qual and group stage
+                {
+                    _currEuropaTrophyRound++;
+                    List<Club> cs = new List<Club>();
+                    for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
+                    {
+                        List<Club> c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetClubsForEuropaTournament(i, EuropaTournamentType.EuropaTrophy, _currEuropaTrophyRound);
+                        if (c != null)
+                            cs.AddRange(c);
+                    }
+                    cs.AddRange(winners);
+                    if (_currEuropaTrophyRound != 5)
+                    {
+                        _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", cs,
+                            _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data,
+                            _currEuropaTrophyRound >= 1 ? _europaCupRounds[_currEuropaTrophyRound - 1].GetLoosers() : null));
+                        Match[] ms = _europaTrophyRounds[_currEuropaTrophyRound].GetMatches();
+                        AddCupMatchesToCalendar(
+                                ms,
+                                _currEuropaTrophyRound,
+                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
+                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg
+                            );
+                    }
+                    else
+                    {
+                        cs.AddRange(_europaCupRounds[4].GetLoosers());
+                        _europaTrophyRounds.Add(new CupGroupStage("Europa Trophy", 5, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg, 14, cs, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data));
+                    }
+
+                }
+                else  // knockout stage
+                {
+
+                    if (winners.Count == 1)
+                    {
+                        Debug.LogError("Europa Trophy champion has been found, it is !" + winners[0].Name + " from " + winners[0].CountryName);
+                    }
+                    else
+                    {
+                        _currEuropaTrophyRound++;
+                        List<Club> clubsInCurrentRound = winners;
+                        List<Club> clubsFromHigherCup = _currEuropaTrophyRound == 6 ? _europaCupRounds[5].GetLoosers() : null;
+                        _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", clubsInCurrentRound, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data, clubsFromHigherCup, _currEuropaTrophyRound == 6));
+                        Match[] ms = _europaTrophyRounds[_currEuropaTrophyRound].GetMatches();
+                        AddCupMatchesToCalendar(
+                                ms,
+                                _currEuropaTrophyRound,
+                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
+                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg,
+                                clubsInCurrentRound.Count != 2
+                            );
+                    }
+                }
+            }
+        }
         _currentMatch++;
         UpdateCalendar();
     }
@@ -511,6 +575,23 @@ public class MyClub : MonoBehaviour
                             0,
                             _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg,
                             _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].secondLeg
+                        );
+        // EUROP TROPHY
+        _currEuropaTrophyRound = 0;
+        cs = new List<Club>();
+        for (int i = 0; i < CurrFederationRankingLeagueIndex.Length; i++)
+        {
+            List<Club> c = Database.leagueDB[CurrFederationRankingLeagueIndex[i]].GetClubsForEuropaTournament(i, EuropaTournamentType.EuropaTrophy, _currEuropaTrophyRound);
+            if (c != null)
+                cs.AddRange(c);
+        }
+        _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", cs, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data));
+        ms = _europaTrophyRounds[_currEuropaTrophyRound].GetMatches();
+        AddCupMatchesToCalendar(
+                            ms,
+                            0,
+                            _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
+                            _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg
                         );
     }
 

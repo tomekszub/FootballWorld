@@ -214,7 +214,9 @@ public class League_Old
                 case 0:
                     switch (rankingPosition)
                     {
-                        case >= 37:
+                        case >= 34:
+                            return new List<Club>() { Teams[2], Teams[3] };
+                        case >= 30 and <= 33:
                             return new List<Club>() { Teams[3] };
                         default:
                             return null;
@@ -222,25 +224,21 @@ public class League_Old
                 case 1:
                     switch (rankingPosition)
                     {
-                        case >= 37:
+                        case >= 30 and <= 33:
                             return new List<Club>() { Teams[2] };
-                        case >= 26 and <= 36:
+                        case >= 18 and <= 29:
                             return new List<Club>() { Teams[2], Teams[3] };
-                        case >= 17 and <= 25:
-                            return new List<Club>() { Teams[3]};
-                        case 16:
-                            return new List<Club>() { Teams[4]};
                         default:
                             return null;
                     }
                 case 2:
                     switch (rankingPosition)
                     {
-                        case >= 17 and <= 25:
-                            return new List<Club>() { Teams[2] };
-                        case 16:
-                            return new List<Club>() { Teams[3] };
-                        case >= 11 and <= 15:
+                        case 17:
+                            return new List<Club>() { Teams[2], Teams[3] };
+                        case >= 11 and <= 16:
+                            return new List<Club>() { Teams[3], Teams[4] };
+                        case 10:
                             return new List<Club>() { Teams[4] };
                         default:
                             return null;
@@ -248,27 +246,25 @@ public class League_Old
                 case 3:
                     switch (rankingPosition)
                     {
-                        case >= 11 and <= 15:
-                            return new List<Club>() { Teams[3] };
-                        case >= 9 and <= 10:
+                        case >= 7 and <= 9:
                             return new List<Club>() { Teams[4] };
+                        case >= 5 and <= 6:
+                            return new List<Club>() { Teams[5] };
                         default:
                             return null;
                     }
                 case 4:
                     switch (rankingPosition)
                     {
-                        case >= 7 and <= 8:
-                            return new List<Club>() { Teams[4] };
+                        case >= 3 and <= 4:
+                            return new List<Club>() { Teams[6] };
                         default:
                             return null;
                     }
                 case 5:  // group phase
                     switch (rankingPosition)
                     {
-                        case >= 5 and <= 6:
-                            return new List<Club>() { Teams[5] };
-                        case >= 1 and <= 4:
+                        case >= 1 and <= 2:
                             return new List<Club>() { Teams[6] };
                         default:
                             return null;
