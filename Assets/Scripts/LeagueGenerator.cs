@@ -5,12 +5,13 @@ using static Footballer;
 
 public class LeagueGenerator : MonoBehaviour
 {
-    [SerializeField] bool _TeducedTeamAmount_TEST = false;
+    const int FOOTBALLERS_PER_TEAM = 25;
+
+    [SerializeField] bool _ReducedTeamAmount_TEST = false;
 
     [SerializeField] CountryMaster _CountryMaster;
     [SerializeField] LeagueMaster _LeagueMaster;
 
-    const int FOOTBALLERS_PER_TEAM = 25;
 
     LeagueDef _leagueDef;
     string _country;
@@ -18,7 +19,7 @@ public class LeagueGenerator : MonoBehaviour
     List<Credentials> _people = new List<Credentials>();
     public void Generate(string country, int clubAmount)
     {
-        if (_TeducedTeamAmount_TEST)
+        if (_ReducedTeamAmount_TEST)
             clubAmount = 2;
         // TODO: cash every name data in a dictionary for the time of creating db
 
@@ -156,7 +157,6 @@ public class LeagueGenerator : MonoBehaviour
         for (int i = 0; i < FOOTBALLERS_PER_TEAM; i++)
         {
             randomPersonIndex = Random.Range(0, _people.Count);
-            Debug.LogWarning($"{i} {randomPersonIndex} of {_people.Count}");
             person = _people[randomPersonIndex];
             _people.RemoveAt(randomPersonIndex);
             minSkill = Random.Range(0, 5) * 20;
