@@ -32,7 +32,7 @@ public class TableRow : MonoBehaviour
         if (showFlag)
         {
             _Flag.gameObject.SetActive(true);
-            _Flag.sprite = Database.Instance.GetCountryMaster().GetFlagByName(_team.Name);
+            _Flag.sprite = Database.Instance.CountryMaster.GetFlagByName(_team.Name);
         }
         else
             _Flag.gameObject.SetActive(false);

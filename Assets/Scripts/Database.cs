@@ -12,7 +12,6 @@ public class Database : MonoBehaviour
 	public static List<Footballer> footballersDB = new List<Footballer>();
 	public static List<Club> clubDB = new List<Club>();
 	public static List<League_Old> leagueDB = new List<League_Old>();
-	public static List<Club> tempLeague = new List<Club>();
 	public static string[,] arbiterDB = new string[2,5];
 	public GameObject nameInput, surnameInput, countryInput;
 	public GameObject playerPanelPrefab;
@@ -42,6 +41,12 @@ public class Database : MonoBehaviour
 		arbiterDB [1, 3] = "Victor Kassai";
 		arbiterDB [0, 4] = "44";
 		arbiterDB [1, 4] = "Nicola Rizzoli";
+
+        if(_LeagueGenerator == null)
+        {
+            Debug.LogError("League generator is null, so no leagues will be generated.");
+            return;
+        }
 
         _LeagueGenerator.Generate("Spain", 16);
         _LeagueGenerator.Generate("England", 16);
@@ -99,7 +104,7 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("San Marino", 8);
     }
 
-    public CountryMaster GetCountryMaster() => _CountryMaster;
+    public CountryMaster CountryMaster => _CountryMaster;
 
 	public void Search()
 	{
@@ -129,15 +134,28 @@ public class Database : MonoBehaviour
 			}
 		}
 	}
-    public static Club GetClubByID(int id)
+
+    Club GetClubByID(int id)
     {
         for (int i = 0; i < clubDB.Count; i++)
         {
-            if (clubDB[i].Id == id) return clubDB[i];
+            if (clubDB[i].Id == id) 
+                return clubDB[i];
         }
         return null;
     }
-	void ClearPanels()
+
+    public List<Footballer> GetFootballersFromClub(int id)
+    {
+        List<Footballer> footballers = new();
+        clubDB[id].FootballersIDs.ForEach(fID => footballers.Add(footballersDB[fID]));
+
+        return footballers;
+    }
+
+    public List<Footballer> GetFootballersFromCountry(string country) => footballersDB.Where((x) => x.Country == country).ToList();
+
+    void ClearPanels()
 	{
         for(int i = searchResultContent.transform.childCount - 1; i >= 0; i--)
         {

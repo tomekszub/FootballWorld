@@ -9,8 +9,8 @@ public class CalendarEntry : MonoBehaviour
 
     public void SetData(int hostID, int guestID, string resultString)
     {
-        _HostFlag.sprite = Database.Instance.GetCountryMaster().GetFlagByName(Database.clubDB[hostID].CountryName);
-        _GuestFlag.sprite = Database.Instance.GetCountryMaster().GetFlagByName(Database.clubDB[guestID].CountryName);
+        _HostFlag.sprite = Database.Instance.CountryMaster.GetFlagByName(Database.clubDB[hostID].CountryName);
+        _GuestFlag.sprite = Database.Instance.CountryMaster.GetFlagByName(Database.clubDB[guestID].CountryName);
         _ResultText.text = $"{Database.clubDB[hostID].Name} {resultString} {Database.clubDB[guestID].Name}";
     }
 }

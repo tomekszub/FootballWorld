@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 public class SquadListPanel : MonoBehaviour
 {
+    [SerializeField] FootballerTableData _FootballersTableData;
     [SerializeField] TMPro.TextMeshProUGUI _CoachText;
-    [SerializeField, FormerlySerializedAs("squadListElements")] List<SquadListElement> _SquadListElements;
     [SerializeField] TMPro.TMP_Dropdown _TournamentSelectionDropdown;
 
     int _currLeagueTeamIndex;
-    int _currTeamPlayersCount;
 
     private void Awake()
     {
@@ -23,10 +20,10 @@ public class SquadListPanel : MonoBehaviour
         var tournaments = new List<string>(MyClub.Instance.MyTournaments);
         tournaments.Insert(0, "");
         _TournamentSelectionDropdown.AddOptions(tournaments);
-        SetupSquad();
+        SetupSquad(fieldsChanged: true);
     }
 
-    public void SetupSquad(int id = -1)
+    public void SetupSquad(int id = -1, bool fieldsChanged = false)
     {
         if (id == -1)
             id = MyClub.Instance.MyClubID;
@@ -41,19 +38,7 @@ public class SquadListPanel : MonoBehaviour
 
         _CoachText.text = Database.clubDB[id].Name;
 
-        _currTeamPlayersCount = Database.clubDB[id].FootballersIDs.Count;
-
-        for (int i = 0; i < _SquadListElements.Count; i++)
-        {
-            if (i < _currTeamPlayersCount)
-            {
-                _SquadListElements[i].gameObject.SetActive(true);
-                _SquadListElements[i].SetData(Database.footballersDB[Database.clubDB[id].FootballersIDs[i]], "");
-            }
-            else
-                _SquadListElements[i].gameObject.SetActive(false);
-        }
-
+        _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(id), fieldsChanged);
     }
 
     public void ShowNextClub()
@@ -75,9 +60,6 @@ public class SquadListPanel : MonoBehaviour
     public void OnTournamentChanged(int option)
     {
         string tournament = option == 0 ? "" : _TournamentSelectionDropdown.options[option].text;
-        for (int i = 0; i < _currTeamPlayersCount; i++)
-        {
-            _SquadListElements[i].UpdateStatistics(tournament);
-        }
+        _FootballersTableData.UpdateStats(tournament);
     }
 }

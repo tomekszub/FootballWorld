@@ -1,12 +1,15 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class NationalTeamsPanel : MonoBehaviour
 {
-    [SerializeField] TMPro.TextMeshProUGUI _NameText;
-    [SerializeField] List<NationalTeamsElement> _NationalTeamsElements;
-    [SerializeField] TMPro.TMP_Dropdown _ContinentDropdown;
+    [SerializeField] TextMeshProUGUI _NameText;
+    [SerializeField] Image _CountryImage;
+    [SerializeField] TMP_Dropdown _ContinentDropdown;
+    [SerializeField] FootballerTableData _FootballerTableData;
 
     int _currCountryIndex = 0;
     List<string> _countries;
@@ -21,38 +24,23 @@ public class NationalTeamsPanel : MonoBehaviour
 
     void UpdateCountries(string continent)
     {
-        var countries = Database.Instance.GetCountryMaster().GetCountryListFromContinent(continent);
+        var countries = Database.Instance.CountryMaster.GetCountryListFromContinent(continent);
         _countries = countries.ToList();
         _countries.Sort();
         _currCountryIndex = 0;
-        SetupSquad();
+        SetupSquad(true);
     }
 
-    public void SetupSquad()
+    public void SetupSquad(bool fieldsChanged = false)
     {
         var country = _countries[_currCountryIndex];
         _NameText.text = country;
-        List<Footballer> footballers = new List<Footballer>();
-        for (int i = 0; i < Database.footballersDB.Count; i++)
-        {
-            if(Database.footballersDB[i].Country == country)
-                footballers.Add(Database.footballersDB[i]);
-        }
+        _CountryImage.sprite = Database.Instance.CountryMaster.GetFlagByName(country);
+        List<Footballer> footballers = Database.Instance.GetFootballersFromCountry(country);
 
         footballers.Sort();
-        int maxPlayers = Mathf.Min(33, footballers.Count);
 
-        for (int i = 0; i < _NationalTeamsElements.Count; i++)
-        {
-            if (i < maxPlayers)
-            {
-                _NationalTeamsElements[i].gameObject.SetActive(true);
-                _NationalTeamsElements[i].SetData(footballers.ElementAt(i));
-            }
-            else
-                _NationalTeamsElements[i].gameObject.SetActive(false);
-        }
-
+        _FootballerTableData.ShowData(footballers.Take(30).ToList(), fieldsChanged);
     }
 
     public void ShowNextClub()

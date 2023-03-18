@@ -109,9 +109,6 @@ public class Footballer : IComparable<Footballer>
 	{
 		if(tournament == "")
         {
-			if (_statistics.Count == 0)
-				return null;
-
 			PlayerStatistics playerStatistics = new PlayerStatistics();
 
 			foreach (var item  in _statistics.Values)
@@ -121,8 +118,8 @@ public class Footballer : IComparable<Footballer>
 
 			return playerStatistics;
         }
-		else
-			return _statistics.ContainsKey(tournament) ? _statistics[tournament] : null;
+
+		return _statistics.ContainsKey(tournament) ? _statistics[tournament] : new PlayerStatistics();
 	}
 
 	public List<string> GetPlayedTournaments()
@@ -213,9 +210,6 @@ public class Footballer : IComparable<Footballer>
 	int GetTotalMatchesPlayed()
     {
 		var stats = GetPlayerStatistics("");
-		if(stats == null)
-			return 0;
-		
 		return stats.MatchesPlayed;
     }
 }

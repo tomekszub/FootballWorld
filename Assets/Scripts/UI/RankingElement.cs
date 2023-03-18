@@ -16,7 +16,7 @@ public class RankingElement : MonoBehaviour
     public void SetData(string country, float totalPoints, float season1Points, float season2Points, float season3Points, float season4Points, float season5Points)
     {
         _Name.text = country;
-        _Flag.sprite = Database.Instance.GetCountryMaster().GetFlagByName(country);
+        _Flag.sprite = Database.Instance.CountryMaster.GetFlagByName(country);
         _TotalPoints.text = totalPoints.ToString("F3");
         _Season1Points.text = season1Points.ToString("F3");
         _Season2Points.text = season2Points.ToString("F3");
