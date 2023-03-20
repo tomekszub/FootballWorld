@@ -47,7 +47,7 @@ public class Footballer : IComparable<Footballer>
 
 	public string GetFullName() => Name != "" ? $"{Name} {Surname}" : Surname;
 
-	public Footballer(int id, string name, string surname, string alteredSurname, string country, float rating, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear, int ednurance, int clubID = -1)
+	public Footballer(int id, string name, string surname, string alteredSurname, string country, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear, int endurance, int clubID = -1)
 	{
 		Id = id;
 		Name = name;
@@ -89,13 +89,15 @@ public class Footballer : IComparable<Footballer>
 		Shoot = shoot;
 		Speed = speed;
 		Pass = pass;
+        // TODO: calculating corner skill is a nonsense right now
+        // + when executing corner only pass and free kicks count so Corner is only for selecting players wtf
 		Corner = freeKicks - heading + pass;
-		Penalty = freeKicks + shoot;
+		Penalty = (freeKicks + shoot) / 2;
         BirthYear = birthYear;
 		_statistics = new Dictionary<string, PlayerStatistics> ();
 		ClubID = clubID;
 		Condition = 100;
-		Endurance = ednurance;
+		Endurance = endurance;
     }
     public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
 	{
@@ -151,10 +153,7 @@ public class Footballer : IComparable<Footballer>
         }
     }
 
-    public int CompareTo(Footballer f)
-    {
-        return f.Rating.CompareTo(Rating);
-    }
+    public int CompareTo(Footballer f) => f.Rating.CompareTo(Rating);
 
     public class PlayerStatistics
     {

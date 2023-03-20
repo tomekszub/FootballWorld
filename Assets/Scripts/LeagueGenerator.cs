@@ -16,17 +16,14 @@ public class LeagueGenerator : MonoBehaviour
     LeagueDef _leagueDef;
     string _country;
     int _clubsAmount;
-    List<Credentials> _people = new List<Credentials>();
+    List<Credentials> _people = new();
     public void Generate(string country, int clubAmount)
     {
         if (_ReducedTeamAmount_TEST)
             clubAmount = 2;
-        // TODO: cash every name data in a dictionary for the time of creating db
+        // TODO: cache every name data in a dictionary for the time of creating db
 
         _leagueDef = _LeagueMaster.GetLeagueDefinition(country);
-
-        if (_leagueDef == null)
-            return;
 
         _clubsAmount = clubAmount;
         _country = country;
@@ -169,15 +166,14 @@ public class LeagueGenerator : MonoBehaviour
                 person.Surname, 
                 person.Surname, 
                 person.Country,
-                0, // for now rating is left in the constructor for backward compatibility, but is evaluated in the constructor from other stats
                 freeKickSkill,
                 pos[i % pos.Count], 
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10) / 10, 1, 100), 
+                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
+                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
+                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
+                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
+                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
+                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100), 
                 1996,
                 Mathf.Clamp(Random.Range(enduranceMin, enduranceMin + 40), 1, 100),
                 clubID));

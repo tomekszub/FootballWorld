@@ -19,7 +19,7 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
         _Fields[FootballerFieldType.NameAndSurname].SetTextData(footballer.GetFullName());
         _Fields[FootballerFieldType.Rating].SetTextData(footballer.Rating.ToString());
         _Fields[FootballerFieldType.RatingStars].SetTextData(footballer.Rating.ToString());
-        _Fields[FootballerFieldType.RatingStars].SetImageData(Resources.Load<Sprite>($"Stars/{(int)footballer.Rating}"));
+        _Fields[FootballerFieldType.RatingStars].SetImageData(Resources.Load<Sprite>($"Stars/{Mathf.RoundToInt(footballer .Rating/10)}"));
         if (footballer.ClubID != -1)
         {
             _Fields[FootballerFieldType.Club].SetImageData(Database.Instance.CountryMaster.GetFlagByName(Database.clubDB[footballer.ClubID].CountryName));

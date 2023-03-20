@@ -55,6 +55,7 @@ public class Comment : MonoBehaviour
     public int GetPlayerWithBall() => _playerWithBall;
     public int SetPlayerWithBall(int val) => _playerWithBall = val;
     #endregion
+
     void Awake()
     {
         if (Instance == null)
@@ -62,6 +63,7 @@ public class Comment : MonoBehaviour
         else
             Destroy(this);
     }
+
     // Use this for initialization, 
     public void Init(int hostID, int guestID, string compName)
     {
@@ -71,10 +73,8 @@ public class Comment : MonoBehaviour
         _time = 0.1f;
         PrepareNextMatch();
     }
-    public void OnSimSpeedChanged(float val)
-    {
-        _time = val;
-    }
+
+    public void OnSimSpeedChanged(float val) => _time = val;
 
     public void SimulateMatch()
     {
@@ -109,38 +109,43 @@ public class Comment : MonoBehaviour
         Clear();
         RecognizeFormation(Database.clubDB[_hostId].Formation, true);
         RecognizeFormation(Database.clubDB[_guestId].Formation, false);
-        CalculateWeakness();
+        CalculateWeaknessOfTheDay();
         _isPlaying = false;
         CommentLine.Instance.StartingSettings();
         _StartStopButton.text = "Rozpocznij mecz";
     }
+
     public void StartStopButtonClick()
     {
         if (_end)
         {
             MyClub.Instance.ProcesssMatchStats(_matchStats, _competitionName);
             WindowsManager.Instance.ShowWindow("Club");
+            return;
         }
+
         if (_isPlaying == false)
-        {
             StartCoroutine(CommentStart());
-        }
     }
-    // główna pętla
+
     IEnumerator CommentStart()
     {
         UpdateChances();
         CommentLine.Instance.UpdateResult(_matchStats);
         if (_minute >= 90)
         {
-            if(_time > 0) yield return new WaitForSeconds(_time);
+            if(_time > 0)
+                yield return new WaitForSeconds(_time);
+
             CommentLine.Instance.EndOfTheMatch();
             _end = true;
             _StartStopButton.text = "Zakończ mecz";
-            Debug.Log("KONIEC MECZU!!!---Wynik: " + _matchStats[0].GetGoals() + "-" + _matchStats[1].GetGoals() + " " + Time.time);
+            Debug.Log("KONIEC MECZU!!!---Wynik: " + _matchStats[0].GetGoals() + " - " + _matchStats[1].GetGoals());
             StopAllCoroutines();
         }
+
         _isPlaying = true;
+
         if (_minute == 0)
         {
             CommentLine.Instance.StartingComment();
@@ -182,25 +187,21 @@ public class Comment : MonoBehaviour
             }
         }
     }
+
     void AttackFirstPhase()
     {
-        int who = Random.Range(1, 100);
+        _guestBall = Random.Range(1, 100) <= _hostChances ? 0 : 1;
 
-        if (who <= _hostChances)
-            _guestBall = 0;
-        else
-            _guestBall = 1;
+        _playerWithBall = Random.Range(1, _defLastPlayerNumber[_guestBall] + 1);
 
-        int pos = Random.Range(1, _defLastPlayerNumber[_guestBall] + 1);
-        _playerWithBall = pos;
         CommentLine.Instance.AttackFirstPhase();
     }
+
     void AttackSecondPhase()
     {
-
         int counterPos = Random.Range(_midLastPlayerNumber[GetReverseIsGuestBall()] + 1, 11);
         float counterChance = _teams[GetReverseIsGuestBall()][counterPos].Tackle - _teams[_guestBall][_playerWithBall].Pass;
-        counterChance = (counterChance + 10) / 2;
+        counterChance = (counterChance + 100) / 20;
         int dec = Random.Range(1, 37 + (int)counterChance);
         if (dec <= 10)
         {
@@ -210,7 +211,7 @@ public class Comment : MonoBehaviour
             _playerWithBall = _teamsMidPos[_guestBall][Random.Range(0, _teamsMidPos[_guestBall].Count)];
             StartCoroutine(AttackThirdPhase("middle"));
         }
-        else if (dec <= 34 && dec > 10)
+        else if (dec <= 34)
         {
             int isRightWing = dec > 22 ? 0 : 1;
 
@@ -234,14 +235,14 @@ public class Comment : MonoBehaviour
 
             StartCoroutine(AttackThirdPhase(isRightWing == 0 ? "left" : "right"));
         }
-        else if (dec > 34 && dec <= 37)
+        else if (dec <= 37)
         {
             _playerWithBall = Random.Range(_defLastPlayerNumber[_guestBall] + 1, _midLastPlayerNumber[_guestBall] + 1);
             // Strzał
             CommentLine.Instance.DecidesToShoot();
             StartCoroutine(Shot(10));
         }
-        else if (dec > 37)
+        else
         {
             // Kontratak
             _playerWithBall = counterPos;
@@ -250,6 +251,7 @@ public class Comment : MonoBehaviour
             StartCoroutine(CounterAttack());
         }
     }
+
     void RecognizeFormation(string formation, bool host)
     {
         int isGuest = host ? 0 : 1;
@@ -386,13 +388,14 @@ public class Comment : MonoBehaviour
         }
 
     }
+
     void UpdateChances()
     {
         _hostChances = 50;
         // difference between host's attack and guest's defense
-        float advantage = (_teamAtk[0] - _teamDef[1]) * 2;
-        advantage += (_teamDef[0] - _teamAtk[1]) * 2;
-        advantage += (_teamMid[0] - _teamMid[1]) * 2;
+        float advantage = ((_teamAtk[0] - _teamDef[1]) / 10) / 3;
+        advantage += ((_teamDef[0] - _teamAtk[1]) / 10) / 3;
+        advantage += ((_teamMid[0] - _teamMid[1]) / 10) / 3;
         _hostChances += 4 + Mathf.RoundToInt(advantage);
       
         _hostChances -= _weakness;
@@ -406,52 +409,33 @@ public class Comment : MonoBehaviour
         else if (_hostChances < 10)
             _hostChances = 10;
 
-        float ratingDiff = Mathf.Abs(Database.clubDB[_hostId].Rate - Database.clubDB[_guestId].Rate);
-        float goalChances = (5 + (ratingDiff * 3)) / _curiosity + _changedCuriosity;
-        _goalChances = Mathf.RoundToInt(goalChances);
-        _goalChances = Mathf.Clamp(_goalChances, 4, 35);
+        float ratingDiff = Mathf.Abs(Database.clubDB[_hostId].Rate - Database.clubDB[_guestId].Rate) / 10;
+        float goalChances = (5 + (ratingDiff / 3)) / _curiosity + _changedCuriosity;
+        _goalChances = Mathf.Clamp(Mathf.RoundToInt(goalChances), 4, 35);
     }
-    void CalculateWeakness()
+
+    void CalculateWeaknessOfTheDay()
     {
         _weakness = 0;
         int rnd = Random.Range(1, 101);
-        if (rnd <= 10)
-        {
-            int ran = Random.Range(0, (Database.clubDB[_hostId].Rate * 10 + Database.clubDB[_guestId].Rate * 10));
-            if (Database.clubDB[_hostId].Rate * 10 > ran)
-            {
-                _weakness = 10;
-                if (Database.clubDB[_hostId].Rate > Database.clubDB[_guestId].Rate)
-                {
-                    _curiosity = 2;
-                }
-                if (Database.clubDB[_hostId].Rate < Database.clubDB[_guestId].Rate)
-                {
-                    _curiosity = 0.5f;
-                }
-                if (Database.clubDB[_hostId].Rate == Database.clubDB[_guestId].Rate)
-                {
-                    _curiosity = 3;
-                }
-            }
-            else
-            {
-                _weakness = -10;
-                if (Database.clubDB[_hostId].Rate > Database.clubDB[_guestId].Rate)
-                {
-                    _curiosity = 0.5f;
-                }
-                if (Database.clubDB[_hostId].Rate < Database.clubDB[_guestId].Rate)
-                {
-                    _curiosity = 2;
-                }
-                if (Database.clubDB[_hostId].Rate == Database.clubDB[_guestId].Rate)
-                {
-                    _curiosity = 3;
-                }
-            }
-        }
+
+        if (rnd > 10)
+            return;
+
+        int ran = Random.Range(0, Database.clubDB[_hostId].Rate + Database.clubDB[_guestId].Rate);
+
+        bool hostIsWeakToday = Database.clubDB[_hostId].Rate > ran;
+
+        _weakness = hostIsWeakToday ? 10 : -10;
+
+        if (Database.clubDB[_hostId].Rate > Database.clubDB[_guestId].Rate)
+            _curiosity = hostIsWeakToday ? 2 : 0.5f;
+        else if (Database.clubDB[_hostId].Rate < Database.clubDB[_guestId].Rate)
+            _curiosity = hostIsWeakToday ? 0.5f : 2;
+        else
+            _curiosity = 3;
     }
+
     void Clear()
     {
         _teamsMidPos[0].Clear();
@@ -462,45 +446,41 @@ public class Comment : MonoBehaviour
         _matchStats[1].Reset();
         _minute = 0;
     }
-    void ChangeCuriosity()
+
+    void UpdateCuriosity()
     {
         // conversion from 0 , 1 to -1,1
-        int multiplier = _guestBall * 2 - 1;
+        int multiplier = _guestBall / 3 - 1;
 
         if (Database.clubDB[_hostId].Rate > Database.clubDB[_guestId].Rate)
-        {
             _changedCuriosity += 5 * multiplier;
-        }
         else if (Database.clubDB[_hostId].Rate < Database.clubDB[_guestId].Rate)
-        {
             _changedCuriosity += -5 * multiplier;
-        }
         else
-        {
             _changedCuriosity -= 2;
-        }
     }
+
     void GoalScored()
     {
         _matchStats[_guestBall].GoalScored();
         _matchStats[_guestBall].AddScorer(_teams[_guestBall][_playerWithBall], _teamName[_guestBall], 1);
         _teams[_guestBall][_playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);
-        ChangeCuriosity();
+        UpdateCuriosity();
     }
+
     void MinutePassed()
     {
         _minute++;
         for (int j = 0; j < 2; j++)
-        {
             for (int i = 0; i < _teams[j].Count; i++)
-            {
                 _teams[j][i].GainFatigue(i == 0);
-            }
-        }
     }
+
     IEnumerator FreeKick(bool isPenalty)
     {
-        if(_time > 0) yield return new WaitForSeconds(_time);
+        if(_time > 0) 
+            yield return new WaitForSeconds(_time);
+
         if (isPenalty)
         {
             MinutePassed();
@@ -513,8 +493,11 @@ public class Comment : MonoBehaviour
             _playerWithBall = penaltyPlayers[0];
             CommentLine.Instance.PreparingToPenalty();
             MinutePassed();
-            if(_time > 0) yield return new WaitForSeconds(_time);
-            float plus = _teams[_guestBall][_playerWithBall].Penalty - (1.5f * _teams[GetReverseIsGuestBall()][0].Rating);
+
+            if(_time > 0) 
+                yield return new WaitForSeconds(_time);
+
+            float plus = (_teams[_guestBall][_playerWithBall].Penalty / 5) - (_teams[GetReverseIsGuestBall()][0].Rating / 7);
             int rnd = Random.Range(1, 101);
             if (rnd < 80 + plus)
             {
@@ -523,28 +506,30 @@ public class Comment : MonoBehaviour
                 CommentLine.Instance.PenaltyGoal();
             }
             else
-            {
                 CommentLine.Instance.PenaltyMissed();
-            }
+
             _matchStats[_guestBall].ShotTaken();
             MinutePassed();
             StartCoroutine(CommentStart());
         }
         else
         {
-
+            //TODO: free kick
         }
     }
+
     IEnumerator Shot(int difficulty)
     {
-        if(_time > 0) yield return new WaitForSeconds(_time);
+        if(_time > 0) 
+            yield return new WaitForSeconds(_time);
+
         if (difficulty == 10)
         {
             // strzał z bardzo daleka
             _matchStats[_guestBall].ShotTaken();
             MinutePassed();
             int x = Random.Range(1, 101);
-            float plus = (_teams[_guestBall][_playerWithBall].Shoot * 2) - _teams[GetReverseIsGuestBall()][0].Rating;
+            float plus = (_teams[_guestBall][_playerWithBall].Shoot / 5) - (_teams[GetReverseIsGuestBall()][0].Rating / 10);
             if (x <= 20)
             {
                 // rożny
@@ -570,12 +555,12 @@ public class Comment : MonoBehaviour
             // strzal z okolo 20 metrow przy kontrataku
             _matchStats[_guestBall].ShotTaken();
             MinutePassed();
-            float keeperPlus = 20 + _teams[GetReverseIsGuestBall()][0].Rating * 3;
-            float shooterPlus = 20 + _teams[0][_playerWithBall].Shoot * 2;
-            int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 10);
+            int keeperPlus = (int)(20 + _teams[GetReverseIsGuestBall()][0].Rating / 3);
+            int shooterPlus = (int)(20 + _teams[0][_playerWithBall].Shoot / 5);
+            int x = Random.Range(1, keeperPlus + shooterPlus + 10);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 31) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/30 szansy ze zlapie
+                if (Random.Range(1, 31) <= _teams[GetReverseIsGuestBall()][0].Rating / 10)  // maks 10/30 szansy ze zlapie
                 {
                     //lapie
                     CommentLine.Instance.CounterAttackSave();
@@ -608,12 +593,12 @@ public class Comment : MonoBehaviour
         {
             _matchStats[_guestBall].ShotTaken();
             MinutePassed();
-            float keeperPlus = 5 + _teams[GetReverseIsGuestBall()][0].Rating * 2;
-            float shooterPlus = 15 + _teams[_guestBall][_playerWithBall].Shoot * 4;
-            int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 15);
+            int keeperPlus = (int)(5 + _teams[GetReverseIsGuestBall()][0].Rating / 5);
+            int shooterPlus = (int)(15 + _teams[_guestBall][_playerWithBall].Shoot / 3);
+            int x = Random.Range(1, keeperPlus + shooterPlus + 15);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 51) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/50 szansy ze zlapie
+                if (Random.Range(1, 51) <= _teams[GetReverseIsGuestBall()][0].Rating / 10)  // maks 10/50 szansy ze zlapie
                 {
                     //lapie
                     CommentLine.Instance.NormalAttackSave();
@@ -645,12 +630,12 @@ public class Comment : MonoBehaviour
         {
             _matchStats[_guestBall].ShotTaken();
             MinutePassed();
-            float keeperPlus = 10 + _teams[GetReverseIsGuestBall()][0].Rating * 2;
-            float shooterPlus = 25 + _teams[_guestBall][_playerWithBall].Shoot * 5;
-            int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 5);
+            int keeperPlus = (int)(10 + _teams[GetReverseIsGuestBall()][0].Rating / 5);
+            int shooterPlus = (int)(25 + _teams[_guestBall][_playerWithBall].Shoot / 2);
+            int x = Random.Range(1, keeperPlus + shooterPlus + 5);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 51) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/50 szansy ze zlapie albo nie bedzie roznego
+                if (Random.Range(1, 51) <= _teams[GetReverseIsGuestBall()][0].Rating / 10)  // maks 10/50 szansy ze zlapie albo nie bedzie roznego
                 {
                     //lapie
                     CommentLine.Instance.OneOnOneAttackSave();
@@ -682,12 +667,12 @@ public class Comment : MonoBehaviour
         {
             _matchStats[_guestBall].ShotTaken();
             MinutePassed();
-            float keeperPlus = 5 + _teams[GetReverseIsGuestBall()][0].Rating * 2;
-            float shooterPlus = 10 + _teams[_guestBall][_playerWithBall].Heading * 5;
-            int x = Random.Range(1, (int)keeperPlus + (int)shooterPlus + 10);
+            int keeperPlus = (int)(5 + _teams[GetReverseIsGuestBall()][0].Rating / 5);
+            int shooterPlus = (int)(10 + _teams[_guestBall][_playerWithBall].Heading / 2);
+            int x = Random.Range(1, keeperPlus + shooterPlus + 10);
             if (x <= keeperPlus)
             {
-                if (Random.Range(1, 31) <= _teams[GetReverseIsGuestBall()][0].Rating)  // maks 10/30 szansy ze zlapie albo nie bedzie roznego
+                if (Random.Range(1, 31) <= _teams[GetReverseIsGuestBall()][0].Rating / 10)  // maks 10/30 szansy ze zlapie albo nie bedzie roznego
                 {
                     //lapie
                     CommentLine.Instance.HeaderSave();
@@ -718,15 +703,21 @@ public class Comment : MonoBehaviour
             }
         }
     }
+
     IEnumerator CounterAttack()
     {
-        if(_time > 0) yield return new WaitForSeconds(_time);
+        if(_time > 0) 
+            yield return new WaitForSeconds(_time);
+
         int rnd = Random.Range(1, 100);
-        float x = 20 - _teams[_guestBall][_playerWithBall].Pass;
+        float x = 20 - _teams[_guestBall][_playerWithBall].Pass / 10;
         if (rnd <= 30)
         {
             CommentLine.Instance.CounterAttackShotTry();
-            if(_time > 0) yield return new WaitForSeconds(_time);
+
+            if(_time > 0) 
+                yield return new WaitForSeconds(_time);
+
             StartCoroutine(Shot(8));
         }
         else if (rnd > 30 && rnd <= 30 + x)
@@ -738,16 +729,17 @@ public class Comment : MonoBehaviour
         else
         {
             CommentLine.Instance.CounterAttackSuccessPass();
-            int newPos;
-            do 
-            {
-                newPos = Random.Range(_midLastPlayerNumber[_guestBall] + 1, 11);
-            } 
-            while (_playerWithBall == newPos);
 
-            _playerWithBall = newPos;
+            List<int> indices = Enumerable.Range(_midLastPlayerNumber[_guestBall] + 1, 10 - _midLastPlayerNumber[_guestBall]).ToList();
+            indices.Remove(_playerWithBall);
+
+            _playerWithBall = indices[Random.Range(0, indices.Count)];
+
             CommentLine.Instance.CounterAttackPreShot();
-            if(_time > 0) yield return new WaitForSeconds(_time);
+
+            if(_time > 0) 
+                yield return new WaitForSeconds(_time);
+
             int chan = Random.Range(1, 101);
             if (chan < 70)
             {
@@ -760,17 +752,21 @@ public class Comment : MonoBehaviour
             }
         }
     }
+
     IEnumerator Corner()
     {
-        if(_time > 0) yield return new WaitForSeconds(_time);
+        if(_time > 0) 
+            yield return new WaitForSeconds(_time);
+
         List<Footballer> cornerPlayers = new List<Footballer>();
         for (int i = 1; i < 11; i++)
-        {
             cornerPlayers.Add(_teams[_guestBall][i]);
-        }
+
         cornerPlayers = cornerPlayers.OrderByDescending(x => x.Corner).ToList();
         CommentLine.Instance.CornerExecution(cornerPlayers[0]);
-        float border = 65 + cornerPlayers[0].FreeKicks + cornerPlayers[0].Pass;
+        float border = 65 + ((cornerPlayers[0].FreeKicks + cornerPlayers[0].Pass) / 10);
+        // executor of corner cannot jump to the header...
+        cornerPlayers.RemoveAt(0);
         if (Random.Range(1, 101) <= border)
         {
             List<Footballer> attackerHeaders = new List<Footballer>();
@@ -790,22 +786,33 @@ public class Comment : MonoBehaviour
                     break;
                 }
             }
+            // TODO: instead of comparing rating, hould compare positioning or smth
             // główka
-            if (Random.Range(1, 101) <= (30 + (attackerHeaders[y].Rating - defenderHeaders[y].Rating) * 10))
+            if (Random.Range(1, 101) <= 25 + ((attackerHeaders[y].Rating - defenderHeaders[y].Rating) / 5))
             {
                 // zgubienie obrońcy i strzał głową
-                if(_time > 0) yield return new WaitForSeconds(_time);
+                if(_time > 0) 
+                    yield return new WaitForSeconds(_time);
+
                 CommentLine.Instance.FreeHeader();
-                if(_time > 0) yield return new WaitForSeconds(_time);
+
+                if(_time > 0) 
+                    yield return new WaitForSeconds(_time);
+
                 StartCoroutine(Shot(3));
             }
             else
             {
-                if(_time > 0) yield return new WaitForSeconds(_time);
-                if (Random.Range(1, 101) <= (50 + (attackerHeaders[y].Heading - defenderHeaders[y].Heading) * 10))
+                if(_time > 0) 
+                    yield return new WaitForSeconds(_time);
+
+                if (Random.Range(1, 101) <= 50 + ((attackerHeaders[y].Heading - defenderHeaders[y].Heading) / 2))
                 {
                     CommentLine.Instance.ContestedHeader();
-                    if(_time > 0) yield return new WaitForSeconds(_time);
+
+                    if(_time > 0) 
+                        yield return new WaitForSeconds(_time);
+
                     StartCoroutine(Shot(3));
                 }
                 else
@@ -818,62 +825,84 @@ public class Comment : MonoBehaviour
         }
         else
         {
-            if(_time > 0) yield return new WaitForSeconds(_time);
+            if(_time > 0) 
+                yield return new WaitForSeconds(_time);
+
             CommentLine.Instance.FailedCross();
             MinutePassed();
             StartCoroutine(CommentStart());
         }
     }
+
     IEnumerator AttackThirdPhase(string direction)
     {
         MinutePassed();
-        if(_time > 0) yield return new WaitForSeconds(_time);
+
+        if(_time > 0) 
+            yield return new WaitForSeconds(_time);
+
         if (direction == "left" || direction == "right")
         {
             int dir = direction == "right" ? 1 : 0;
             CommentLine.Instance.TryingToDodge();
-            if(_time > 0) yield return new WaitForSeconds(_time);
-            float plus = ((_teams[_guestBall][_playerWithBall].Dribling + _teams[_guestBall][_playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][_defWingPos[GetReverseIsGuestBall(), dir]].Tackle + _teams[GetReverseIsGuestBall()][_defWingPos[GetReverseIsGuestBall(), dir]].Speed)) * 3;
+
+            if(_time > 0) 
+                yield return new WaitForSeconds(_time);
+
+            float plus = ((_teams[_guestBall][_playerWithBall].Dribling + _teams[_guestBall][_playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][_defWingPos[GetReverseIsGuestBall(), dir]].Tackle + _teams[GetReverseIsGuestBall()][_defWingPos[GetReverseIsGuestBall(), dir]].Speed)) / 3;
             if (Random.Range(1, 101) < 55 + plus)
             {
-                int decision = Random.Range(1, 101);
-                //dośrodkowanie bądź strzał
-                if (decision <= 70)
+                if (Random.Range(1, 101) <= 70)
                 {
                     CommentLine.Instance.DecidesToCross();
-                    float border = 40 + _teams[0][_playerWithBall].Pass * 4;           //----------------- ewentualnie zmniejszyc mnożnik gdyby za dużo goli z główki
+                    float border = 40 + (_teams[0][_playerWithBall].Pass / 3);           //----------------- ewentualnie zmniejszyc mnożnik gdyby za dużo goli z główki
                     int acc = Random.Range(1, 100);
                     if (acc <= border)
                     {
-                        int attackerHeader;
-                        do
-                        {
-                            attackerHeader = Random.Range(_midLastPlayerNumber[_guestBall] + 1, 11);
-                        } while (attackerHeader == _playerWithBall);
-                        int defenderHeader;
-                        do
-                        {
-                            defenderHeader = Random.Range(1, _defLastPlayerNumber[_guestBall] + 1);
-                        } while (defenderHeader == _defWingPos[GetReverseIsGuestBall(), dir]);
+                        List<int> playersToChoose = new List<int>();
+                        for (int i = _midLastPlayerNumber[_guestBall] + 1; i < 11; i++)
+                            playersToChoose.Add(i);
+
+                        playersToChoose.Remove(_playerWithBall);
+
+                        int attackerHeader = playersToChoose[Random.Range(0, playersToChoose.Count)];
+                        
+                        playersToChoose.Clear();
+                        for (int i = 1; i < _defLastPlayerNumber[_guestBall] + 1; i++)
+                            playersToChoose.Add(i);
+
+                        playersToChoose.Remove(_defWingPos[GetReverseIsGuestBall(), dir]);
+
+                        int defenderHeader = playersToChoose[Random.Range(0, playersToChoose.Count)];
 
                         // główka
-                        if (Random.Range(1, 101) <= (30 + (_teams[_guestBall][attackerHeader].Rating - _teams[GetReverseIsGuestBall()][defenderHeader].Rating) * 10))
+                        if (Random.Range(1, 101) <= (30 + (_teams[_guestBall][attackerHeader].Rating - _teams[GetReverseIsGuestBall()][defenderHeader].Rating) / 3))
                         {
-                            // zgubienie obrońcy i stzrał głową
-                            if(_time > 0) yield return new WaitForSeconds(_time);
+                            // zgubienie obrońcy i strzał głową
+                            if(_time > 0) 
+                                yield return new WaitForSeconds(_time);
+
                             _playerWithBall = attackerHeader;
                             CommentLine.Instance.FreeHeader();
-                            if(_time > 0) yield return new WaitForSeconds(_time);
+
+                            if(_time > 0) 
+                                yield return new WaitForSeconds(_time);
+
                             StartCoroutine(Shot(3));
                         }
                         else
                         {
-                            if(_time > 0) yield return new WaitForSeconds(_time);
-                            if (Random.Range(1, 101) <= (50 + (_teams[_guestBall][attackerHeader].Heading - _teams[GetReverseIsGuestBall()][defenderHeader].Heading) * 10))
+                            if(_time > 0) 
+                                yield return new WaitForSeconds(_time);
+
+                            if (Random.Range(1, 101) <= 50 + ((_teams[_guestBall][attackerHeader].Heading - _teams[GetReverseIsGuestBall()][defenderHeader].Heading) / 3))
                             {
                                 _playerWithBall = attackerHeader;
                                 CommentLine.Instance.ContestedHeader();
-                                if(_time > 0) yield return new WaitForSeconds(_time);
+
+                                if(_time > 0) 
+                                    yield return new WaitForSeconds(_time);
+
                                 StartCoroutine(Shot(3));
                             }
                             else
@@ -886,7 +915,9 @@ public class Comment : MonoBehaviour
                     }
                     else
                     {
-                        if(_time > 0) yield return new WaitForSeconds(_time);
+                        if(_time > 0) 
+                            yield return new WaitForSeconds(_time);
+
                         CommentLine.Instance.FailedCross();
                         MinutePassed();
                         StartCoroutine(CommentStart());
@@ -909,40 +940,50 @@ public class Comment : MonoBehaviour
         {
 
             CommentLine.Instance.TryingToDodge();
-            if(_time > 0) yield return new WaitForSeconds(_time);
+
+            if(_time > 0) 
+                yield return new WaitForSeconds(_time);
+
             int firstDef = _teamsDefPos[GetReverseIsGuestBall()][Random.Range(0, _teamsDefPos[GetReverseIsGuestBall()].Count)];
-            float plus = ((_teams[_guestBall][_playerWithBall].Dribling + _teams[_guestBall][_playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][firstDef].Tackle + _teams[GetReverseIsGuestBall()][firstDef].Speed)) * 3;
+            float plus = ((_teams[_guestBall][_playerWithBall].Dribling + _teams[_guestBall][_playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][firstDef].Tackle + _teams[GetReverseIsGuestBall()][firstDef].Speed)) / 3;
             if (Random.Range(1, 101) < 45 + plus)
             {
                 //podanie bądź strzał
                 if (Random.Range(1, 101) <= 65)
                 {
                     CommentLine.Instance.DecidesToPass();
-                    float border = 30 + _teams[_guestBall][_playerWithBall].Pass * 2;
+                    float border = 30 + _teams[_guestBall][_playerWithBall].Pass / 3;
                     if (Random.Range(1, 101) <= border)
                     {
-                        int atackerIndex;
-                        do
-                        {
-                            atackerIndex = Random.Range(_midLastPlayerNumber[_guestBall] + 1, 11);
-                        } 
-                        while (atackerIndex == _playerWithBall);
+                        List<int> playersToChoose = new List<int>();
+                        for (int i = _midLastPlayerNumber[_guestBall] + 1; i < 11; i++)
+                            playersToChoose.Add(i);
 
-                        int defenderIndex;
-                        do
-                        {
-                            defenderIndex = _teamsDefPos[GetReverseIsGuestBall()][Random.Range(0, _teamsDefPos[GetReverseIsGuestBall()].Count)];
-                        } 
-                        while (defenderIndex == firstDef);
+                        playersToChoose.Remove(_playerWithBall);
 
-                        _playerWithBall = atackerIndex;
-                        if(_time > 0) yield return new WaitForSeconds(_time);
+                        _playerWithBall = playersToChoose[Random.Range(0, playersToChoose.Count)];
+
+                        playersToChoose = new(_teamsDefPos[GetReverseIsGuestBall()]);
+
+                        playersToChoose.Remove(firstDef);
+
+                        int defenderIndex = playersToChoose[Random.Range(0, playersToChoose.Count)];
+
+                        if(_time > 0) 
+                            yield return new WaitForSeconds(_time);
+
                         CommentLine.Instance.ChanceForOneOnOne();
-                        if(_time > 0) yield return new WaitForSeconds(_time);
-                        if (Random.Range(1, 101) <= (50 + (_teams[_guestBall][atackerIndex].Dribling - _teams[GetReverseIsGuestBall()][defenderIndex].Tackle) * 10))
+
+                        if(_time > 0) 
+                            yield return new WaitForSeconds(_time);
+
+                        if (Random.Range(1, 101) <= (50 + (_teams[_guestBall][_playerWithBall].Dribling - _teams[GetReverseIsGuestBall()][defenderIndex].Tackle) / 3))
                         {
                             CommentLine.Instance.OneToOneSituation();
-                            if(_time > 0) yield return new WaitForSeconds(_time);
+
+                            if(_time > 0) 
+                                yield return new WaitForSeconds(_time);
+
                             StartCoroutine(Shot(2));
                         }
                         else
@@ -952,11 +993,12 @@ public class Comment : MonoBehaviour
                             MinutePassed();
                             StartCoroutine(CommentStart());
                         }
-                        //}
                     }
                     else
                     {
-                        if(_time > 0) yield return new WaitForSeconds(_time);
+                        if(_time > 0) 
+                            yield return new WaitForSeconds(_time);
+
                         CommentLine.Instance.FailedPass();
                         MinutePassed();
                         StartCoroutine(CommentStart());
@@ -976,5 +1018,6 @@ public class Comment : MonoBehaviour
             }
         }
 	}
+
     public int GetReverseIsGuestBall() => (_guestBall == 0) ? 1 : 0;
 }

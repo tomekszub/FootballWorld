@@ -165,7 +165,7 @@ public class Database : MonoBehaviour
 	void inputData(int i, GameObject go)
 	{
 		go.transform.Find("Name").GetComponent<Text>().text =  footballersDB[i].Name;
-		go.transform.Find("Rate").GetComponent<Image>().sprite =  Resources.Load<Sprite>("Stars/" + (int)footballersDB[i].Rating);
+		go.transform.Find("Rate").GetComponent<Image>().sprite =  Resources.Load<Sprite>($"Stars/{Mathf.RoundToInt(footballersDB[i].Rating/10)}");
 		go.transform.Find("Surname").GetComponent<Text>().text =  footballersDB[i].Surname;
 		go.transform.Find("FreeKicks").GetComponent<Text>().text =  "Stałe fragmenty gry: " + footballersDB[i].FreeKicks.ToString();
 		go.transform.Find("Flag").GetComponent<Image>().sprite =  _CountryMaster.GetFlagByName(footballersDB[i].Country);
