@@ -14,6 +14,7 @@ public class Simulation : MonoBehaviour
     static MatchStats[] matchStats = new MatchStats[2];//static int hostGoals, guestGoals, hostShots, guestShots
     static string[] teamName = new string[2];
     public static int playerWithBall;  // piłkarz przy piłce
+    public static int prevPlayerWithBall;
     public static int guestBall;  // posiadanie piłki
     static int[] defLastPlayerNumber = new int[2];// granice pozycji piłkarzy: obrona , pomoc , atak
     static int[] midLastPlayerNumber = new int[2];
@@ -25,6 +26,16 @@ public class Simulation : MonoBehaviour
     static int weakness = 0;
     static int changedCuriosity = 0;
     static string _competitionName = "";
+
+    static int PlayerWithBall
+    {
+        get => playerWithBall;
+        set
+        {
+            prevPlayerWithBall = playerWithBall;
+            playerWithBall = value;
+        }
+    }
 
     static void PrepareNextMatch()
     {
@@ -83,7 +94,7 @@ public class Simulation : MonoBehaviour
                     guestBall = 1;
                     if (who <= hostChances) guestBall = 0;
                     pos = Random.Range(1, defLastPlayerNumber[guestBall] + 1);
-                    playerWithBall = pos;
+                    PlayerWithBall = pos;
                     //Debug.Log("First Phase");
                     AttackSecondPhase();
                 }
@@ -95,7 +106,7 @@ public class Simulation : MonoBehaviour
     {
         //Debug.Log("Second phase");
         int counterPos = Random.Range(midLastPlayerNumber[GetReverseIsGuestBall()] + 1, 11);
-        float counterChance = _teams[GetReverseIsGuestBall()][counterPos].Tackle - _teams[guestBall][playerWithBall].Pass;
+        float counterChance = _teams[GetReverseIsGuestBall()][counterPos].Tackle - _teams[guestBall][PlayerWithBall].Pass;
         counterChance += 100;
         counterChance /= 20;
         int dec = Random.Range(1, 37 + (int)counterChance);
@@ -119,10 +130,10 @@ public class Simulation : MonoBehaviour
             // Strzał
             Shot(10);
         }
-        else if (dec > 37)
+        else
         {
             // Kontratak
-            playerWithBall = counterPos;
+            PlayerWithBall = counterPos;
             guestBall = GetReverseIsGuestBall();
             CounterAttack();
         }
@@ -329,26 +340,25 @@ public class Simulation : MonoBehaviour
     }
     static void FreeKick(bool isPenalty)
     {
+        PlayerWithBall = -1;
         if (isPenalty)
         {
             matchStats[guestBall].ShotTaken();
             MinutePassed();
-            List<Footballer> penaltyPlayers = new List<Footballer>();
+            int[] penaltyPlayers = new int[10];
             for (int i = 1; i < 11; i++)
             {
-                penaltyPlayers.Add(_teams[guestBall][i]);
+                penaltyPlayers[i - 1] = i;
             }
-            penaltyPlayers = penaltyPlayers.OrderByDescending(x => x.Penalty).ToList();
+            penaltyPlayers = penaltyPlayers.OrderByDescending(x => _teams[guestBall][x].Penalty).ToArray();
+            PlayerWithBall = penaltyPlayers[0];
             MinutePassed();
-            float plus = (_teams[guestBall][playerWithBall].Penalty / 5) - (_teams[GetReverseIsGuestBall()][0].Rating / 7);
+            float plus = (_teams[guestBall][PlayerWithBall].Penalty / 5) - (_teams[GetReverseIsGuestBall()][0].Rating / 7);
             int rnd = Random.Range(1, 101);
             if (rnd < 80 + plus)
             {
                 // gol
-                matchStats[guestBall].GoalScored();
-                matchStats[guestBall].AddScorer(penaltyPlayers[0], teamName[guestBall],1);
-                penaltyPlayers[0].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
-                UpdateCuriosity();
+                GoalScored();
                 MinutePassed();
                 return;
             }
@@ -362,6 +372,20 @@ public class Simulation : MonoBehaviour
         {
         }
     }
+
+    static void GoalScored()
+    {
+        matchStats[guestBall].GoalScored();
+        matchStats[guestBall].AddScorer(_teams[guestBall][PlayerWithBall], teamName[guestBall], 1);
+        _teams[guestBall][PlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);
+        if (prevPlayerWithBall != -1)
+        {
+            _teams[guestBall][prevPlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Assists);
+            prevPlayerWithBall = -1;
+        }
+        UpdateCuriosity();
+    }
+
     static void Shot(int difficulty)
     {
         
@@ -371,7 +395,7 @@ public class Simulation : MonoBehaviour
             matchStats[guestBall].ShotTaken();
             MinutePassed();
             int x = Random.Range(1, 101);
-            float plus = (_teams[guestBall][playerWithBall].Shoot / 5) - (_teams[GetReverseIsGuestBall()][0].Rating / 10);
+            float plus = (_teams[guestBall][PlayerWithBall].Shoot / 5) - (_teams[GetReverseIsGuestBall()][0].Rating / 10);
             if (x <= 20)
             {
                 // rożny
@@ -380,10 +404,7 @@ public class Simulation : MonoBehaviour
             else if (x > 20 && x <= 30 + plus)
             {
                 // goool
-                matchStats[guestBall].GoalScored();
-                matchStats[guestBall].AddScorer(_teams[guestBall][playerWithBall], teamName[guestBall],1);
-                _teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
-                UpdateCuriosity();
+                GoalScored();
                 MinutePassed();
                 return;
             }
@@ -400,7 +421,7 @@ public class Simulation : MonoBehaviour
             matchStats[guestBall].ShotTaken();
             MinutePassed();
             int keeperPlus = (int)(20 + _teams[GetReverseIsGuestBall()][0].Rating / 3);
-            int shooterPlus = (int)(20 + _teams[0][playerWithBall].Shoot / 5);
+            int shooterPlus = (int)(20 + _teams[0][PlayerWithBall].Shoot / 5);
             int x = Random.Range(1, keeperPlus + shooterPlus + 10);
             if (x <= keeperPlus)
             {
@@ -421,10 +442,7 @@ public class Simulation : MonoBehaviour
             else if (x > keeperPlus && x <= keeperPlus + shooterPlus)
             {
                 // goool
-                matchStats[guestBall].GoalScored();
-                matchStats[guestBall].AddScorer(_teams[guestBall][playerWithBall], teamName[guestBall],1);
-                _teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
-                UpdateCuriosity();
+                GoalScored();
                 MinutePassed();
                 return;
             }
@@ -440,7 +458,7 @@ public class Simulation : MonoBehaviour
             matchStats[guestBall].ShotTaken();
             MinutePassed();
             int keeperPlus = (int)(5 + _teams[GetReverseIsGuestBall()][0].Rating / 5);
-            int shooterPlus = (int)(15 + _teams[guestBall][playerWithBall].Shoot / 3);
+            int shooterPlus = (int)(15 + _teams[guestBall][PlayerWithBall].Shoot / 3);
             int x = Random.Range(1, keeperPlus + shooterPlus + 15);
             if (x <= keeperPlus)
             {
@@ -461,10 +479,7 @@ public class Simulation : MonoBehaviour
             else if (x > keeperPlus && x <= keeperPlus + shooterPlus)
             {
                 // goool
-                matchStats[guestBall].GoalScored();
-                matchStats[guestBall].AddScorer(_teams[guestBall][playerWithBall], teamName[guestBall],1);
-                _teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
-                UpdateCuriosity();
+                GoalScored();
                 MinutePassed();
                 return;
             }
@@ -480,7 +495,7 @@ public class Simulation : MonoBehaviour
             matchStats[guestBall].ShotTaken();
             MinutePassed();
             int keeperPlus = (int)(10 + _teams[GetReverseIsGuestBall()][0].Rating / 5);
-            int shooterPlus = (int)(25 + _teams[guestBall][playerWithBall].Shoot / 2);
+            int shooterPlus = (int)(25 + _teams[guestBall][PlayerWithBall].Shoot / 2);
             int x = Random.Range(1, keeperPlus + shooterPlus + 5);
             if (x <= keeperPlus)
             {
@@ -500,10 +515,7 @@ public class Simulation : MonoBehaviour
             else if (x > keeperPlus && x <= keeperPlus + shooterPlus)
             {
                 // goool
-                matchStats[guestBall].GoalScored();
-                matchStats[guestBall].AddScorer(_teams[guestBall][playerWithBall], teamName[guestBall],1);
-                _teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
-                UpdateCuriosity();
+                GoalScored();
                 MinutePassed();
                 return;
             }
@@ -518,7 +530,7 @@ public class Simulation : MonoBehaviour
             matchStats[guestBall].ShotTaken();
             MinutePassed();
             int keeperPlus = (int)(5 + _teams[GetReverseIsGuestBall()][0].Rating / 5);
-            int shooterPlus = (int)(10 + _teams[guestBall][playerWithBall].Heading / 2);
+            int shooterPlus = (int)(10 + _teams[guestBall][PlayerWithBall].Heading / 2);
             int x = Random.Range(1, keeperPlus + shooterPlus + 10);
             if (x <= keeperPlus)
             {
@@ -534,10 +546,7 @@ public class Simulation : MonoBehaviour
             else if (x > keeperPlus && x <= keeperPlus + shooterPlus)
             {
                 // goool
-                matchStats[guestBall].GoalScored();
-                matchStats[guestBall].AddScorer(_teams[guestBall][playerWithBall], teamName[guestBall],1);
-                _teams[guestBall][playerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);;
-                UpdateCuriosity();
+                GoalScored();
                 MinutePassed();
                 return;
             }
@@ -550,8 +559,10 @@ public class Simulation : MonoBehaviour
     }
     static void CounterAttack()
     {
+        prevPlayerWithBall = -1;
+
         int rnd = Random.Range(1, 100);
-        float x = 20 - _teams[guestBall][playerWithBall].Pass / 10;
+        float x = 20 - _teams[guestBall][PlayerWithBall].Pass / 10;
         if (rnd <= 30)
         {
             Shot(8);
@@ -564,9 +575,9 @@ public class Simulation : MonoBehaviour
         else if (rnd > 30 + x)
         {
             List<int> indices = Enumerable.Range(midLastPlayerNumber[guestBall] + 1, 10 - midLastPlayerNumber[guestBall]).ToList();
-            indices.Remove(playerWithBall);
+            indices.Remove(PlayerWithBall);
 
-            playerWithBall = indices[Random.Range(0, indices.Count)];
+            PlayerWithBall = indices[Random.Range(0, indices.Count)];
 
             int chan = Random.Range(1, 101);
             if (chan < 70)
@@ -606,7 +617,7 @@ public class Simulation : MonoBehaviour
             {
                 if (attackerHeaders[y].Surname == _teams[guestBall][i].Surname && attackerHeaders[y].Name == _teams[guestBall][i].Name)
                 {
-                    playerWithBall = i;
+                    PlayerWithBall = i;
                     break;
                 }
             }
@@ -645,13 +656,13 @@ public class Simulation : MonoBehaviour
         if (direction == "left" || direction == "right")
         {
             int dir = direction == "right" ? 1 : 0;
-            float plus = ((_teams[guestBall][playerWithBall].Dribling + _teams[guestBall][playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][defWingPos[GetReverseIsGuestBall(), dir]].Tackle + _teams[GetReverseIsGuestBall()][defWingPos[GetReverseIsGuestBall(), dir]].Speed)) / 3;
+            float plus = ((_teams[guestBall][PlayerWithBall].Dribling + _teams[guestBall][PlayerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][defWingPos[GetReverseIsGuestBall(), dir]].Tackle + _teams[GetReverseIsGuestBall()][defWingPos[GetReverseIsGuestBall(), dir]].Speed)) / 3;
             if (Random.Range(1, 101) < 55 + plus)
             {
                 //dośrodkowanie bądź strzał
                 if (Random.Range(1, 101) <= 70)
                 {
-                    float border = 40 + (_teams[0][playerWithBall].Pass / 3);           //----------------- ewentualnei zmniejszyc mnożnik gdyby za dużo goli z główki
+                    float border = 40 + (_teams[0][PlayerWithBall].Pass / 3);           //----------------- ewentualnei zmniejszyc mnożnik gdyby za dużo goli z główki
                     int acc = Random.Range(1, 100);
                     if (acc <= border)
                     {
@@ -659,7 +670,7 @@ public class Simulation : MonoBehaviour
                         for (int i = midLastPlayerNumber[guestBall] + 1; i < 11; i++)
                             playersToChoose.Add(i);
 
-                        playersToChoose.Remove(playerWithBall);
+                        playersToChoose.Remove(PlayerWithBall);
 
                         int attackerHeader = playersToChoose[Random.Range(0, playersToChoose.Count)];
 
@@ -676,14 +687,14 @@ public class Simulation : MonoBehaviour
                         {
                             // zgubienie obrońcy i stzrał głową
                             
-                            playerWithBall = attackerHeader;                          
+                            PlayerWithBall = attackerHeader;                          
                             Shot(3);
                         }
                         else
                         {
                             if (Random.Range(1, 101) <= 50 + ((_teams[guestBall][attackerHeader].Heading - _teams[GetReverseIsGuestBall()][defenderHeader].Heading) / 3))
                             {
-                                playerWithBall = attackerHeader;
+                                PlayerWithBall = attackerHeader;
                                 Shot(3);
                             }
                             else
@@ -713,23 +724,23 @@ public class Simulation : MonoBehaviour
         else if (direction == "middle")
         {          
             int firstDef = teamsDefPos[GetReverseIsGuestBall()][Random.Range(0, teamsDefPos[GetReverseIsGuestBall()].Count)];
-            float plus = ((_teams[guestBall][playerWithBall].Dribling + _teams[guestBall][playerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][firstDef].Tackle + _teams[GetReverseIsGuestBall()][firstDef].Speed)) / 3;
+            float plus = ((_teams[guestBall][PlayerWithBall].Dribling + _teams[guestBall][PlayerWithBall].Speed) - (_teams[GetReverseIsGuestBall()][firstDef].Tackle + _teams[GetReverseIsGuestBall()][firstDef].Speed)) / 3;
             if (Random.Range(1, 101) < 45 + plus)
             {
                 int decision = Random.Range(1, 101);
                 //podanie bądź strzał
                 if (decision <= 65)
                 {
-                    float border = 30 + _teams[guestBall][playerWithBall].Pass / 3;
+                    float border = 30 + _teams[guestBall][PlayerWithBall].Pass / 3;
                     if (Random.Range(1, 101) <= border)
                     {
                         List<int> playersToChoose = new List<int>();
                         for (int i = midLastPlayerNumber[guestBall] + 1; i < 11; i++)
                             playersToChoose.Add(i);
 
-                        playersToChoose.Remove(playerWithBall);
+                        playersToChoose.Remove(PlayerWithBall);
 
-                        playerWithBall = playersToChoose[Random.Range(0, playersToChoose.Count)];
+                        PlayerWithBall = playersToChoose[Random.Range(0, playersToChoose.Count)];
 
                         playersToChoose = new(teamsDefPos[GetReverseIsGuestBall()]);
 
@@ -737,13 +748,13 @@ public class Simulation : MonoBehaviour
 
                         int defenderIndex = playersToChoose[Random.Range(0, playersToChoose.Count)];
 
-                        if (Random.Range(1, 101) <= (50 + (_teams[guestBall][playerWithBall].Dribling - _teams[GetReverseIsGuestBall()][defenderIndex].Tackle) / 3))
+                        if (Random.Range(1, 101) <= (50 + (_teams[guestBall][PlayerWithBall].Dribling - _teams[GetReverseIsGuestBall()][defenderIndex].Tackle) / 3))
                         {                     
                             Shot(2);
                         }
                         else
                         {
-                            playerWithBall = defenderIndex;
+                            PlayerWithBall = defenderIndex;
                             MinutePassed();
                             return;
                         }
