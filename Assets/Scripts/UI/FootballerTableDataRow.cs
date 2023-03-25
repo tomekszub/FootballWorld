@@ -19,7 +19,8 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
         _Fields[FootballerFieldType.NameAndSurname].SetTextData(footballer.GetFullName());
         _Fields[FootballerFieldType.Rating].SetTextData(footballer.Rating.ToString());
         _Fields[FootballerFieldType.RatingStars].SetTextData(footballer.Rating.ToString());
-        _Fields[FootballerFieldType.RatingStars].SetImageData(Resources.Load<Sprite>($"Stars/{Mathf.RoundToInt(footballer .Rating/10)}"));
+        _Fields[FootballerFieldType.RatingStars].SetImageData(Resources.Load<Sprite>($"Stars/{Mathf.Max(1, Mathf.RoundToInt(footballer.Rating/10))}"));
+
         if (footballer.ClubID != -1)
         {
             _Fields[FootballerFieldType.Club].SetImageData(Database.Instance.CountryMaster.GetFlagByName(Database.clubDB[footballer.ClubID].CountryName));
@@ -30,6 +31,7 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
             _Fields[FootballerFieldType.Club].SetImageData(null);
             _Fields[FootballerFieldType.Club].SetTextData("Free Agent");
         }
+
         _Fields[FootballerFieldType.Shoot].SetTextData(footballer.Shoot.ToString());
         _Fields[FootballerFieldType.Pass].SetTextData(footballer.Pass.ToString());
         _Fields[FootballerFieldType.Dribling].SetTextData(footballer.Dribling.ToString());
@@ -38,6 +40,8 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
         _Fields[FootballerFieldType.Speed].SetTextData(footballer.Speed.ToString());
         _Fields[FootballerFieldType.Endurance].SetTextData(footballer.Endurance.ToString());
         _Fields[FootballerFieldType.Condition].SetImageFillAmount(footballer.Condition / 100);
+        if(_Fields[FootballerFieldType.Perks] is PerksTableDataField perksDataField)
+            perksDataField.SetPerks(footballer.Perks);
         UpdateStatistics(tournamentFilter);
     }
 

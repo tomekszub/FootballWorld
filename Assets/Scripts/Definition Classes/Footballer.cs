@@ -3,6 +3,12 @@ using UnityEngine;
 using System.Linq;
 using System;
 
+public enum Perk
+{
+    Wonderkid = 0,
+    Marathoner = 1
+}
+
 public class Footballer : IComparable<Footballer>
 {
 	const float BASE_FATIGUE_LOSS = 10;
@@ -41,11 +47,12 @@ public class Footballer : IComparable<Footballer>
 			_fatigue = Math.Clamp(value, 0, 100);
 		}
     }
+	public string GetFullName() => Name != "" ? $"{Name} {Surname}" : Surname;
+    public HashSet<Perk> Perks => _perks;
 
+    HashSet<Perk> _perks;
 	float _fatigue;
 	Dictionary<string, PlayerStatistics> _statistics;
-
-	public string GetFullName() => Name != "" ? $"{Name} {Surname}" : Surname;
 
 	public Footballer(int id, string name, string surname, string alteredSurname, string country, float freeKicks, Position pos, float dribling, float tackle, float heading, float shoot, float speed, float pass, int birthYear, int endurance, int clubID = -1)
 	{
@@ -98,6 +105,7 @@ public class Footballer : IComparable<Footballer>
 		ClubID = clubID;
 		Condition = 100;
 		Endurance = endurance;
+        _perks = new HashSet<Perk> ();
     }
     public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
 	{
@@ -205,6 +213,8 @@ public class Footballer : IComparable<Footballer>
 	{
 		Condition -= (BASE_FATIGUE_GAIN + (MAX_FATIGUE_GAIN_ENDURANCE - (Endurance * BASE_FATIGUE_GAIN_PER_ENDURANCE))) * (goalkeeper ? 0.6f : 1f);
 	}
+
+    public void AddPerk(Perk perk) => _perks.Add(perk);
 
 	int GetTotalMatchesPlayed()
     {

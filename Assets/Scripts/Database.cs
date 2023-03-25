@@ -17,9 +17,14 @@ public class Database : MonoBehaviour
 	public GameObject playerPanelPrefab;
     public GameObject searchResultContent;
     public GameObject warningText;
+
     [SerializeField] CountryMaster _CountryMaster;
     [SerializeField] LeagueMaster _LeagueMaster;
     [SerializeField] LeagueGenerator _LeagueGenerator;
+    [SerializeField] IconMaster _IconMaster;
+
+    public CountryMaster CountryMaster => _CountryMaster;
+    public IconMaster IconMaster => _IconMaster;
 
     void Awake () 
 	{
@@ -103,8 +108,6 @@ public class Database : MonoBehaviour
         _LeagueGenerator.Generate("Andorra", 8);
         _LeagueGenerator.Generate("San Marino", 8);
     }
-
-    public CountryMaster CountryMaster => _CountryMaster;
 
 	public void Search()
 	{

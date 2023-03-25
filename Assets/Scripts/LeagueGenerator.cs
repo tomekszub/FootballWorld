@@ -151,6 +151,8 @@ public class LeagueGenerator : MonoBehaviour
         int enduranceMin;
         float freeKickSkill;
         Credentials person;
+        Footballer f;
+
         for (int i = 0; i < FOOTBALLERS_PER_TEAM; i++)
         {
             randomPersonIndex = Random.Range(0, _people.Count);
@@ -160,23 +162,31 @@ public class LeagueGenerator : MonoBehaviour
             freeKickSkill = Random.Range(minSkill, minSkill + 20) / 10;
             enduranceMin = (int)(10 + baseRating * 0.5f);
 
-            Database.footballersDB.Add(new Footballer(
-                startingDBIndex + i, 
-                person.Name, 
-                person.Surname, 
-                person.Surname, 
+            f = new Footballer(
+                startingDBIndex + i,
+                person.Name,
+                person.Surname,
+                person.Surname,
                 person.Country,
                 freeKickSkill,
-                pos[i % pos.Count], 
+                pos[i % pos.Count],
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
                 Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100), 
+                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
                 1996,
                 Mathf.Clamp(Random.Range(enduranceMin, enduranceMin + 40), 1, 100),
-                clubID));
+                clubID);
+
+            if (Random.value < 0.01f)
+                f.AddPerk(Perk.Wonderkid);
+
+            if (Random.value < 0.01f)
+                f.AddPerk(Perk.Marathoner);
+
+            Database.footballersDB.Add(f);
         }
     }
 
