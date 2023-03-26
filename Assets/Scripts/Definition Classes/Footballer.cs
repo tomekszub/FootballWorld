@@ -47,7 +47,7 @@ public class Footballer : IComparable<Footballer>
 			_fatigue = Math.Clamp(value, 0, 100);
 		}
     }
-	public string GetFullName() => Name != "" ? $"{Name} {Surname}" : Surname;
+	public string FullName => Name != "" ? $"{Name} {Surname}" : Surname;
     public HashSet<Perk> Perks => _perks;
 
     HashSet<Perk> _perks;

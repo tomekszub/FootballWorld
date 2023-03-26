@@ -16,7 +16,7 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
         _Fields[FootballerFieldType.Nationality].SetImageData(Database.Instance.CountryMaster.GetFlagByName(footballer.Country));
         _Fields[FootballerFieldType.Name].SetTextData(footballer.Name);
         _Fields[FootballerFieldType.Surname].SetTextData(footballer.Surname);
-        _Fields[FootballerFieldType.NameAndSurname].SetTextData(footballer.GetFullName());
+        _Fields[FootballerFieldType.NameAndSurname].SetTextData(footballer.FullName);
         _Fields[FootballerFieldType.Rating].SetTextData(footballer.Rating.ToString());
         _Fields[FootballerFieldType.RatingStars].SetTextData(footballer.Rating.ToString());
         _Fields[FootballerFieldType.RatingStars].SetImageData(Resources.Load<Sprite>($"Stars/{Mathf.Max(1, Mathf.RoundToInt(footballer.Rating/10))}"));
