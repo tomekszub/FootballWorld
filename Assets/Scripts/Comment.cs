@@ -10,6 +10,8 @@ public class Comment : MonoBehaviour
     public static Comment Instance;
 
     [SerializeField] TextMeshProUGUI _StartStopButton;
+    [SerializeField] List<CommentPanelFootballerRow> _HostSquadStatsUI;
+    [SerializeField] List<CommentPanelFootballerRow> _GuestSquadStatsUI;
 
     float _time = 0.1f;
     bool _isPlaying = false;
@@ -108,8 +110,10 @@ public class Comment : MonoBehaviour
         {
             _teams[0].Add(Database.footballersDB[Database.clubDB[_hostId].FootballersIDs[i]]);
             _teams[0][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
+            _HostSquadStatsUI[i].Init(_teams[0][i]);
             _teams[1].Add(Database.footballersDB[Database.clubDB[_guestId].FootballersIDs[i]]);
             _teams[1][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
+            _GuestSquadStatsUI[i].Init(_teams[1][i]);
         }
         _teamsMidPos[0] = new List<int>();
         _teamsMidPos[1] = new List<int>();
@@ -489,6 +493,8 @@ public class Comment : MonoBehaviour
         for (int j = 0; j < 2; j++)
             for (int i = 0; i < _teams[j].Count; i++)
                 _teams[j][i].GainFatigue(i == 0);
+        _HostSquadStatsUI.ForEach(f => f.UpdateState( 5 + (_minute * 0.05f)));
+        _GuestSquadStatsUI.ForEach(f => f.UpdateState( 5 + (_minute * 0.05f)));
     }
 
     IEnumerator FreeKick(bool isPenalty)
