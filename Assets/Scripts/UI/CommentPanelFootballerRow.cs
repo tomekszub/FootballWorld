@@ -12,10 +12,12 @@ public class CommentPanelFootballerRow : MonoBehaviour
     [SerializeField] TextMeshProUGUI _MatchRating;
 
     Footballer _footballer;
+    PlayersMatchData _playersMatchData;
 
-    public void Init(Footballer footballer)
+    public void Init(Footballer footballer, PlayersMatchData playersMatchData)
     {
         _footballer = footballer;
+        _playersMatchData = playersMatchData;
         _PosText.text = footballer.Pos.ToString();
         _CountryImage.sprite = Database.Instance.CountryMaster.GetFlagByName(footballer.Country);
         _NameText.text = footballer.Surname;
@@ -24,9 +26,9 @@ public class CommentPanelFootballerRow : MonoBehaviour
         _MatchRating.text = "5.0";
     }
 
-    public void UpdateState(float rating)
+    public void UpdateState()
     {
         _ConditionFill.fillAmount = _footballer.Condition / 100;
-        _MatchRating.text = rating.ToString();
+        _MatchRating.text = _playersMatchData.MatchRating.ToString();
     }
 }

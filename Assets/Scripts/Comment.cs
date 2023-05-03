@@ -18,6 +18,7 @@ public class Comment : MonoBehaviour
     int _minute = 0;
     int _hostId, _guestId;
     List<Footballer>[] _teams = new List<Footballer>[2];
+    List<PlayersMatchData>[] _teamsMatchData = new List<PlayersMatchData>[2];
     float[] _teamDef = new float[2], _teamMid = new float[2], _teamAtk = new float[2];
     int _hostChances, _goalChances;
     MatchStats[] _matchStats = new MatchStats[2];
@@ -106,14 +107,18 @@ public class Comment : MonoBehaviour
        
         _teams[0] = new List<Footballer>(11);
         _teams[1] = new List<Footballer>(11);
+        _teamsMatchData[0] = new(11);
+        _teamsMatchData[1] = new(11);
         for (int i = 0; i < 11; i++)
         {
             _teams[0].Add(Database.footballersDB[Database.clubDB[_hostId].FootballersIDs[i]]);
             _teams[0][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
-            _HostSquadStatsUI[i].Init(_teams[0][i]);
+            _teamsMatchData[0].Add(new PlayersMatchData());
+            _HostSquadStatsUI[i].Init(_teams[0][i], _teamsMatchData[0][i]);
             _teams[1].Add(Database.footballersDB[Database.clubDB[_guestId].FootballersIDs[i]]);
             _teams[1][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchesPlayed);
-            _GuestSquadStatsUI[i].Init(_teams[1][i]);
+            _teamsMatchData[1].Add(new PlayersMatchData());
+            _GuestSquadStatsUI[i].Init(_teams[1][i], _teamsMatchData[1][i]);
         }
         _teamsMidPos[0] = new List<int>();
         _teamsMidPos[1] = new List<int>();
@@ -478,10 +483,13 @@ public class Comment : MonoBehaviour
     {
         _matchStats[_guestBall].GoalScored();
         _matchStats[_guestBall].AddScorer(_teams[_guestBall][PlayerWithBall], _teamName[_guestBall], 1);
+        _teamsMatchData[_guestBall][PlayerWithBall].MatchRating += .5f;
         _teams[_guestBall][PlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);
+        _teamsMatchData[_guestBall].ForEach(data => data.MatchRating += .5f);
         if (_prevPlayerWithBall != -1)
         {
             _teams[_guestBall][_prevPlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Assists);
+            _teamsMatchData[_guestBall][_prevPlayerWithBall].MatchRating += .25f;
             _prevPlayerWithBall = -1;
         }
         UpdateCuriosity();
@@ -493,8 +501,8 @@ public class Comment : MonoBehaviour
         for (int j = 0; j < 2; j++)
             for (int i = 0; i < _teams[j].Count; i++)
                 _teams[j][i].GainFatigue(i == 0);
-        _HostSquadStatsUI.ForEach(f => f.UpdateState( 5 + (_minute * 0.05f)));
-        _GuestSquadStatsUI.ForEach(f => f.UpdateState( 5 + (_minute * 0.05f)));
+        _HostSquadStatsUI.ForEach(f => f.UpdateState());
+        _GuestSquadStatsUI.ForEach(f => f.UpdateState());
     }
 
     IEnumerator FreeKick(bool isPenalty)
