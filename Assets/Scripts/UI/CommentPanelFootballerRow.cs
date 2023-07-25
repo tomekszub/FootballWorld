@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class CommentPanelFootballerRow : MonoBehaviour
 {
@@ -23,12 +24,12 @@ public class CommentPanelFootballerRow : MonoBehaviour
         _NameText.text = footballer.Surname;
         _RatingImage.sprite = Resources.Load<Sprite>($"Stars/{Mathf.Max(1, Mathf.RoundToInt(footballer.Rating / 10))}");
         _ConditionFill.fillAmount = footballer.Condition / 100;
-        _MatchRating.text = "5.0";
+        _MatchRating.text = playersMatchData.MatchRating.ToString();
     }
 
     public void UpdateState()
     {
         _ConditionFill.fillAmount = _footballer.Condition / 100;
-        _MatchRating.text = _playersMatchData.MatchRating.ToString();
+        _MatchRating.text = Math.Round(_playersMatchData.MatchRating, 2).ToString();
     }
 }

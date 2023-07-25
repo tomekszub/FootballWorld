@@ -1,4 +1,6 @@
 public class PlayersMatchData
 {
-    public float MatchRating { get; set; } = 5;
+    public float MatchRating { get; private set; } = 6;
+
+    public float UpdateMatchRating(float change) => MatchRating += change;
 }
