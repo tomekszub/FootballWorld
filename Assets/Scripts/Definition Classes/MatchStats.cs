@@ -3,34 +3,34 @@
 public class MatchStats
 {
     int shots,goals;
-    public List<Scorer> scorers = new List<Scorer>();
+    public List<Scorer> scorers = new();
 
     public MatchStats(List<Scorer> s)
     {
         Reset();
         scorers = s;
     }
+
     public void ShotTaken()
     {
         shots++;
     }
-    public int GetShots()
-    {
-        return shots;
-    }
+
+    public int Shots => shots;
+
     public void GoalScored()
     {
         goals++;
     }
-    public int GetGoals()
-    {
-        return goals;
-    }
+
+    public int Goals => goals;
+
     public void Reset()
     {
         shots = 0;
         goals = 0;
     }
+
     public void AddScorer(Footballer s, string club, int goalsScored)
     {
         for (int i = 0; i < scorers.Count; i++)
@@ -43,6 +43,7 @@ public class MatchStats
         }
         scorers.Add(new Scorer(s.Id,s.Name,s.Surname,club, goalsScored));
     }
+
     public void AddScorer(Scorer s)
     {
         for (int i = 0; i < scorers.Count; i++)

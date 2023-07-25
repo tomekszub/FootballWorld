@@ -142,67 +142,10 @@ public class Footballer : IComparable<Footballer>
 		if (!_statistics.ContainsKey(tournamentName))
 			_statistics.Add(tournamentName, new PlayerStatistics());
 
-		switch (statName)
-		{
-			case PlayerStatistics.StatName.MatchesPlayed:
-				_statistics[tournamentName].MatchesPlayed++;
-				break;
-			case PlayerStatistics.StatName.Goals:
-				_statistics[tournamentName].Goals++;
-				break;
-			case PlayerStatistics.StatName.Assists:
-				_statistics[tournamentName].Assists++;
-				break;
-			case PlayerStatistics.StatName.CleanSheet:
-				_statistics[tournamentName].CleanSheet++;
-				break;
-			default:
-				break;
-        }
+        _statistics[tournamentName].ChangeStat(statName, 1);
     }
 
     public int CompareTo(Footballer f) => f.Rating.CompareTo(Rating);
-
-    public class PlayerStatistics
-    {
-        public enum StatName
-        {
-            MatchesPlayed,
-            Goals,
-            Assists,
-            CleanSheet
-        }
-        public int MatchesPlayed, Goals, Assists, CleanSheet;
-
-        public PlayerStatistics(int matchesPlayed, int goals, int assists, int cleanSheet)
-        {
-            MatchesPlayed = matchesPlayed;
-            Goals = goals;
-            Assists = assists;
-            CleanSheet = cleanSheet;
-        }
-
-		public PlayerStatistics()
-        {
-			MatchesPlayed = 0;
-			Goals = 0;
-			Assists = 0;
-			CleanSheet = 0;
-		}
-
-		public PlayerStatistics(PlayerStatistics playerStatistics)
-        {
-			MatchesPlayed = playerStatistics.MatchesPlayed;
-			Goals = playerStatistics.Goals;
-			Assists = playerStatistics.Assists;
-			CleanSheet = playerStatistics.CleanSheet;
-		}
-
-        public static PlayerStatistics operator +(PlayerStatistics p1, PlayerStatistics p2)
-        {
-			return new PlayerStatistics(p1.MatchesPlayed + p2.MatchesPlayed, p1.Goals + p2.Goals, p1.Assists + p2.Assists, p1.CleanSheet + p2.CleanSheet);
-        }
-    }
 
 	public void LoseFatigue()
 	{
@@ -219,6 +162,56 @@ public class Footballer : IComparable<Footballer>
 	int GetTotalMatchesPlayed()
     {
 		var stats = GetPlayerStatistics("");
-		return stats.MatchesPlayed;
+		return stats.GetStat(PlayerStatistics.StatName.MatchesPlayed);
+    }
+
+    public class PlayerStatistics
+    {
+        public enum StatName
+        {
+            MatchesPlayed,
+            Goals,
+            Assists,
+            CleanSheet
+        }
+
+        Dictionary<StatName, int> _stats;
+
+        public PlayerStatistics(Dictionary<StatName, int> stats)
+        {
+            _stats = new Dictionary<StatName, int>(stats);
+        }
+
+		public PlayerStatistics()
+        {
+            _stats = new();
+
+            foreach (var statName in Enum.GetValues(typeof(StatName)))
+                _stats.Add((StatName)statName, 0);
+        }
+
+		public PlayerStatistics(PlayerStatistics playerStatistics)
+        {
+            _stats = new(playerStatistics._stats);
+		}
+
+        public int GetStat(StatName statName) => _stats[statName];
+
+        public int ChangeStat(StatName statName, int change) => _stats[statName] += change;
+
+        public static PlayerStatistics operator +(PlayerStatistics p1, PlayerStatistics p2)
+        {
+            Dictionary<StatName, int> stats = new(p1._stats);
+
+            foreach(var statKVP in p2._stats)
+            {
+                if(stats.ContainsKey(statKVP.Key))
+                    stats[statKVP.Key] += statKVP.Value;
+                else
+                    stats.Add(statKVP.Key, statKVP.Value);
+            }
+
+			return new PlayerStatistics(stats);
+        }
     }
 }

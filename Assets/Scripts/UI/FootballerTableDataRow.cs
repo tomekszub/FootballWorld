@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 using static FootballerTableData;
+using static Footballer.PlayerStatistics;
 
 public class FootballerTableDataRow : SerializedMonoBehaviour
 {
@@ -48,9 +49,9 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
     public void UpdateStatistics(string tournamentFilter)
     {
         var playerStatistics = _footballer.GetPlayerStatistics(tournamentFilter);
-        _Fields[FootballerFieldType.MatchesPlayed].SetTextData(playerStatistics.MatchesPlayed.ToString());
-        _Fields[FootballerFieldType.Goals].SetTextData(playerStatistics.Goals.ToString());
-        _Fields[FootballerFieldType.Assists].SetTextData(playerStatistics.Assists.ToString());
+        _Fields[FootballerFieldType.MatchesPlayed].SetTextData(playerStatistics.GetStat(StatName.MatchesPlayed).ToString());
+        _Fields[FootballerFieldType.Goals].SetTextData(playerStatistics.GetStat(StatName.Goals).ToString());
+        _Fields[FootballerFieldType.Assists].SetTextData(playerStatistics.GetStat(StatName.Assists).ToString());
     }
 
     public void ShowFields(List<FootballerFieldType> fields)

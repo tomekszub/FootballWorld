@@ -239,56 +239,56 @@ public class MyClub : MonoBehaviour
     {
         int hostId = Matches[_currentMatch].FirstTeamId;
         int guestId = Matches[_currentMatch].SecondTeamId;
-        Matches[_currentMatch].Result.HostGoals = matchStats[0].GetGoals();
-        Matches[_currentMatch].Result.GuestGoals = matchStats[1].GetGoals();
+        Matches[_currentMatch].Result.HostGoals = matchStats[0].Goals;
+        Matches[_currentMatch].Result.GuestGoals = matchStats[1].Goals;
         Matches[_currentMatch].Finished = true;
 
         if (competitionName == _leagueName)
         {
             #region Table
-            if (matchStats[0].GetGoals() > matchStats[1].GetGoals())
+            if (matchStats[0].Goals > matchStats[1].Goals)
             {
                 for (int i = 0; i < _leagueTeams.Count; i++)
                 {
                     if (_leagueTeams[i].Id == hostId)
                     {
-                        _leagueTeams[i].LostGoals += matchStats[1].GetGoals();
+                        _leagueTeams[i].LostGoals += matchStats[1].Goals;
                         _leagueTeams[i].Points += 3;
-                        _leagueTeams[i].ScoredGoals += matchStats[0].GetGoals();
+                        _leagueTeams[i].ScoredGoals += matchStats[0].Goals;
                         _leagueTeams[i].Wins++;
                         _leagueTeams[i].MatchesPlayed++;
-                        _leagueTeams[i].DifferenceGoals += matchStats[0].GetGoals() - matchStats[1].GetGoals();
+                        _leagueTeams[i].DifferenceGoals += matchStats[0].Goals - matchStats[1].Goals;
                     }
                     if (_leagueTeams[i].Id == guestId)
                     {
-                        _leagueTeams[i].LostGoals += matchStats[0].GetGoals();
-                        _leagueTeams[i].ScoredGoals += matchStats[1].GetGoals();
+                        _leagueTeams[i].LostGoals += matchStats[0].Goals;
+                        _leagueTeams[i].ScoredGoals += matchStats[1].Goals;
                         _leagueTeams[i].Loses++;
                         _leagueTeams[i].MatchesPlayed++;
-                        _leagueTeams[i].DifferenceGoals -= matchStats[0].GetGoals() - matchStats[1].GetGoals();
+                        _leagueTeams[i].DifferenceGoals -= matchStats[0].Goals - matchStats[1].Goals;
                     }
                 }
             }
-            else if (matchStats[0].GetGoals() < matchStats[1].GetGoals())
+            else if (matchStats[0].Goals < matchStats[1].Goals)
             {
                 for (int i = 0; i < _leagueTeams.Count; i++)
                 {
                     if (_leagueTeams[i].Id == hostId)
                     {
-                        _leagueTeams[i].LostGoals += matchStats[1].GetGoals();
-                        _leagueTeams[i].ScoredGoals += matchStats[0].GetGoals();
+                        _leagueTeams[i].LostGoals += matchStats[1].Goals;
+                        _leagueTeams[i].ScoredGoals += matchStats[0].Goals;
                         _leagueTeams[i].Loses++;
                         _leagueTeams[i].MatchesPlayed++;
-                        _leagueTeams[i].DifferenceGoals += matchStats[0].GetGoals() - matchStats[1].GetGoals();
+                        _leagueTeams[i].DifferenceGoals += matchStats[0].Goals - matchStats[1].Goals;
                     }
                     if (_leagueTeams[i].Id == guestId)
                     {
-                        _leagueTeams[i].LostGoals += matchStats[0].GetGoals();
+                        _leagueTeams[i].LostGoals += matchStats[0].Goals;
                         _leagueTeams[i].Points += 3;
-                        _leagueTeams[i].ScoredGoals += matchStats[1].GetGoals();
+                        _leagueTeams[i].ScoredGoals += matchStats[1].Goals;
                         _leagueTeams[i].Wins++;
                         _leagueTeams[i].MatchesPlayed++;
-                        _leagueTeams[i].DifferenceGoals -= matchStats[0].GetGoals() - matchStats[1].GetGoals();
+                        _leagueTeams[i].DifferenceGoals -= matchStats[0].Goals - matchStats[1].Goals;
                     }
                 }
             }
@@ -298,17 +298,17 @@ public class MyClub : MonoBehaviour
                 {
                     if (_leagueTeams[i].Id == hostId)
                     {
-                        _leagueTeams[i].LostGoals += matchStats[1].GetGoals();
+                        _leagueTeams[i].LostGoals += matchStats[1].Goals;
                         _leagueTeams[i].Points += 1;
-                        _leagueTeams[i].ScoredGoals += matchStats[0].GetGoals();
+                        _leagueTeams[i].ScoredGoals += matchStats[0].Goals;
                         _leagueTeams[i].Draws++;
                         _leagueTeams[i].MatchesPlayed++;
                     }
                     if (_leagueTeams[i].Id == guestId)
                     {
-                        _leagueTeams[i].LostGoals += matchStats[0].GetGoals();
+                        _leagueTeams[i].LostGoals += matchStats[0].Goals;
                         _leagueTeams[i].Points += 1;
-                        _leagueTeams[i].ScoredGoals += matchStats[1].GetGoals();
+                        _leagueTeams[i].ScoredGoals += matchStats[1].Goals;
                         _leagueTeams[i].Draws++;
                         _leagueTeams[i].MatchesPlayed++;
                     }

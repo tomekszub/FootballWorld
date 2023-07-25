@@ -166,7 +166,7 @@ public class Comment : MonoBehaviour
             CommentLine.Instance.EndOfTheMatch();
             _end = true;
             _StartStopButton.text = "Zakończ mecz";
-            Debug.Log("KONIEC MECZU!!!---Wynik: " + _matchStats[0].GetGoals() + " - " + _matchStats[1].GetGoals());
+            Debug.Log("KONIEC MECZU!!!---Wynik: " + _matchStats[0].Goals + " - " + _matchStats[1].Goals);
             StopAllCoroutines();
             yield break;
         }

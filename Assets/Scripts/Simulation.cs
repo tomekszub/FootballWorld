@@ -77,7 +77,7 @@ public class Simulation : MonoBehaviour
             UpdateChances();
             if (_minute >= 90)
             {
-                Debug.Log("KONIEC !!!---Wynik: " + teamName[0] + matchStats[0].GetGoals() + "-" + matchStats[1].GetGoals() + teamName[1]);
+                Debug.Log("KONIEC !!!---Wynik: " + teamName[0] + matchStats[0].Goals + "-" + matchStats[1].Goals + teamName[1]);
                 break;
             }
             else

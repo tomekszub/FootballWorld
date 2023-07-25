@@ -84,11 +84,11 @@ public class CommentLine : MonoBehaviour
     public void InfoComment()
     {
         MatchStats[] ms = Comment.Instance.GetMatchStats();
-        int hostShots = ms[0].GetShots();
-        int guestShots = ms[1].GetShots();
+        int hostShots = ms[0].Shots;
+        int guestShots = ms[1].Shots;
         int hostChances = Comment.Instance.GetHostChances();
-        int hostGoals = ms[0].GetGoals();
-        int guestGoals = ms[1].GetGoals();
+        int hostGoals = ms[0].Goals;
+        int guestGoals = ms[1].Goals;
         string text = "";
         int attendence = Random.Range((Database.clubDB[_guestId].Rate / 10) * Database.clubDB[_hostId].StadiumCapacity, Database.clubDB[_hostId].StadiumCapacity);
         switch (GetRandomIndex(8))
@@ -718,7 +718,7 @@ public class CommentLine : MonoBehaviour
 
     public void UpdateResult(MatchStats[] matchStats)
     {
-        _ResultText.text = $"{_hostName} {matchStats[0].GetGoals()} - {matchStats[1].GetGoals()} {_guestName}";
+        _ResultText.text = $"{_hostName} {matchStats[0].Goals} - {matchStats[1].Goals} {_guestName}";
     }
 
     int GetRandomIndex(int countOfIndices)
