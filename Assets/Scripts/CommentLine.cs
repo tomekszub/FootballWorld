@@ -709,7 +709,7 @@ public class CommentLine : MonoBehaviour
 
     public void FailedChanceOneToOne()
     {
-        _Commentary.text += $"\n{_teams[Comment.Instance.ReverseGuestBall][Comment.Instance.PlayerWithBall].Surname} wyłuskuje piłkę napastnikowi i wybija ją.";
+        _Commentary.text += $"\n{_teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname} wyłuskuje piłkę napastnikowi i wybija ją.";
     }
 
     public void OneToOneSituation()

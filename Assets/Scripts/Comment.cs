@@ -1032,6 +1032,7 @@ public class Comment : MonoBehaviour
                         else
                         {
                             PlayerWithBall = defenderIndex;
+                            GuestBall = ReverseGuestBall;
                             CommentLine.Instance.FailedChanceOneToOne();
                             MinutePassed();
                             StartCoroutine(CommentStart());
