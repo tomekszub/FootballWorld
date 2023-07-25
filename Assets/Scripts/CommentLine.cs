@@ -650,9 +650,8 @@ public class CommentLine : MonoBehaviour
         }
     }
 
-    public void TryingToDodge()
+    public void TryingToGetPastDefender()
     {
-        
         _Commentary.text += $"\n{Comment.Instance.GetMinute()} min. Piłkę przy nodze ma {_teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname}. próbuje minąć przeciwnika...";
     }
 

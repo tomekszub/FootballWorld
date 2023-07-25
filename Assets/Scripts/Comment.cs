@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,8 @@ using TMPro;
 
 public class Comment : MonoBehaviour
 {
+    const int SECOND_PHASE_SAFE_INDEX = 37;
+
     public static Comment Instance;
 
     [SerializeField] TextMeshProUGUI _StartStopButton;
@@ -228,12 +229,17 @@ public class Comment : MonoBehaviour
         int counterPos = Random.Range(_midLastPlayerNumber[ReverseGuestBall] + 1, 11);
         float counterChance = _teams[ReverseGuestBall][counterPos].Tackle - _teams[GuestBall][PlayerWithBall].Pass;
         counterChance = (counterChance + 100) / 20;
-        int dec = Random.Range(1, 37 + (int)counterChance);
+        int dec = Random.Range(1, SECOND_PHASE_SAFE_INDEX + (int)counterChance);
+
+        UpdateMatchRatingForCurrentPlayer(dec > SECOND_PHASE_SAFE_INDEX ? MatchRatingConstants.COUNTER_BALL_LOSS : MatchRatingConstants.BASIC_PASS_SUCCESS);
+
+        // TODO: Add decision making based on some attributes
         if (dec <= 10)
         {
             // środek podanie
             PlayerWithBall = Random.Range(_defLastPlayerNumber[GuestBall] + 1, _midLastPlayerNumber[GuestBall] + 1);
             CommentLine.Instance.PassMiddle();
+            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.BASIC_PASS_SUCCESS);
             PlayerWithBall = _teamsMidPos[GuestBall][Random.Range(0, _teamsMidPos[GuestBall].Count)];
             StartCoroutine(AttackThirdPhase("middle"));
         }
@@ -245,6 +251,8 @@ public class Comment : MonoBehaviour
             PlayerWithBall = pos;
 
             CommentLine.Instance.PassToTheWing(isRightWing);
+
+            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.BASIC_PASS_SUCCESS);
 
             if (_wingPos[GuestBall, isRightWing] != pos)
                 PlayerWithBall = _wingPos[GuestBall, isRightWing];
@@ -274,6 +282,9 @@ public class Comment : MonoBehaviour
             PlayerWithBall = counterPos;
             GuestBall = ReverseGuestBall;
             CommentLine.Instance.InterceptionAndCounter();
+
+            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_BALL_INTERCEPTION);
+
             StartCoroutine(CounterAttack());
         }
     }
@@ -490,17 +501,32 @@ public class Comment : MonoBehaviour
     {
         _matchStats[GuestBall].GoalScored();
         _matchStats[GuestBall].AddScorer(_teams[GuestBall][PlayerWithBall], _teamName[GuestBall], 1);
-        _teamsMatchData[GuestBall][PlayerWithBall].MatchRating += .5f;
+        UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.GOAL_SCORED);
         _teams[GuestBall][PlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);
-        _teamsMatchData[GuestBall].ForEach(data => data.MatchRating += .5f);
-        _teamsMatchData[ReverseGuestBall].ForEach(data => data.MatchRating -= .5f);
+        _teamsMatchData[GuestBall].ForEach(data => data.UpdateMatchRating(MatchRatingConstants.GOAL_SCORED_TEAM));
+        _teamsMatchData[ReverseGuestBall].ForEach(data => data.UpdateMatchRating(MatchRatingConstants.GOAL_LOST_TEAM));
         if (_prevPlayerWithBall != -1)
         {
             _teams[GuestBall][_prevPlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Assists);
-            _teamsMatchData[GuestBall][_prevPlayerWithBall].MatchRating += .25f;
+            UpdateMatchRatingForPlayer(GuestBall, _prevPlayerWithBall, MatchRatingConstants.ASSIST);
             _prevPlayerWithBall = -1;
         }
         UpdateCuriosity();
+    }
+
+    void UpdateMatchRatingForCurrentPlayer(float change)
+    {
+        UpdateMatchRatingForPlayer(GuestBall, PlayerWithBall, change);
+    }
+
+    void UpdateMatchRatingForPreviousPlayer(float change)
+    {
+        UpdateMatchRatingForPlayer(GuestBall, _prevPlayerWithBall, change);
+    }
+
+    void UpdateMatchRatingForPlayer(int guestTeam, int id, float change)
+    {
+        _teamsMatchData[guestTeam][id].UpdateMatchRating(change);
     }
 
     void MinutePassed()
@@ -546,7 +572,12 @@ public class Comment : MonoBehaviour
                 CommentLine.Instance.PenaltyGoal();
             }
             else
+            {
                 CommentLine.Instance.PenaltyMissed();
+
+                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.PENALTY_MISSED);
+                UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.PENALTY_SAVED);
+            }
 
             _matchStats[GuestBall].ShotTaken();
             MinutePassed();
@@ -573,18 +604,27 @@ public class Comment : MonoBehaviour
             if (x <= 20)
             {
                 // rożny
+                //TODO: differentiate between richochet and saved by goalkeeper
                 CommentLine.Instance.LongShotCorner();
+                UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.LONG_SAVE_SUCCESS);
+                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.LONG_SHOT_SUCCESS);
                 StartCoroutine(Corner());
             }
             else
             {
                 if (x <= 30 + plus)
                 {
-                    GoalScored();
+                    // TODO: differentiate betweeen fail save and no chance goal
                     CommentLine.Instance.LongShotGoal();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.LONG_SAVE_FAIL);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.LONG_SHOT_SUCCESS);
+                    GoalScored();
                 }
                 else
+                {
                     CommentLine.Instance.LongShotMiss();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.LONG_SHOT_FAIL);
+                }
 
                 MinutePassed();
                 StartCoroutine(CommentStart());
@@ -604,6 +644,8 @@ public class Comment : MonoBehaviour
                 {
                     //lapie
                     CommentLine.Instance.CounterAttackSave();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.COUNTER_SAVE_SUCCESS);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_SHOT_FAIL);
                     MinutePassed();
                     StartCoroutine(CommentStart());
                 }
@@ -611,6 +653,8 @@ public class Comment : MonoBehaviour
                 {
                     //korner
                     CommentLine.Instance.CounterAttackCorner();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.COUNTER_SAVE_CORNER);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_SHOT_SUCCESS);
                     StartCoroutine(Corner());
                 }
             }
@@ -618,12 +662,15 @@ public class Comment : MonoBehaviour
             {
                 if (x <= keeperPlus + shooterPlus)
                 {
-                    GoalScored();
                     CommentLine.Instance.CounterAttackGoal();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.COUNTER_SAVE_FAIL);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_SHOT_SUCCESS);
+                    GoalScored();
                 }
                 else
                 {
                     CommentLine.Instance.CounterAttackMiss();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_SHOT_FAIL);
                 }
                 MinutePassed();
                 StartCoroutine(CommentStart());
@@ -642,6 +689,8 @@ public class Comment : MonoBehaviour
                 {
                     //lapie
                     CommentLine.Instance.NormalAttackSave();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.NORMAL_SAVE_SUCCESS);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.NORMAL_SHOT_FAIL);
                     MinutePassed();
                     StartCoroutine(CommentStart());
                 }
@@ -649,6 +698,8 @@ public class Comment : MonoBehaviour
                 {
                     //korner
                     CommentLine.Instance.NormalAttackCorner();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.NORMAL_SAVE_CORNER);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.NORMAL_SHOT_SUCCESS);
                     StartCoroutine(Corner());
                 }
             }
@@ -656,11 +707,16 @@ public class Comment : MonoBehaviour
             {
                 if (x <= keeperPlus + shooterPlus)
                 {
-                    GoalScored();
                     CommentLine.Instance.NormalAttackGoal();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.NORMAL_SAVE_FAIL);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.NORMAL_SHOT_SUCCESS);
+                    GoalScored();
                 }
                 else
+                {
                     CommentLine.Instance.NormalAttackMiss();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.NORMAL_SHOT_FAIL);
+                }
 
                 MinutePassed();
                 StartCoroutine(CommentStart());
@@ -679,6 +735,8 @@ public class Comment : MonoBehaviour
                 {
                     //lapie
                     CommentLine.Instance.OneOnOneAttackSave();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.ONE_ON_ONE_SAVE_SUCCESS);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.ONE_ON_ONE_SHOT_FAIL);
                     MinutePassed();
                     StartCoroutine(CommentStart());
                 }
@@ -686,6 +744,8 @@ public class Comment : MonoBehaviour
                 {
                     //korner
                     CommentLine.Instance.OneOnOneAttackCorner();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.ONE_ON_ONE_SAVE_CORNER);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.ONE_ON_ONE_SHOT_FAIL);
                     StartCoroutine(Corner());
                 }
             }
@@ -693,16 +753,22 @@ public class Comment : MonoBehaviour
             {
                 if (x <= keeperPlus + shooterPlus)
                 {
-                    GoalScored();
                     CommentLine.Instance.OneOnOneAttackGoal();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.ONE_ON_ONE_SAVE_FAIL);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.ONE_ON_ONE_SHOT_SUCCESS);
+                    GoalScored();
                 }
                 else
+                {
                     CommentLine.Instance.OneOnOneAttackMiss();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.ONE_ON_ONE_SHOT_FAIL);
+                }
 
                 MinutePassed();
                 StartCoroutine(CommentStart());
             }
         }
+        // TODO: detach headers from difficulty 3
         else if (difficulty == 3)    //   główka
         {
             _matchStats[GuestBall].ShotTaken();
@@ -716,6 +782,8 @@ public class Comment : MonoBehaviour
                 {
                     //lapie
                     CommentLine.Instance.HeaderSave();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.GOOD_SAVE_SUCCESS);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.GOOD_SHOT_FAIL);
                     MinutePassed();
                     StartCoroutine(CommentStart());
                 }
@@ -723,6 +791,8 @@ public class Comment : MonoBehaviour
                 {
                     //korner
                     CommentLine.Instance.HeaderCorner();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.GOOD_SAVE_CORNER);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.GOOD_SHOT_SUCCESS);
                     StartCoroutine(Corner());
                 }
 
@@ -731,12 +801,15 @@ public class Comment : MonoBehaviour
             {
                 if (x <= keeperPlus + shooterPlus)
                 {
-                    GoalScored();
                     CommentLine.Instance.HeaderGoal();
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, 0, MatchRatingConstants.GOOD_SAVE_FAIL);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.GOOD_SHOT_SUCCESS);
+                    GoalScored();
                 }
                 else
                 {
                     CommentLine.Instance.HeaderMiss();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.GOOD_SHOT_FAIL);
                 }
                 MinutePassed();
                 StartCoroutine(CommentStart());
@@ -765,14 +838,16 @@ public class Comment : MonoBehaviour
         }
         else if (rnd <= 30 + x)
         {
+            // TODO: differentiate between bad pass and good tackle/interception
             CommentLine.Instance.CounterAttackFailedPass();
+            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_PASS_FAIL);
             MinutePassed();
             StartCoroutine(CommentStart());
         }
         else
         {
             CommentLine.Instance.CounterAttackSuccessPass();
-
+            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_PASS_FAIL);
             List<int> indices = Enumerable.Range(_midLastPlayerNumber[GuestBall] + 1, 10 - _midLastPlayerNumber[GuestBall]).ToList();
             indices.Remove(PlayerWithBall);
 
@@ -783,10 +858,12 @@ public class Comment : MonoBehaviour
             if(_time > 0) 
                 yield return new WaitForSeconds(_time);
 
+            // TODO: add chance to clean tackle based on defender's tackle and attacker's ... ball control?
             int chan = Random.Range(1, 101);
             if (chan < 70)
             {
                 CommentLine.Instance.CounterAttackPenaltyFoul();
+                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.PENALTY_WON);
                 StartCoroutine(FreeKick(true));
             }
             else
@@ -801,47 +878,45 @@ public class Comment : MonoBehaviour
         if(_time > 0) 
             yield return new WaitForSeconds(_time);
 
-        List<Footballer> cornerPlayers = new List<Footballer>();
+        List<(int id, Footballer player)> cornerPlayers = new();
         for (int i = 1; i < 11; i++)
-            cornerPlayers.Add(_teams[GuestBall][i]);
+            cornerPlayers.Add((i, _teams[GuestBall][i]));
 
-        cornerPlayers = cornerPlayers.OrderByDescending(x => x.Corner).ToList();
-        CommentLine.Instance.CornerExecution(cornerPlayers[0]);
-        float border = 65 + ((cornerPlayers[0].FreeKicks + cornerPlayers[0].Pass) / 10);
+        cornerPlayers = cornerPlayers.OrderByDescending(x => x.player.Corner).ToList();
+        CommentLine.Instance.CornerExecution(cornerPlayers[0].player);
+        float border = 65 + ((cornerPlayers[0].player.FreeKicks + cornerPlayers[0].player.Pass) / 10);
         // executor of corner cannot jump to the header...
+        int cornerExecutorID = cornerPlayers[0].id;
         cornerPlayers.RemoveAt(0);
+
         if (Random.Range(1, 101) <= border)
         {
-            List<Footballer> attackerHeaders = new List<Footballer>();
-            List<Footballer> defenderHeaders = new List<Footballer>();
-            attackerHeaders = cornerPlayers.OrderByDescending(x => x.Heading).ToList();
+            var attackerHeaders = cornerPlayers.OrderByDescending(x => x.player.Heading).ToList();
+            List<(int id, Footballer player)> defenderHeaders = new();
             for (int i = 1; i < 11; i++)
             {
-                defenderHeaders.Add(_teams[ReverseGuestBall][i]);
+                defenderHeaders.Add((i, _teams[ReverseGuestBall][i]));
             }
             int y = Random.Range(0, 30); // losowanie indeksu piłkarzy, którzy będą walczyć o piłkę
             y /= 10;
-            for (int i = 1; i < 11; i++)
-            {
-                if (attackerHeaders[y].Id == _teams[GuestBall][i].Id)
-                {
-                    PlayerWithBall = i;
-                    break;
-                }
-            }
-            // TODO: instead of comparing rating, hould compare positioning or smth
+            PlayerWithBall = attackerHeaders[y].id;
+            // TODO: instead of comparing rating, could compare positioning or smth
             // główka
-            if (Random.Range(1, 101) <= 25 + ((attackerHeaders[y].Rating - defenderHeaders[y].Rating) / 5))
+            if (Random.Range(1, 101) <= 25 + ((attackerHeaders[y].player.Rating - defenderHeaders[y].player.Rating) / 5))
             {
                 // zgubienie obrońcy i strzał głową
                 if(_time > 0) 
                     yield return new WaitForSeconds(_time);
 
                 CommentLine.Instance.FreeHeader();
+                UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_SUCCESS);
+                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CORNER_WON_POSITIONING);
+                UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeaders[y].id, MatchRatingConstants.CORNER_LOST_POSITIONING);
 
                 if(_time > 0) 
                     yield return new WaitForSeconds(_time);
 
+                // TODO: defferentiate between free header and contested header
                 StartCoroutine(Shot(3));
             }
             else
@@ -849,18 +924,24 @@ public class Comment : MonoBehaviour
                 if(_time > 0) 
                     yield return new WaitForSeconds(_time);
 
-                if (Random.Range(1, 101) <= 50 + ((attackerHeaders[y].Heading - defenderHeaders[y].Heading) / 2))
+                if (Random.Range(1, 101) <= 50 + ((attackerHeaders[y].player.Heading - defenderHeaders[y].player.Heading) / 2))
                 {
                     CommentLine.Instance.ContestedHeader();
+                    UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_SUCCESS);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CORNER_WON_HEADER);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeaders[y].id, MatchRatingConstants.CORNER_LOST_HEADER);
 
-                    if(_time > 0) 
+                    if (_time > 0) 
                         yield return new WaitForSeconds(_time);
 
                     StartCoroutine(Shot(3));
                 }
                 else
                 {
-                    CommentLine.Instance.DefenderWinsHeader(defenderHeaders[y]);
+                    CommentLine.Instance.DefenderWinsHeader(defenderHeaders[y].player);
+                    UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_SUCCESS);
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CORNER_LOST_HEADER);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeaders[y].id, MatchRatingConstants.CORNER_WON_HEADER);
                     MinutePassed();
                     StartCoroutine(CommentStart());
                 }
@@ -872,6 +953,8 @@ public class Comment : MonoBehaviour
                 yield return new WaitForSeconds(_time);
 
             CommentLine.Instance.FailedCross();
+            UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_FAIL);
+
             MinutePassed();
             StartCoroutine(CommentStart());
         }
@@ -887,7 +970,7 @@ public class Comment : MonoBehaviour
         if (direction == "left" || direction == "right")
         {
             int dir = direction == "right" ? 1 : 0;
-            CommentLine.Instance.TryingToDodge();
+            CommentLine.Instance.TryingToGetPastDefender();
 
             if(_time > 0) 
                 yield return new WaitForSeconds(_time);
@@ -898,6 +981,8 @@ public class Comment : MonoBehaviour
                 if (Random.Range(1, 101) <= 70)
                 {
                     CommentLine.Instance.DecidesToCross();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, _defWingPos[ReverseGuestBall, dir], MatchRatingConstants.DRIBBLE_DUEL_LOST);
                     float border = 40 + (_teams[0][PlayerWithBall].Pass / 3);           //----------------- ewentualnie zmniejszyc mnożnik gdyby za dużo goli z główki
                     int acc = Random.Range(1, 100);
                     if (acc <= border)
@@ -927,8 +1012,11 @@ public class Comment : MonoBehaviour
 
                             PlayerWithBall = attackerHeader;
                             CommentLine.Instance.FreeHeader();
+                            UpdateMatchRatingForPreviousPlayer(MatchRatingConstants.CROSS_SUCCESS);
+                            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CROSS_WON_POSITIONING);
+                            UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeader, MatchRatingConstants.CROSS_LOST_POSITIONING);
 
-                            if(_time > 0) 
+                            if (_time > 0) 
                                 yield return new WaitForSeconds(_time);
 
                             StartCoroutine(Shot(3));
@@ -942,8 +1030,11 @@ public class Comment : MonoBehaviour
                             {
                                 PlayerWithBall = attackerHeader;
                                 CommentLine.Instance.ContestedHeader();
+                                UpdateMatchRatingForPreviousPlayer(MatchRatingConstants.CROSS_SUCCESS);
+                                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CROSS_WON_HEADER);
+                                UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeader, MatchRatingConstants.CROSS_LOST_HEADER);
 
-                                if(_time > 0) 
+                                if (_time > 0) 
                                     yield return new WaitForSeconds(_time);
 
                                 StartCoroutine(Shot(3));
@@ -951,6 +1042,10 @@ public class Comment : MonoBehaviour
                             else
                             {
                                 CommentLine.Instance.DefenderWinsHeader(_teams[ReverseGuestBall][defenderHeader]);
+                                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CROSS_SUCCESS);
+                                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CROSS_LOST_HEADER);
+                                UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeader, MatchRatingConstants.CROSS_WON_HEADER);
+
                                 MinutePassed();
                                 StartCoroutine(CommentStart());
                             }
@@ -962,6 +1057,7 @@ public class Comment : MonoBehaviour
                             yield return new WaitForSeconds(_time);
 
                         CommentLine.Instance.FailedCross();
+                        UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CROSS_FAIL);
                         MinutePassed();
                         StartCoroutine(CommentStart());
                     }
@@ -969,12 +1065,16 @@ public class Comment : MonoBehaviour
                 else
                 {
                     CommentLine.Instance.DecidesToShootInsteadOfCrossing();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, _defWingPos[ReverseGuestBall, dir], MatchRatingConstants.DRIBBLE_DUEL_LOST);
                     StartCoroutine(Shot(5));
                 }
             }
             else
             {
                 CommentLine.Instance.FailedWingDribble(dir);
+                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_LOST);
+                UpdateMatchRatingForPlayer(ReverseGuestBall, _defWingPos[ReverseGuestBall, dir], MatchRatingConstants.DRIBBLE_DUEL_WON);
                 MinutePassed();
                 StartCoroutine(CommentStart());
             }
@@ -982,7 +1082,7 @@ public class Comment : MonoBehaviour
         else if (direction == "middle")
         {
 
-            CommentLine.Instance.TryingToDodge();
+            CommentLine.Instance.TryingToGetPastDefender();
 
             if(_time > 0) 
                 yield return new WaitForSeconds(_time);
@@ -995,6 +1095,9 @@ public class Comment : MonoBehaviour
                 if (Random.Range(1, 101) <= 65)
                 {
                     CommentLine.Instance.DecidesToPass();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, firstDef, MatchRatingConstants.DRIBBLE_DUEL_LOST);
+
                     float border = 30 + _teams[GuestBall][PlayerWithBall].Pass / 3;
                     if (Random.Range(1, 101) <= border)
                     {
@@ -1016,15 +1119,18 @@ public class Comment : MonoBehaviour
                             yield return new WaitForSeconds(_time);
 
                         CommentLine.Instance.ChanceForOneOnOne();
+                        UpdateMatchRatingForPreviousPlayer(MatchRatingConstants.ADVANCED_PASS_FAIL);
 
-                        if(_time > 0) 
+                        if (_time > 0)
                             yield return new WaitForSeconds(_time);
 
-                        if (Random.Range(1, 101) <= (50 + (_teams[GuestBall][PlayerWithBall].Dribling - _teams[ReverseGuestBall][defenderIndex].Tackle) / 3))
+                        if (Random.Range(1, 101) <= (40 + (_teams[GuestBall][PlayerWithBall].Dribling - _teams[ReverseGuestBall][defenderIndex].Tackle) / 3))
                         {
                             CommentLine.Instance.OneToOneSituation();
+                            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.KEY_DRIBBLE_DUEL_WON);
+                            UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.KEY_DRIBBLE_DUEL_LOST);
 
-                            if(_time > 0) 
+                            if (_time > 0) 
                                 yield return new WaitForSeconds(_time);
 
                             StartCoroutine(Shot(2));
@@ -1034,6 +1140,8 @@ public class Comment : MonoBehaviour
                             PlayerWithBall = defenderIndex;
                             GuestBall = ReverseGuestBall;
                             CommentLine.Instance.FailedChanceOneToOne();
+                            UpdateMatchRatingForPlayer(ReverseGuestBall, _prevPlayerWithBall, MatchRatingConstants.KEY_DRIBBLE_DUEL_LOST);
+                            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.KEY_DRIBBLE_DUEL_WON);
                             MinutePassed();
                             StartCoroutine(CommentStart());
                         }
@@ -1044,6 +1152,7 @@ public class Comment : MonoBehaviour
                             yield return new WaitForSeconds(_time);
 
                         CommentLine.Instance.FailedPass();
+                        UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.ADVANCED_PASS_FAIL);
                         MinutePassed();
                         StartCoroutine(CommentStart());
                     }
@@ -1051,12 +1160,16 @@ public class Comment : MonoBehaviour
                 else
                 {
                     CommentLine.Instance.DecidesToShootInsteadOfPassing();
+                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, firstDef, MatchRatingConstants.DRIBBLE_DUEL_LOST);
                     StartCoroutine(Shot(5));
                 }
             }
             else
             {
                 CommentLine.Instance.FailedMidDribble(_teams[ReverseGuestBall][firstDef]);
+                UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_LOST);
+                UpdateMatchRatingForPlayer(ReverseGuestBall, firstDef, MatchRatingConstants.DRIBBLE_DUEL_WON);
                 MinutePassed();
                 StartCoroutine(CommentStart());
             }
