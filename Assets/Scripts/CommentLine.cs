@@ -122,19 +122,19 @@ public class CommentLine : MonoBehaviour
         string text = "";
         switch (rnd)
         {
-            case 1: text += "Akcje " + _host_guest_string[Comment.Instance.GetGuestBall()].getGenitive() + " długim podaniem rozpoczyna " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ".";break;
-            case 2: text += "Przy piłce " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ", przyjmuje piłkę i podaje.";break;
-            case 3: text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " dostaje piłkę i odgrywa ją do partnera.";break;
-            case 4: text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " podaje piłkę do kolegi.";break;
-            case 5: text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " w posiadaniu piłki, szuka kolegi z zespołu i podaje.";break;
-            case 6: text += "Teraz " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ", od razu podaje do przodu.";break;
+            case 1: text += "Akcje " + _host_guest_string[Comment.Instance.GuestBall].getGenitive() + " długim podaniem rozpoczyna " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ".";break;
+            case 2: text += "Przy piłce " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ", przyjmuje piłkę i podaje.";break;
+            case 3: text += teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " dostaje piłkę i odgrywa ją do partnera.";break;
+            case 4: text += teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " podaje piłkę do kolegi.";break;
+            case 5: text += teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " w posiadaniu piłki, szuka kolegi z zespołu i podaje.";break;
+            case 6: text += "Teraz " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ", od razu podaje do przodu.";break;
         }
 
         _Commentary.text += "\n" + Comment.Instance.GetMinute() + " min. " + text;
     }
     public void InterceptionAndCounter()
     {
-        _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " przechwytuje piłkę i " + _host_guest_string[Comment.Instance.GetGuestBall()].getNominative() + " wychodzą z kontratakiem.";
+        _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " przechwytuje piłkę i " + _host_guest_string[Comment.Instance.GuestBall].getNominative() + " wychodzą z kontratakiem.";
     }
     public void PassMiddle()
     {
@@ -143,13 +143,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nPiłka trafia do " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ". Ten dogrywa do lepiej ustawionego partnera.";
+                _Commentary.text += "\nPiłka trafia do " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ". Ten dogrywa do lepiej ustawionego partnera.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " dostał piłkę i podaje ją do przodu.";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " dostał piłkę i podaje ją do przodu.";
                 break;
             case 3:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " po otrzymaniu futbolówki niezwłocznie oddaje ją do nieatakowanego partnera.";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " po otrzymaniu futbolówki niezwłocznie oddaje ją do nieatakowanego partnera.";
                 break;
         }
     }
@@ -160,23 +160,23 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nPiłka trafia do " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ". Zagranie na " + _left_right_wing_string[isRightWing].getNominative() + " skrzydło.";
+                _Commentary.text += "\nPiłka trafia do " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ". Zagranie na " + _left_right_wing_string[isRightWing].getNominative() + " skrzydło.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " podaje na skrzydło.";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " podaje na skrzydło.";
                 break;
             case 3:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " po otrzymaniu piłki bez zastanowienia posyła ją na " + _left_right_direction_string[isRightWing] + ".";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " po otrzymaniu piłki bez zastanowienia posyła ją na " + _left_right_direction_string[isRightWing] + ".";
                 break;
         }
     }
     public void DecidesToShoot()
     {
-        _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " decyduje się na uderzenie z daleka...";
+        _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " decyduje się na uderzenie z daleka...";
     }
     public void PreparingToPenalty()
     {
-        _Commentary.text += "\n" + Comment.Instance.GetMinute() + " min. Do piłki podchodzi " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + "...";
+        _Commentary.text += "\n" + Comment.Instance.GetMinute() + " min. Do piłki podchodzi " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + "...";
     }
     public void PenaltyGoal()
     {
@@ -189,10 +189,10 @@ public class CommentLine : MonoBehaviour
                 text = "Gol, pewnie wykorzystany karny.";
                 break;
             case 2:
-                text = "Fantastyczny strzał, " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " bez szans.";
+                text = "Fantastyczny strzał, " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " bez szans.";
                 break;
             case 3:
-                text = "Mocno, w dolny róg bramki i gol dla " + _host_guest_string[Comment.Instance.GetGuestBall()].getGenitive() + ".";
+                text = "Mocno, w dolny róg bramki i gol dla " + _host_guest_string[Comment.Instance.GuestBall].getGenitive() + ".";
                 break;
         }
         _Commentary.text += "\n<color=#ffa500ff>" + Comment.Instance.GetMinute() + " min. " + text + "</color>";
@@ -205,10 +205,10 @@ public class CommentLine : MonoBehaviour
         switch (ran)
         {
             case 1:
-                text = teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " wyczuł intencje strzelajacego i łapie piłkę.";
+                text = teams[Comment.Instance.ReverseGuestBall][0].Surname + " wyczuł intencje strzelajacego i łapie piłkę.";
                 break;
             case 2:
-                text = "Za słaby strzał, " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " odbija bez problemu.";
+                text = "Za słaby strzał, " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " odbija bez problemu.";
                 break;
             case 3:
                 text = "Mocno, nad bramką i nadal wynik bez zmian.";
@@ -223,13 +223,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nStrzela " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ", ale piłka po rykoszecie wypada za boisko, Rzut rożny.";
+                _Commentary.text += "\nStrzela " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ", ale piłka po rykoszecie wypada za boisko, Rzut rożny.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ", dobry strzał i dobra obrona bramkarza, wybija piłkę na rzut rożny.";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ", dobry strzał i dobra obrona bramkarza, wybija piłkę na rzut rożny.";
                 break;
             case 3:
-                _Commentary.text += "\nStrzał " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + " zablokowany przez jednego z graczy " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + " i mamy korner.";
+                _Commentary.text += "\nStrzał " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + " zablokowany przez jednego z graczy " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + " i mamy korner.";
                 break;
         }
     }
@@ -241,13 +241,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                text = "Gooooool, cudowny strzał " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ".";
+                text = "Gooooool, cudowny strzał " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ".";
                 break;
             case 2:
-                text = "Piękny gol " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w oknie bramki " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + ".";
+                text = "Piękny gol " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w oknie bramki " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + ".";
                 break;
             case 3:
-                text = "Przepiękne uderzenie " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + " i gol.";
+                text = "Przepiękne uderzenie " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + " i gol.";
                 break;
         }
         _Commentary.text += "\n<color=#ffa500ff>" + Comment.Instance.GetMinute() + " min. " + text + "</color>";
@@ -262,10 +262,10 @@ public class CommentLine : MonoBehaviour
                 _Commentary.text += "\nAle bardzo nieudana próba.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " strzela z daleka ale niecelnie.";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " strzela z daleka ale niecelnie.";
                 break;
             case 3:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " strzela z dystansu ale piłka ląduje poza boiskiem.";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " strzela z dystansu ale piłka ląduje poza boiskiem.";
                 break;
         }
     }
@@ -276,13 +276,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + ", z problemami ale łapie piłkę.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + ", z problemami ale łapie piłkę.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " wyłapuje to niegroźne uderzenie.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " wyłapuje to niegroźne uderzenie.";
                 break;
             case 3:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " decyduje się złapać piłkę zamiast wybić ją do boku i udaje mu się to.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " decyduje się złapać piłkę zamiast wybić ją do boku i udaje mu się to.";
                 break;
         }
     }
@@ -293,13 +293,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ", rzut rożny.";
+                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ", rzut rożny.";
                 break;
             case 2:
                 _Commentary.text += "\nDobry strzał i bardzo dobra obrona bramkarza, mamy korner. To powinna być bramka.";
                 break;
             case 3:
-                _Commentary.text += "\nŚwietna obrona " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ", ratuje " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + " i mamy korner.";
+                _Commentary.text += "\nŚwietna obrona " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ", ratuje " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + " i mamy korner.";
                 break;
         }
     }
@@ -311,13 +311,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                text = "Gooooool, piękne uderzenie " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ".";
+                text = "Gooooool, piękne uderzenie " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ".";
                 break;
             case 2:
-                text = "Piękny gol " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w samym okienku bramki " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + ".";
+                text = "Piękny gol " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w samym okienku bramki " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + ".";
                 break;
             case 3:
-                text = "Kapitalne uderzenie, po ziemi " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + " i gol.";
+                text = "Kapitalne uderzenie, po ziemi " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + " i gol.";
                 break;
         }
         _Commentary.text += "\n<color=#ffa500ff>" + Comment.Instance.GetMinute() + " min. " + text + "</color>";
@@ -332,7 +332,7 @@ public class CommentLine : MonoBehaviour
                 _Commentary.text += "\nAleż pudło, dobrych kilka metrów obok bramki.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " odprowadza piłkę wzrokiem. Niecelny strzał.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " odprowadza piłkę wzrokiem. Niecelny strzał.";
                 break;
             case 3:
                 _Commentary.text += "\nWysoko nad bramką, bardzo słaby strzał. Dlaczego nie podawał?";
@@ -347,13 +347,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + ", z problemami ale łapie piłkę.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + ", z problemami ale łapie piłkę.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " wyłapuje to niegroźne uderzenie.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " wyłapuje to niegroźne uderzenie.";
                 break;
             case 3:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " decyduje się złapać piłkę zamiast wybić ją do boku i udaje mu się to.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " decyduje się złapać piłkę zamiast wybić ją do boku i udaje mu się to.";
                 break;
         }
     }
@@ -365,13 +365,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ", rzut rożny.";
+                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ", rzut rożny.";
                 break;
             case 2:
-                _Commentary.text += "\nDobry strzał ale bardzo dobra parada " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ", mamy korner. To powinna być bramka.";
+                _Commentary.text += "\nDobry strzał ale bardzo dobra parada " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ", mamy korner. To powinna być bramka.";
                 break;
             case 3:
-                _Commentary.text += "\nDoskonała obrona " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + " ratuje " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + " i mamy korner.";
+                _Commentary.text += "\nDoskonała obrona " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + " ratuje " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + " i mamy korner.";
                 break;
         }
     }
@@ -384,13 +384,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                text = "Gooooool, piękne uderzenie " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ".";
+                text = "Gooooool, piękne uderzenie " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ".";
                 break;
             case 2:
-                text = "Piękny gol " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w samym okienku bramki " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + ".";
+                text = "Piękny gol " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w samym okienku bramki " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + ".";
                 break;
             case 3:
-                text = "Kapitalne uderzenie, po ziemi " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + " i gol.";
+                text = "Kapitalne uderzenie, po ziemi " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + " i gol.";
                 break;
         }
         _Commentary.text += "\n<color=#ffa500ff>" + Comment.Instance.GetMinute() + " min. " + text + "</color>";
@@ -406,7 +406,7 @@ public class CommentLine : MonoBehaviour
                 _Commentary.text += "\nAleż pudło, dobrych kilka metrów obok bramki.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " odprowadza piłkę wzrokiem. Niecelny strzał.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " odprowadza piłkę wzrokiem. Niecelny strzał.";
                 break;
             case 3:
                 _Commentary.text += "\nWysoko nad bramką, bardzo słaby strzał. Dlaczego nie podawał?";
@@ -421,13 +421,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + ", wyłuskuje piłkę spod nóg przeciwnika.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + ", wyłuskuje piłkę spod nóg przeciwnika.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " próbuje ominąć " +teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + " ale nie udaje mu się to i piłka w rękach bramkarza.";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " próbuje ominąć " +teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + " ale nie udaje mu się to i piłka w rękach bramkarza.";
                 break;
             case 3:
-                _Commentary.text += "\nStrzał odbity do boku przez " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " i niebezpieczeństwo zażegnane.";
+                _Commentary.text += "\nStrzał odbity do boku przez " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " i niebezpieczeństwo zażegnane.";
                 break;
         }
     }
@@ -439,13 +439,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ", rzut rożny.";
+                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ", rzut rożny.";
                 break;
             case 2:
-                _Commentary.text += "\nSłaby strzał i dobrze spisał się " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + ", " + _host_guest_string[Comment.Instance.GetGuestBall()].getNominative() + " wznowią grę z rogu boiska. To powinno zakoćzyć się zmianą wyniku...";
+                _Commentary.text += "\nSłaby strzał i dobrze spisał się " + teams[Comment.Instance.ReverseGuestBall][0].Surname + ", " + _host_guest_string[Comment.Instance.GuestBall].getNominative() + " wznowią grę z rogu boiska. To powinno zakoćzyć się zmianą wyniku...";
                 break;
             case 3:
-                _Commentary.text += "\nDoskonała obrona " + teams[Comment.Instance.GetReverseIsGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ", ratuje " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + " i mamy korner.";
+                _Commentary.text += "\nDoskonała obrona " + teams[Comment.Instance.ReverseGuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ", ratuje " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + " i mamy korner.";
                 break;
         }
     }
@@ -458,13 +458,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                text = "Gooooool, " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " mija bramkarza i pakuje piłkę do pustej bramki.";
+                text = "Gooooool, " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " mija bramkarza i pakuje piłkę do pustej bramki.";
                 break;
             case 2:
-                text = "Cudowny gol " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w samym okienku bramki " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + ".";
+                text = "Cudowny gol " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w samym okienku bramki " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + ".";
                 break;
             case 3:
-                text = "Czysto uderza po ziemi " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " i gol.";
+                text = "Czysto uderza po ziemi " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " i gol.";
                 break;
         }
         _Commentary.text += "\n<color=#ffa500ff>" + Comment.Instance.GetMinute() + " min. " + text + "</color>";
@@ -480,13 +480,13 @@ public class CommentLine : MonoBehaviour
                 _Commentary.text += "\nAleż pudło, dobrych kilka metrów obok bramki.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " odprowadza piłkę wzrokiem. Zmarnowana 100 % okazja.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " odprowadza piłkę wzrokiem. Zmarnowana 100 % okazja.";
                 break;
             case 3:
                 _Commentary.text += "\nWysoko nad bramką, bardzo słaby strzał. Takie sytuacje trzeba wykorzystywać.";
                 break;
             case 4:
-                _Commentary.text += "\nStrzał i słupek ratuje " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive();
+                _Commentary.text += "\nStrzał i słupek ratuje " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive();
                 break;
         }
     }
@@ -498,13 +498,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " bez trudu łapie piłkę.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " bez trudu łapie piłkę.";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " prosto w ręce " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ".";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " prosto w ręce " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ".";
                 break;
             case 3:
-                _Commentary.text += "\nStrzał odbity do boku przez " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " i niebezpieczeństwo zażegnane.";
+                _Commentary.text += "\nStrzał odbity do boku przez " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " i niebezpieczeństwo zażegnane.";
                 break;
         }
     }
@@ -516,13 +516,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ", rzut rożny.";
+                _Commentary.text += "\nCoż za interwencja " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ", rzut rożny.";
                 break;
             case 2:
-                _Commentary.text += "\nNiezbyt dobry strzał " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ", ale " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " z problemami wybija piłkę na rzut rożny.";
+                _Commentary.text += "\nNiezbyt dobry strzał " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ", ale " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " z problemami wybija piłkę na rzut rożny.";
                 break;
             case 3:
-                _Commentary.text += "\nDoskonała obrona " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + " ratuje " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + " i mamy korner.";
+                _Commentary.text += "\nDoskonała obrona " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + " ratuje " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + " i mamy korner.";
                 break;
         }
     }
@@ -535,13 +535,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                text = "Gooooool, " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " bez szans";
+                text = "Gooooool, " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " bez szans";
                 break;
             case 2:
-                text = "Świetny strzał " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w okienku bramki " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + ".";
+                text = "Świetny strzał " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ". Piłka w okienku bramki " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + ".";
                 break;
             case 3:
-                text = "Bramka dla " + _host_guest_string[Comment.Instance.GetGuestBall()].getGenitive() + " po strzale głową.";
+                text = "Bramka dla " + _host_guest_string[Comment.Instance.GuestBall].getGenitive() + " po strzale głową.";
                 break;
         }
         _Commentary.text += "\n<color=#ffa500ff>" + Comment.Instance.GetMinute() + " min. " + text + "</color>";
@@ -554,16 +554,16 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nBardzo blisko, ale jednak obok bramki strzeżonej przez " + teams[Comment.Instance.GetReverseIsGuestBall()][0].AlteredSurname + ".";
+                _Commentary.text += "\nBardzo blisko, ale jednak obok bramki strzeżonej przez " + teams[Comment.Instance.ReverseGuestBall][0].AlteredSurname + ".";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " odprowadza piłkę wzrokiem. Zmarnowana dobra okazja na zdobycie bramki.";
+                _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][0].Surname + " odprowadza piłkę wzrokiem. Zmarnowana dobra okazja na zdobycie bramki.";
                 break;
             case 3:
                 _Commentary.text += "\nWysoko nad bramką, bardzo słaba główka. Takie sytuacje mogą się zemścić.";
                 break;
             case 4:
-                _Commentary.text += "\nPoprzeczka ratuje " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive();
+                _Commentary.text += "\nPoprzeczka ratuje " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive();
                 break;
         }
     }
@@ -575,13 +575,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " przebiega kilkanaście metrów i strzela...";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " przebiega kilkanaście metrów i strzela...";
                 break;
             case 2:
-                _Commentary.text += "\nPiłkę przy nodze ma " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " i decyduje się na uderzenie...";
+                _Commentary.text += "\nPiłkę przy nodze ma " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " i decyduje się na uderzenie...";
                 break;
             case 3:
-                _Commentary.text += "\nPrzy piłce " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ", widzi wysuniętego bramkarza...";
+                _Commentary.text += "\nPrzy piłce " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ", widzi wysuniętego bramkarza...";
                 break;
         }
     }
@@ -593,13 +593,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\nFatalne podanie " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + " i koniec kontrataku.";
+                _Commentary.text += "\nFatalne podanie " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + " i koniec kontrataku.";
                 break;
             case 2:
-                _Commentary.text += "\nPogubił się " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " podaje wprost do przeciwnika.";
+                _Commentary.text += "\nPogubił się " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " podaje wprost do przeciwnika.";
                 break;
             case 3:
-                _Commentary.text += "\nPodaje " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ", ale piłka przechwycona przez obronę.";
+                _Commentary.text += "\nPodaje " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ", ale piłka przechwycona przez obronę.";
                 break;
         }
     }
@@ -627,13 +627,13 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ", ten ma przed sobą tylko bramkarza.";
+                _Commentary.text += teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ", ten ma przed sobą tylko bramkarza.";
                 break;
             case 2:
-                _Commentary.text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ", ten jest sam na sam z bramkarzem.";
+                _Commentary.text += teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ", ten jest sam na sam z bramkarzem.";
                 break;
             case 3:
-                _Commentary.text += teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].AlteredSurname + ", który jest teraz na czystej pozycji.";
+                _Commentary.text += teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].AlteredSurname + ", który jest teraz na czystej pozycji.";
                 break;
         }
     }
@@ -644,10 +644,10 @@ public class CommentLine : MonoBehaviour
         switch (rnd)
         {
             case 1:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " podaje do ";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " podaje do ";
                 break;
             case 2:
-                _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " zgrywa do ";
+                _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " zgrywa do ";
                 break;
         }
     }
@@ -657,11 +657,11 @@ public class CommentLine : MonoBehaviour
     }
     public void FreeHeader()
     {
-        _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " urywa się spod opieki obrońcy i strzela...";
+        _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " urywa się spod opieki obrońcy i strzela...";
     }
     public void ContestedHeader()
     {
-        _Commentary.text += "\n" + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + " wygrywa pojedynek główkowy...";
+        _Commentary.text += "\n" + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + " wygrywa pojedynek główkowy...";
     }
     public void DefenderWinsHeader(Footballer defender)
     {
@@ -677,17 +677,17 @@ public class CommentLine : MonoBehaviour
                 _Commentary.text += "\nZłe było to dośrodkowanie i obrońca wybija bez problemu.";
                 break;
             case 2:
-                _Commentary.text += "\nNieźle wykonane, ale " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " łapie piłkę.";
+                _Commentary.text += "\nNieźle wykonane, ale " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " łapie piłkę.";
                 break;
             case 3:
-                _Commentary.text += "\nZa dużo siły w tym dograniu i aut dla " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + ".";
+                _Commentary.text += "\nZa dużo siły w tym dograniu i aut dla " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + ".";
                 break;
         }
     }
     public void TryingToDodge()
     {
         
-        _Commentary.text += "\n" + Comment.Instance.GetMinute() + " min. Piłkę przy nodze ma " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ". próbuje minąć przeciwnika...";
+        _Commentary.text += "\n" + Comment.Instance.GetMinute() + " min. Piłkę przy nodze ma " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ". próbuje minąć przeciwnika...";
     }
     public void DecidesToCross()
     {
@@ -701,7 +701,7 @@ public class CommentLine : MonoBehaviour
     }
     public void FailedWingDribble(int direction)
     {
-        _Commentary.text += "\nSprytna próba, ale " + teams[Comment.Instance.GetReverseIsGuestBall()][defWingPos[Comment.Instance.GetReverseIsGuestBall(), direction]].Surname + " nie dał się nabrać i zabrał piłkę.";
+        _Commentary.text += "\nSprytna próba, ale " + teams[Comment.Instance.ReverseGuestBall][defWingPos[Comment.Instance.ReverseGuestBall, direction]].Surname + " nie dał się nabrać i zabrał piłkę.";
     }
     public void FailedMidDribble(Footballer defender)
     {
@@ -729,24 +729,24 @@ public class CommentLine : MonoBehaviour
                 _Commentary.text += "\nZłe było to podanie i obrońca przechwytuje bez problemu.";
                 break;
             case 2:
-                _Commentary.text += "\nNieźle wykonane, ale trochę za mocno i " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " łapie piłkę.";
+                _Commentary.text += "\nNieźle wykonane, ale trochę za mocno i " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " łapie piłkę.";
                 break;
             case 3:
-                _Commentary.text += "\nZa dużo siły w tym dograniu i " + _host_guest_string[Comment.Instance.GetReverseIsGuestBall()].getGenitive() + " zaczną od bramki.";
+                _Commentary.text += "\nZa dużo siły w tym dograniu i " + _host_guest_string[Comment.Instance.ReverseGuestBall].getGenitive() + " zaczną od bramki.";
                 break;
         }
     }
     public void ChanceForOneOnOne()
     {
-        _Commentary.text += "\nTam jest " + teams[Comment.Instance.GetGuestBall()][Comment.Instance.PlayerWithBall].Surname + ", odwraca się, a przed nim tylko jeden obrońca...";
+        _Commentary.text += "\nTam jest " + teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname + ", odwraca się, a przed nim tylko jeden obrońca...";
     }
     public void FailedChanceOneToOne()
     {
-        _Commentary.text += "\n" + teams[Comment.Instance.GetReverseIsGuestBall()][Comment.Instance.PlayerWithBall].Surname + " wyłuskuje piłkę napastnikowi i wybija ją.";
+        _Commentary.text += "\n" + teams[Comment.Instance.ReverseGuestBall][Comment.Instance.PlayerWithBall].Surname + " wyłuskuje piłkę napastnikowi i wybija ją.";
     }
     public void OneToOneSituation()
     {
-        _Commentary.text += "\nMija go, jeszcze tylko " + teams[Comment.Instance.GetReverseIsGuestBall()][0].Surname + " może zapobiec utracie bramki...";
+        _Commentary.text += "\nMija go, jeszcze tylko " + teams[Comment.Instance.ReverseGuestBall][0].Surname + " może zapobiec utracie bramki...";
     }
     public void UpdateResult(MatchStats[] matchStats)
     {
