@@ -9,25 +9,20 @@ public class SquadListPanel : MonoBehaviour
 
     int _currLeagueTeamIndex;
 
-    private void Awake()
-    {
-        _currLeagueTeamIndex = MyClub.Instance.MyInLeagueIndex;
-    }
-
     void OnEnable()
     {
+        _currLeagueTeamIndex = MyClub.Instance.MyInLeagueIndex;
         _TournamentSelectionDropdown.ClearOptions();
         var tournaments = new List<string>(MyClub.Instance.MyTournaments);
         tournaments.Insert(0, "");
         _TournamentSelectionDropdown.AddOptions(tournaments);
-        SetupSquad(fieldsChanged: true);
+        SetupSquad();
     }
 
-    public void SetupSquad(int id = -1, bool fieldsChanged = false)
-    {
-        if (id == -1)
-            id = MyClub.Instance.MyClubID;
+    void SetupSquad() => SetupSquad(MyClub.Instance.MyClubID, true);
 
+    void SetupSquad(int id, bool fieldsChanged = false)
+    {
         if(id == MyClub.Instance.MyClubID)
         {
             _TournamentSelectionDropdown.gameObject.SetActive(true);
