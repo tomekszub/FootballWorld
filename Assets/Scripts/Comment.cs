@@ -493,6 +493,7 @@ public class Comment : MonoBehaviour
         _teamsMatchData[GuestBall][PlayerWithBall].MatchRating += .5f;
         _teams[GuestBall][PlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Goals);
         _teamsMatchData[GuestBall].ForEach(data => data.MatchRating += .5f);
+        _teamsMatchData[ReverseGuestBall].ForEach(data => data.MatchRating -= .5f);
         if (_prevPlayerWithBall != -1)
         {
             _teams[GuestBall][_prevPlayerWithBall].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.Assists);
