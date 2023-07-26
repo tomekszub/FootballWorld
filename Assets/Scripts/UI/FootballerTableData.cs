@@ -1,5 +1,7 @@
 using Sirenix.OdinInspector;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,11 +28,16 @@ public class FootballerTableData : SerializedMonoBehaviour
         Assists = 16,
         Position = 17,
         RatingStars = 18,
-        NameAndSurname = 19
+        NameAndSurname = 19,
+        AvgMatchRating = 20
     }
 
-    [SerializeField] List<FootballerFieldType> _Fields;
-    [SerializeField] FootballerTableDataRow _DataRowPrefab;
+    [SerializeField, DictionaryDrawerSettings(KeyLabel = "TableMode", ValueLabel = "Fields")] 
+    Dictionary<string, List<FootballerFieldType>> _TableDataModes;
+    [SerializeField] 
+    FootballerTableDataRow _DataRowPrefab;
+    [SerializeField]
+    string _CurrTableMode = "SquadOverview";
 
     [Title("References")]
     [SerializeField] FootballerTableDataRow _Header;
@@ -43,10 +50,8 @@ public class FootballerTableData : SerializedMonoBehaviour
     {
         if (fieldsChanged)
         {
-            _Header.ShowFields(_Fields);
-            _HeaderLayoutGroup.enabled = false;
-            // the only way it works eh
-            Invoke(nameof(RebuildLayout), 0.01f);
+            _Header.TurnOffAllFields();
+            StartCoroutine(RefreshHeader());
         }
 
         int index = 0;
@@ -57,14 +62,14 @@ public class FootballerTableData : SerializedMonoBehaviour
             if (index >= _TableRows.Count)
             {
                 dr = Instantiate(_DataRowPrefab, _DataRowsParent);
-                dr.ShowFields(_Fields);
+                dr.ShowFields(_TableDataModes[_CurrTableMode]);
                 _TableRows.Add(dr);
             }
             else
             {
                 dr = _TableRows[index];
                 if (fieldsChanged)
-                    dr.ShowFields(_Fields);
+                    dr.ShowFields(_TableDataModes[_CurrTableMode]);
                 _TableRows[index].gameObject.SetActive(true);
             }
 
@@ -81,5 +86,37 @@ public class FootballerTableData : SerializedMonoBehaviour
             _TableRows[i].UpdateStatistics(tournamentName);
     }
 
-    void RebuildLayout() => _HeaderLayoutGroup.enabled = true;
+    public List<string> GetAvailableTableDataModes() => _TableDataModes.Keys.ToList();
+
+    [Button]
+    public void ChangeTableMode(string mode)
+    {
+        if (!_TableDataModes.ContainsKey(mode))
+            return;
+
+        _CurrTableMode = mode;
+
+        _Header.TurnOffAllFields();
+
+
+        foreach (var dataRow in _TableRows)
+        {
+            dataRow.TurnOffAllFields();
+        }
+
+        StartCoroutine(RefreshHeader());
+        StartCoroutine(RefreshRows());
+    }
+
+    IEnumerator RefreshRows()
+    {
+        yield return new WaitForEndOfFrame();
+        _TableRows.ForEach(row => row.RefreshThemAll(_TableDataModes[_CurrTableMode]));
+    }
+
+    IEnumerator RefreshHeader()
+    {
+        yield return new WaitForEndOfFrame();
+        _Header.RefreshThemAll(_TableDataModes[_CurrTableMode]);
+    }
 }

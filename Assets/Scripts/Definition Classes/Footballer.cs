@@ -137,12 +137,12 @@ public class Footballer : IComparable<Footballer>
 		return _statistics.Keys.ToList();
     }
 
-	public void AddStatistic(string tournamentName, PlayerStatistics.StatName statName)
+	public void AddStatistic(string tournamentName, PlayerStatistics.StatName statName, double val = 1)
     {
 		if (!_statistics.ContainsKey(tournamentName))
 			_statistics.Add(tournamentName, new PlayerStatistics());
 
-        _statistics[tournamentName].ChangeStat(statName, 1);
+        _statistics[tournamentName].ChangeStat(statName, val);
     }
 
     public int CompareTo(Footballer f) => f.Rating.CompareTo(Rating);
@@ -162,7 +162,7 @@ public class Footballer : IComparable<Footballer>
 	int GetTotalMatchesPlayed()
     {
 		var stats = GetPlayerStatistics("");
-		return stats.GetStat(PlayerStatistics.StatName.MatchesPlayed);
+		return (int)stats.GetStat(PlayerStatistics.StatName.MatchesPlayed);
     }
 
     public class PlayerStatistics
@@ -172,14 +172,15 @@ public class Footballer : IComparable<Footballer>
             MatchesPlayed,
             Goals,
             Assists,
-            CleanSheet
+            CleanSheet,
+            MatchRating
         }
 
-        Dictionary<StatName, int> _stats;
+        Dictionary<StatName, double> _stats;
 
-        public PlayerStatistics(Dictionary<StatName, int> stats)
+        public PlayerStatistics(Dictionary<StatName, double> stats)
         {
-            _stats = new Dictionary<StatName, int>(stats);
+            _stats = new Dictionary<StatName, double>(stats);
         }
 
 		public PlayerStatistics()
@@ -195,13 +196,13 @@ public class Footballer : IComparable<Footballer>
             _stats = new(playerStatistics._stats);
 		}
 
-        public int GetStat(StatName statName) => _stats[statName];
+        public double GetStat(StatName statName) => _stats[statName];
 
-        public int ChangeStat(StatName statName, int change) => _stats[statName] += change;
+        public void ChangeStat(StatName statName, double change) => _stats[statName] += change;
 
         public static PlayerStatistics operator +(PlayerStatistics p1, PlayerStatistics p2)
         {
-            Dictionary<StatName, int> stats = new(p1._stats);
+            Dictionary<StatName, double> stats = new(p1._stats);
 
             foreach(var statKVP in p2._stats)
             {

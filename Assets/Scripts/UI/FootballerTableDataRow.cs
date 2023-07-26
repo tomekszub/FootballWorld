@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using static FootballerTableData;
 using static Footballer.PlayerStatistics;
+using System.Collections;
+using UnityEngine.UI;
+using System;
 
 public class FootballerTableDataRow : SerializedMonoBehaviour
 {
     [SerializeField] Dictionary<FootballerFieldType, TableDataField> _Fields;
+    [SerializeField] LayoutGroup _LayoutGroup;
 
     Footballer _footballer;
 
@@ -49,24 +53,26 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
     public void UpdateStatistics(string tournamentFilter)
     {
         var playerStatistics = _footballer.GetPlayerStatistics(tournamentFilter);
-        _Fields[FootballerFieldType.MatchesPlayed].SetTextData(playerStatistics.GetStat(StatName.MatchesPlayed).ToString());
+        var matchesPlayed = playerStatistics.GetStat(StatName.MatchesPlayed);
+        _Fields[FootballerFieldType.MatchesPlayed].SetTextData(matchesPlayed.ToString());
         _Fields[FootballerFieldType.Goals].SetTextData(playerStatistics.GetStat(StatName.Goals).ToString());
         _Fields[FootballerFieldType.Assists].SetTextData(playerStatistics.GetStat(StatName.Assists).ToString());
+        var avgRating = matchesPlayed > 0 ? Math.Round(playerStatistics.GetStat(StatName.MatchRating) / matchesPlayed, 2).ToString() : "-";
+        Debug.LogError("MR " + playerStatistics.GetStat(StatName.MatchRating));
+        _Fields[FootballerFieldType.AvgMatchRating].SetTextData(avgRating);
     }
 
     public void ShowFields(List<FootballerFieldType> fields)
     {
         TurnOffAllFields();
-
-        foreach (var field in fields)
-            SetFieldVisibility(field, true);
+        RefreshThemAll(fields);
     }
 
     public void ShowNewField(FootballerFieldType fieldName) => SetFieldVisibility(fieldName, true);
 
     public void HideField(FootballerFieldType fieldName) => SetFieldVisibility(fieldName, false);
 
-    void TurnOffAllFields()
+    public void TurnOffAllFields()
     {
         foreach (var field in _Fields)
             field.Value.gameObject.SetActive(false);
@@ -76,5 +82,19 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
     {
         if (_Fields.ContainsKey(fieldName))
             _Fields[fieldName].gameObject.SetActive(setTo);
+    }
+
+    IEnumerator UpdateLayoutGroup(List<FootballerFieldType> fields)
+    {
+        TurnOffAllFields();
+        yield return new WaitForEndOfFrame();
+        foreach (var field in fields)
+            SetFieldVisibility(field, true);
+    }
+
+    public void RefreshThemAll(List<FootballerFieldType> fields)
+    {
+        foreach (var field in fields)
+            SetFieldVisibility(field, true);
     }
 }

@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class SquadListPanel : MonoBehaviour
 {
     [SerializeField] FootballerTableData _FootballersTableData;
-    [SerializeField] TMPro.TextMeshProUGUI _CoachText;
-    [SerializeField] TMPro.TMP_Dropdown _TournamentSelectionDropdown;
+    [SerializeField] TextMeshProUGUI _CoachText;
+    [SerializeField] TMP_Dropdown _TournamentSelectionDropdown;
+    [SerializeField] TMP_Dropdown _TableDataModeDropdown;
 
     int _currLeagueTeamIndex;
 
@@ -13,9 +15,11 @@ public class SquadListPanel : MonoBehaviour
     {
         _currLeagueTeamIndex = MyClub.Instance.MyInLeagueIndex;
         _TournamentSelectionDropdown.ClearOptions();
+        _TableDataModeDropdown.ClearOptions();
         var tournaments = new List<string>(MyClub.Instance.MyTournaments);
         tournaments.Insert(0, "");
         _TournamentSelectionDropdown.AddOptions(tournaments);
+        _TableDataModeDropdown.AddOptions(_FootballersTableData.GetAvailableTableDataModes());
         SetupSquad();
     }
 
@@ -23,13 +27,19 @@ public class SquadListPanel : MonoBehaviour
 
     void SetupSquad(int id, bool fieldsChanged = false)
     {
-        if(id == MyClub.Instance.MyClubID)
+        if (id == MyClub.Instance.MyClubID)
         {
             _TournamentSelectionDropdown.gameObject.SetActive(true);
+            _TableDataModeDropdown.gameObject.SetActive(true);
             _TournamentSelectionDropdown.value = 0;
         }
         else
+        {
+            _TableDataModeDropdown.gameObject.SetActive(false);
             _TournamentSelectionDropdown.gameObject.SetActive(false);
+        }
+
+        _TableDataModeDropdown.value = 0;
 
         _CoachText.text = Database.clubDB[id].Name;
 
@@ -56,5 +66,10 @@ public class SquadListPanel : MonoBehaviour
     {
         string tournament = option == 0 ? "" : _TournamentSelectionDropdown.options[option].text;
         _FootballersTableData.UpdateStats(tournament);
+    }
+
+    public void OnTableDataModeChanged(int option)
+    {
+        _FootballersTableData.ChangeTableMode(_TableDataModeDropdown.options[option].text);
     }
 }

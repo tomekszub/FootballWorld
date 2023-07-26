@@ -141,6 +141,19 @@ public class Comment : MonoBehaviour
         _StartStopButton.text = "Rozpocznij mecz";
     }
 
+    void FinishMatch()
+    {
+        for (int i = 0; i < 11; i++)
+        {
+            _teams[0][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchRating, _teamsMatchData[0][i].MatchRating);
+            _teams[1][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.MatchRating, _teamsMatchData[1][i].MatchRating);
+            if (_matchStats[1].Goals == 0)
+                _teams[0][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.CleanSheet);
+            if (_matchStats[0].Goals == 0)
+                _teams[1][i].AddStatistic(_competitionName, Footballer.PlayerStatistics.StatName.CleanSheet);
+        }
+    }
+
     public void StartStopButtonClick()
     {
         if (_end)
@@ -165,6 +178,7 @@ public class Comment : MonoBehaviour
 
             CommentLine.Instance.EndOfTheMatch();
             _end = true;
+            FinishMatch();
             _StartStopButton.text = "Zakończ mecz";
             Debug.Log("KONIEC MECZU!!!---Wynik: " + _matchStats[0].Goals + " - " + _matchStats[1].Goals);
             StopAllCoroutines();
