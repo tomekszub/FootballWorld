@@ -163,12 +163,17 @@ public class Comment : MonoBehaviour
             return;
         }
 
-        if (_isPlaying == false)
+        if (!_isPlaying)
+        {
             StartCoroutine(CommentStart());
+        }
     }
 
     IEnumerator CommentStart()
     {
+        if (_end)
+            yield break;
+
         UpdateChances();
         CommentLine.Instance.UpdateResult(_matchStats);
         if (_minute >= 90)
@@ -176,12 +181,12 @@ public class Comment : MonoBehaviour
             if(_time > 0)
                 yield return new WaitForSeconds(_time);
 
-            CommentLine.Instance.EndOfTheMatch();
+            StopAllCoroutines();
             _end = true;
+            CommentLine.Instance.EndOfTheMatch();
             FinishMatch();
             _StartStopButton.text = "Zakończ mecz";
             Debug.Log("KONIEC MECZU!!!---Wynik: " + _matchStats[0].Goals + " - " + _matchStats[1].Goals);
-            StopAllCoroutines();
             yield break;
         }
 
@@ -205,6 +210,7 @@ public class Comment : MonoBehaviour
                 CommentLine.Instance.InfoComment();
                 MinutePassed();
                 StartCoroutine(CommentStart());
+                yield break;
             }
             if (ch > 5 + _goalChances && ch < 90)
             {
@@ -217,6 +223,7 @@ public class Comment : MonoBehaviour
                 }
                 MinutePassed();
                 StartCoroutine(CommentStart());
+                yield break;
             }
             if (ch <= 5 + _goalChances)
             {
