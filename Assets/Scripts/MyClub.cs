@@ -14,6 +14,7 @@ public class MyClub : MonoBehaviour
     public int MyLeagueID { get; private set; }
     public int MyInLeagueIndex { get; private set; }
     public int MyClubID { get; private set; }
+    public DateTime CurrentDate => _currDate;
     public HashSet<string> MyTournaments { get; private set; } = new HashSet<string>();
 	public List<Match> Matches { get; set; } = new List<Match>();
 	public int[] CurrFederationRankingLeagueIndex { get; private set; } = new int[54];

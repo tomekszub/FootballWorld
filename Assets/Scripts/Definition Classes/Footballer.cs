@@ -30,7 +30,7 @@ public class Footballer : IComparable<Footballer>
 	public string Surname;
 	public string AlteredSurname;
 	public string Country;
-	public float Rating; // 1-10 1 amator, 2 pół-amator, 3 bardzo słaby, 4 słaby, 5 sredni, 6 niezły, 7 dobry, 8 bardzo dobry, 9 rewelacyjny, 10 klasa swiatowa
+	public float Rating;
 	public float FreeKicks;// wykonywanie stałych fragmentów gry
 	public float Corner, Penalty;
 	public int ClubID;
@@ -38,6 +38,7 @@ public class Footballer : IComparable<Footballer>
 	public float Dribling, Tackle, Heading, Shoot, Speed, Pass;
     public int BirthYear;
 	public int Endurance;
+    public byte Height, Weight;
 
 	public float Condition
     {
@@ -105,6 +106,8 @@ public class Footballer : IComparable<Footballer>
 		ClubID = clubID;
 		Condition = 100;
 		Endurance = endurance;
+        Height = (byte)(155 + (heading / 2));
+        Weight = (byte)UnityEngine.Random.Range(50, 110);
         _perks = new HashSet<Perk> ();
     }
     public Footballer(int id, string name, string surname, string country, Dictionary<string,PlayerStatistics> matchStatistics)
