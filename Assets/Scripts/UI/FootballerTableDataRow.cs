@@ -58,7 +58,6 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
         _Fields[FootballerFieldType.Goals].SetTextData(playerStatistics.GetStat(StatName.Goals).ToString());
         _Fields[FootballerFieldType.Assists].SetTextData(playerStatistics.GetStat(StatName.Assists).ToString());
         var avgRating = matchesPlayed > 0 ? Math.Round(playerStatistics.GetStat(StatName.MatchRating) / matchesPlayed, 2).ToString() : "-";
-        Debug.LogError("MR " + playerStatistics.GetStat(StatName.MatchRating));
         _Fields[FootballerFieldType.AvgMatchRating].SetTextData(avgRating);
     }
 
