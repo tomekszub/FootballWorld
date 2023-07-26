@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class SquadListPanel : MonoBehaviour
+public class SquadListPanel : BasePanel
 {
     [SerializeField] FootballerTableData _FootballersTableData;
     [SerializeField] TextMeshProUGUI _CoachText;

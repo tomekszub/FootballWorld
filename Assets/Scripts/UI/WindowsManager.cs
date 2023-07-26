@@ -6,7 +6,7 @@ public class WindowsManager : SerializedMonoBehaviour
 {
     public static WindowsManager Instance;
 
-    [SerializeField] Dictionary<string, GameObject> _UIPanels;
+    [SerializeField] Dictionary<string, BasePanel> _UIPanels;
 
     // Start is called before the first frame update
     void Awake()
@@ -22,16 +22,23 @@ public class WindowsManager : SerializedMonoBehaviour
         }
         ShowWindow("MainMenu");
     }
+
     void HideAllWindows()
     {
         foreach (var panel in _UIPanels)
         {
-            panel.Value.SetActive(false);
+            panel.Value.gameObject.SetActive(false);
         }
     }
+
     public void ShowWindow(string name)
     {
+        ShowWindow(name, new BasePanel.PanelData());
+    }
+
+    public void ShowWindow(string name, BasePanel.PanelData panelData)
+    {
         HideAllWindows();
-        _UIPanels[name].SetActive(true);
+        _UIPanels[name].Show(panelData);
     }
 }

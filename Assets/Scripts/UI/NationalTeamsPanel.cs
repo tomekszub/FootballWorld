@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class NationalTeamsPanel : MonoBehaviour
+public class NationalTeamsPanel : BasePanel
 {
     [SerializeField] TextMeshProUGUI _NameText;
     [SerializeField] Image _CountryImage;

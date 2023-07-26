@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameCreationPanel : MonoBehaviour
+public class GameCreationPanel : BasePanel
 {
     [SerializeField] Dropdown leagueDropDown, clubDropDown;
+
     public void StartGame()
     {
         MyClub.Instance.GenerateGameData(leagueDropDown.value, clubDropDown.value);

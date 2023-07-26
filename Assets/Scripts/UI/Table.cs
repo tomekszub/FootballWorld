@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-
-public class Table : MonoBehaviour
+public class Table : BasePanel
 {
     [SerializeField] List<TableRow> _TableRows;
 
@@ -44,6 +42,7 @@ public class Table : MonoBehaviour
 		}
 		return returnTeams;
 	}
+
 	public void ShowTable(List<Team> tableTeams, int[] positionRanges, bool showFlags = false)
 	{
         WindowsManager.Instance.ShowWindow("Table");

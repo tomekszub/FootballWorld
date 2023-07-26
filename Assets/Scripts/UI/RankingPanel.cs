@@ -2,11 +2,11 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RankingPanel : MonoBehaviour
+public class RankingPanel : BasePanel
 {
     [SerializeField] List<RankingElement> _RankingElements;
 
-    private void OnEnable()
+    void OnEnable()
     {
         //var countries = Database.clubDB.GroupBy(c => c.CountryName).OrderBy(c => c.Key);
         var query = from c in Database.clubDB

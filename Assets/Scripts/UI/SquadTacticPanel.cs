@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SquadTacticPanel : MonoBehaviour
+public class SquadTacticPanel : BasePanel
 {
     [SerializeField] Dropdown _FormationDropDown;
     [SerializeField] GameObject _SquadCell, _EmptyCell;
