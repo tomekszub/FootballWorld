@@ -599,7 +599,7 @@ public class Simulation : MonoBehaviour
             cornerPlayers.Add(_teams[guestBall][i]);
         }
         cornerPlayers = cornerPlayers.OrderByDescending(x => x.Corner).ToList();
-        float border = 65 + ((cornerPlayers[0].FreeKicks + cornerPlayers[0].Pass) / 10);
+        float border = 35 + ((cornerPlayers[0].FreeKicks + cornerPlayers[0].Pass) * 0.32f);
         cornerPlayers.RemoveAt(0);
         int acc = Random.Range(1, 100);
         if (acc <= border)

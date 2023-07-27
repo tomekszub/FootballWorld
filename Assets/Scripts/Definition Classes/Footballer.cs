@@ -42,14 +42,16 @@ public class Footballer : IComparable<Footballer>
 
 	public float Condition
     {
-		get { return _fatigue; }
+		get => _fatigue;
+
 		private set
 		{ 
 			_fatigue = Math.Clamp(value, 0, 100);
 		}
     }
-	public string FullName => Name != "" ? $"{Name} {Surname}" : Surname;
-    public HashSet<Perk> Perks => _perks;
+	public string FullName => string.IsNullOrEmpty(Name) ? Surname : $"{Name} {Surname}";
+    public IEnumerable<Perk> Perks => _perks;
+    public Dictionary<string, PlayerStatistics> Statistics => _statistics;
 
     HashSet<Perk> _perks;
 	float _fatigue;

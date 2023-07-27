@@ -143,13 +143,10 @@ public class LeagueGenerator : MonoBehaviour
         return ret;
     }
 
-    void GenerateFootballers(int startingDBIndex, List<Position> pos, int rating, int clubID)
+    void GenerateFootballers(int startingDBIndex, List<Position> pos, int baseRating, int clubID)
     {
-        int baseRating = rating;
         int randomPersonIndex;
-        int minSkill;
         int enduranceMin;
-        float freeKickSkill;
         Credentials person;
         Footballer f;
 
@@ -158,8 +155,7 @@ public class LeagueGenerator : MonoBehaviour
             randomPersonIndex = Random.Range(0, _people.Count);
             person = _people[randomPersonIndex];
             _people.RemoveAt(randomPersonIndex);
-            minSkill = Random.Range(0, 5) * 20;
-            freeKickSkill = Random.Range(minSkill, minSkill + 20) / 10;
+
             enduranceMin = (int)(10 + baseRating * 0.5f);
 
             f = new Footballer(
@@ -168,14 +164,14 @@ public class LeagueGenerator : MonoBehaviour
                 person.Surname,
                 person.Surname,
                 person.Country,
-                freeKickSkill,
+                Mathf.Clamp(Random.Range(baseRating - 45, baseRating + 20), 1, 100),
                 pos[i % pos.Count],
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
-                Mathf.Clamp(Random.Range(baseRating - 20, baseRating + 10), 1, 100),
+                Random.Range(Mathf.Max(1, baseRating - 20), Mathf.Min(baseRating + 10, 100)),
+                Random.Range(Mathf.Max(1, baseRating - 20), Mathf.Min(baseRating + 10, 100)),
+                Random.Range(Mathf.Max(1, baseRating - 20), Mathf.Min(baseRating + 10, 100)),
+                Random.Range(Mathf.Max(1, baseRating - 20), Mathf.Min(baseRating + 10, 100)),
+                Random.Range(Mathf.Max(1, baseRating - 40), Mathf.Min(baseRating + 30, 100)),
+                Random.Range(Mathf.Max(1, baseRating - 20), Mathf.Min(baseRating + 10, 100)),
                 1996,
                 Mathf.Clamp(Random.Range(enduranceMin, enduranceMin + 40), 1, 100),
                 clubID);

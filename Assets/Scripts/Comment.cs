@@ -905,7 +905,7 @@ public class Comment : MonoBehaviour
 
         cornerPlayers = cornerPlayers.OrderByDescending(x => x.player.Corner).ToList();
         CommentLine.Instance.CornerExecution(cornerPlayers[0].player);
-        float border = 65 + ((cornerPlayers[0].player.FreeKicks + cornerPlayers[0].player.Pass) / 10);
+        float border = 35 + ((cornerPlayers[0].player.FreeKicks + cornerPlayers[0].player.Pass) * .32f);
         // executor of corner cannot jump to the header...
         int cornerExecutorID = cornerPlayers[0].id;
         cornerPlayers.RemoveAt(0);
