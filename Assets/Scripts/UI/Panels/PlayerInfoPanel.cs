@@ -1,9 +1,18 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using static Footballer.PlayerStatistics;
 
 public class PlayerInfoPanel : BasePanel
 {
+    public class PlayerInfoPanelData : PanelData
+    {
+        public Footballer Footballer;
+
+        public PlayerInfoPanelData(Footballer footballer) => Footballer = footballer;
+    }
+
     [Header("Header")]
     [SerializeField] TextMeshProUGUI _FullName;
     [SerializeField] Image _NationalityFlag;
@@ -23,11 +32,10 @@ public class PlayerInfoPanel : BasePanel
     [SerializeField] TextMeshProUGUI _Pass;
     [SerializeField] TextMeshProUGUI _Heading;
     [SerializeField] TextMeshProUGUI _Tackle;
-
-    public class PlayerInfoPanelData : PanelData
-    {
-        public Footballer Footballer;
-    }
+    [SerializeField] TextMeshProUGUI _FreeKick;
+    [SerializeField] TextMeshProUGUI _Endurance;
+    [Header("Match Stats")]
+    [SerializeField] List<MatchStatEntry> _MatchStatsEntries;
 
     protected override void OnShow(PanelData panelData)
     {
@@ -49,5 +57,29 @@ public class PlayerInfoPanel : BasePanel
         _Pass.text = player.Pass.ToString();
         _Heading.text = player.Heading.ToString();
         _Tackle.text = player.Tackle.ToString();
+        _FreeKick.text = player.FreeKicks.ToString();
+        _Endurance.text = player.Endurance.ToString();
+
+        var stats = player.Statistics;
+
+        _MatchStatsEntries.ForEach(entry => entry.gameObject.SetActive(false));
+
+        int index = 0;
+
+        foreach (var stat in stats)
+        {
+            _MatchStatsEntries[index].SetData(
+                stat.Key,
+                stat.Value.GetStat(StatName.MatchesPlayed), 
+                stat.Value.GetStat(StatName.Goals),
+                stat.Value.GetStat(StatName.Assists),
+                stat.Value.GetStat(StatName.MatchRating));
+
+            _MatchStatsEntries[index].gameObject.SetActive(true);
+            index++;
+
+            if (index == _MatchStatsEntries.Count)
+                break;
+        }
     }
 }

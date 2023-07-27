@@ -77,23 +77,20 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
             field.Value.gameObject.SetActive(false);
     }
 
-    void SetFieldVisibility(FootballerFieldType fieldName, bool setTo)
-    {
-        if (_Fields.ContainsKey(fieldName))
-            _Fields[fieldName].gameObject.SetActive(setTo);
-    }
-
-    IEnumerator UpdateLayoutGroup(List<FootballerFieldType> fields)
-    {
-        TurnOffAllFields();
-        yield return new WaitForEndOfFrame();
-        foreach (var field in fields)
-            SetFieldVisibility(field, true);
-    }
-
     public void RefreshThemAll(List<FootballerFieldType> fields)
     {
         foreach (var field in fields)
             SetFieldVisibility(field, true);
+    }
+
+    public void OpenPlayerInfo()
+    {
+        WindowsManager.Instance.ShowWindow("PlayerInfo", new PlayerInfoPanel.PlayerInfoPanelData(_footballer), false);
+    }
+
+    void SetFieldVisibility(FootballerFieldType fieldName, bool setTo)
+    {
+        if (_Fields.ContainsKey(fieldName))
+            _Fields[fieldName].gameObject.SetActive(setTo);
     }
 }

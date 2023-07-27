@@ -5,7 +5,8 @@ using UnityEngine.UI;
 public class PerksTableDataField : TableDataField
 {
     [SerializeField] List<Image> _PerkSlots;
-    public void SetPerks(HashSet<Perk> perks)
+
+    public void SetPerks(IEnumerable<Perk> perks)
     {
         _PerkSlots.ForEach(p => p.gameObject.SetActive(false));
 

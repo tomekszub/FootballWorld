@@ -33,12 +33,13 @@ public class WindowsManager : SerializedMonoBehaviour
 
     public void ShowWindow(string name)
     {
-        ShowWindow(name, new BasePanel.PanelData());
+        ShowWindow(name, new BasePanel.PanelData(), true);
     }
 
-    public void ShowWindow(string name, BasePanel.PanelData panelData)
+    public void ShowWindow(string name, BasePanel.PanelData panelData, bool hideOtherWindows)
     {
-        HideAllWindows();
+        if(hideOtherWindows)
+            HideAllWindows();
         _UIPanels[name].Show(panelData);
     }
 }
