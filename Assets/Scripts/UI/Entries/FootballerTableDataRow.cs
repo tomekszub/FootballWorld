@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static FootballerTableData;
 using static Footballer.PlayerStatistics;
-using System.Collections;
+using static PlayerInfoPanel.PlayerInfoPanelData;
 using UnityEngine.UI;
 using System;
 
@@ -13,9 +13,11 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
     [SerializeField] LayoutGroup _LayoutGroup;
 
     Footballer _footballer;
+    InfoContext _playerInfoContext;
 
-    public void SetData(Footballer footballer, string tournamentFilter = "")
+    public void SetData(Footballer footballer, string tournamentFilter = "", InfoContext playerInfoContext = InfoContext.None)
     {
+        _playerInfoContext = playerInfoContext;
         _footballer = footballer;
         _Fields[FootballerFieldType.Position].SetTextData(footballer.Pos.ToString());
         _Fields[FootballerFieldType.Nationality].SetImageData(Database.Instance.CountryMaster.GetFlagByName(footballer.Country));
@@ -85,7 +87,7 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
 
     public void OpenPlayerInfo()
     {
-        WindowsManager.Instance.ShowWindow("PlayerInfo", new PlayerInfoPanel.PlayerInfoPanelData(_footballer), false);
+        WindowsManager.Instance.ShowWindow("PlayerInfo", new PlayerInfoPanel.PlayerInfoPanelData(_footballer, _playerInfoContext), false);
     }
 
     void SetFieldVisibility(FootballerFieldType fieldName, bool setTo)

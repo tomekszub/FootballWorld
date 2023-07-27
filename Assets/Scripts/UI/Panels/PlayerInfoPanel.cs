@@ -8,9 +8,21 @@ public class PlayerInfoPanel : BasePanel
 {
     public class PlayerInfoPanelData : PanelData
     {
-        public Footballer Footballer;
+        public enum InfoContext
+        {
+            None = 0,
+            Club = 1,
+            Country = 2
+        }
 
-        public PlayerInfoPanelData(Footballer footballer) => Footballer = footballer;
+        public Footballer Footballer;
+        public InfoContext Context;
+
+        public PlayerInfoPanelData(Footballer footballer, InfoContext context)
+        {
+            Footballer = footballer;
+            Context = context;
+        }
     }
 
     [Header("Header")]
@@ -18,6 +30,8 @@ public class PlayerInfoPanel : BasePanel
     [SerializeField] Image _NationalityFlag;
     [SerializeField] TextMeshProUGUI _ClubName;
     [SerializeField] Image _ClubCountryFlag;
+    [SerializeField] Button _NextPlayer;
+    [SerializeField] Button _PreviousPlayer;
     [Header("Info")]
     [SerializeField] TextMeshProUGUI _Position;
     [SerializeField] TextMeshProUGUI _Age;
@@ -37,10 +51,52 @@ public class PlayerInfoPanel : BasePanel
     [Header("Match Stats")]
     [SerializeField] List<MatchStatEntry> _MatchStatsEntries;
 
+    List<Footballer> _contextPlayers;
+    int _currIndexInContextList;
+
     protected override void OnShow(PanelData panelData)
     {
-        Footballer player = panelData is PlayerInfoPanelData p ? p.Footballer : Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID)[0];
+        Footballer player;
+        PlayerInfoPanelData infoData = panelData as PlayerInfoPanelData;
 
+        bool hasInfoData = infoData != null;
+        bool shouldShowArrows = hasInfoData && infoData.Context != PlayerInfoPanelData.InfoContext.None;
+
+        _NextPlayer.onClick.RemoveAllListeners();
+        _PreviousPlayer.onClick.RemoveAllListeners();
+        _NextPlayer.gameObject.SetActive(shouldShowArrows);
+        _PreviousPlayer.gameObject.SetActive(shouldShowArrows);
+
+        if(hasInfoData)
+        {
+            player = infoData.Footballer;
+
+            if (infoData.Context == PlayerInfoPanelData.InfoContext.Club)
+            {
+                _contextPlayers = Database.Instance.GetFootballersFromClub(player.ClubID);
+                _currIndexInContextList = 0;
+                for (int i = 0; i < _contextPlayers.Count; i++)
+                {
+                    if (_contextPlayers[i].Id == player.Id)
+                    {
+                        _currIndexInContextList = i;
+                        break;
+                    }
+                }
+            }
+            _NextPlayer.onClick.AddListener(NextPlayer);
+            _PreviousPlayer.onClick.AddListener(PreviousPlayer);
+        }
+        else
+        {
+            player = Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID)[0];
+        }
+
+        ShowPlayerInfo(player);
+    }
+
+    void ShowPlayerInfo(Footballer player)
+    {
         _FullName.text = player.FullName;
         _NationalityFlag.sprite = Database.Instance.CountryMaster.GetFlagByName(player.Country);
         _ClubName.text = player.ClubID == -1 ? "Free Agent" : Database.clubDB[player.ClubID].Name;
@@ -70,7 +126,7 @@ public class PlayerInfoPanel : BasePanel
         {
             _MatchStatsEntries[index].SetData(
                 stat.Key,
-                stat.Value.GetStat(StatName.MatchesPlayed), 
+                stat.Value.GetStat(StatName.MatchesPlayed),
                 stat.Value.GetStat(StatName.Goals),
                 stat.Value.GetStat(StatName.Assists),
                 stat.Value.GetStat(StatName.MatchRating));
@@ -81,5 +137,24 @@ public class PlayerInfoPanel : BasePanel
             if (index == _MatchStatsEntries.Count)
                 break;
         }
+    }
+
+    void NextPlayer()
+    {
+        _currIndexInContextList++;
+
+        _currIndexInContextList %= _contextPlayers.Count;
+
+        ShowPlayerInfo(_contextPlayers[_currIndexInContextList]);
+    }
+
+    void PreviousPlayer()
+    {
+        _currIndexInContextList--;
+
+        if (_currIndexInContextList < 0)
+            _currIndexInContextList = _contextPlayers.Count - 1;
+
+        ShowPlayerInfo(_contextPlayers[_currIndexInContextList]);
     }
 }

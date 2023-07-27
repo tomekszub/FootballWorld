@@ -43,6 +43,7 @@ public class FootballerTableData : SerializedMonoBehaviour
     [SerializeField] FootballerTableDataRow _Header;
     [SerializeField] HorizontalLayoutGroup _HeaderLayoutGroup;
     [SerializeField] RectTransform _DataRowsParent;
+    [SerializeField] PlayerInfoPanel.PlayerInfoPanelData.InfoContext _PlayerInfoContext;
 
     List<FootballerTableDataRow> _TableRows = new();
 
@@ -73,7 +74,7 @@ public class FootballerTableData : SerializedMonoBehaviour
                 _TableRows[index].gameObject.SetActive(true);
             }
 
-            dr.SetData(footballers[index]);
+            dr.SetData(footballers[index], "", _PlayerInfoContext);
         }
 
         for (; index < _TableRows.Count; index++)
