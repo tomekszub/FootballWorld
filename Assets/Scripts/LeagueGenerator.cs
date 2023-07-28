@@ -2,6 +2,8 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using static Footballer;
+using System;
+using Random = UnityEngine.Random;
 
 public class LeagueGenerator : MonoBehaviour
 {
@@ -176,11 +178,11 @@ public class LeagueGenerator : MonoBehaviour
                 Mathf.Clamp(Random.Range(enduranceMin, enduranceMin + 40), 1, 100),
                 clubID);
 
-            if (Random.value < 0.01f)
-                f.AddPerk(Perk.Wonderkid);
-
-            if (Random.value < 0.01f)
-                f.AddPerk(Perk.Marathoner);
+            foreach (var perk in Enum.GetValues(typeof(Perk)))
+            {
+                if (Random.value < 0.01f)
+                    f.AddPerk((Perk)perk);
+            }
 
             Database.footballersDB.Add(f);
         }

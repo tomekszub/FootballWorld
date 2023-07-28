@@ -6,7 +6,13 @@ using System;
 public enum Perk
 {
     Wonderkid = 0,
-    Marathoner = 1
+    Marathoner = 1,
+    Athletic = 2,
+    TeamPlayer = 3,
+    Leader = 4,
+    Unconventional = 5,
+
+    InjuryProne = 100
 }
 
 public class Footballer : IComparable<Footballer>
