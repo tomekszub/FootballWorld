@@ -21,6 +21,8 @@ public class PerksTableDataField : TableDataField
 
             _PerkSlots[index].gameObject.SetActive(true);
             _PerkSlots[index].sprite = iconMaster.GetPerkIcon(perk);
+
+            index++;
         }
     }
 }
