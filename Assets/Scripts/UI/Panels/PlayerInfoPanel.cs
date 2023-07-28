@@ -37,6 +37,7 @@ public class PlayerInfoPanel : BasePanel
     [SerializeField] TextMeshProUGUI _Age;
     [SerializeField] TextMeshProUGUI _Height;
     [SerializeField] TextMeshProUGUI _Weight;
+    [SerializeField] PerksTableDataField _PerksTable;
     [Header("Stats")]
     [SerializeField] TextMeshProUGUI _Rating;
     [SerializeField] Image _RatingStars;
@@ -105,6 +106,7 @@ public class PlayerInfoPanel : BasePanel
         _Age.text = (MyClub.Instance.CurrentDate.Year - player.BirthYear).ToString();
         _Height.text = player.Height.ToString();
         _Weight.text = player.Weight.ToString();
+        _PerksTable.SetPerks(player.Perks);
         _Rating.text = player.Rating.ToString();
         _RatingStars.sprite = Resources.Load<Sprite>($"Stars/{Mathf.Max(1, Mathf.RoundToInt(player.Rating / 10))}");
         _Shooting.text = player.Shoot.ToString();
