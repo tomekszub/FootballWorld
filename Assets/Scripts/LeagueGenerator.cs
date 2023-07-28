@@ -14,11 +14,11 @@ public class LeagueGenerator : MonoBehaviour
     [SerializeField] CountryMaster _CountryMaster;
     [SerializeField] LeagueMaster _LeagueMaster;
 
-
     LeagueDef _leagueDef;
     string _country;
     int _clubsAmount;
     List<Credentials> _people = new();
+
     public void Generate(string country, int clubAmount)
     {
         if (_ReducedTeamAmount_TEST)

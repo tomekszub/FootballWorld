@@ -9,42 +9,8 @@ using static League_Old;
 
 public class MyClub : MonoBehaviour 
 {
-    public static MyClub Instance;
-
-    public int MyLeagueID { get; private set; }
-    public int MyInLeagueIndex { get; private set; }
-    public int MyClubID { get; private set; }
-    public DateTime CurrentDate => _currDate;
-    public HashSet<string> MyTournaments { get; private set; } = new HashSet<string>();
-	public List<Match> Matches { get; set; } = new List<Match>();
-	public int[] CurrFederationRankingLeagueIndex { get; private set; } = new int[54];
-    public Dictionary<string, int> CurrFederationRankingCountryName { get; private set; } = new Dictionary<string, int>();
-
-    [SerializeField] TextMeshProUGUI _DateText;
-    [SerializeField] CalendarEntry _CalendarMatchEntryPrefab;
-    [SerializeField] GameObject _CalendarEntriesParent;
-    [SerializeField] TextMeshProUGUI _ScorersText;
-    [SerializeField] TextMeshProUGUI _OutputClubName;
-	[SerializeField] Table _TableScript;
-    [SerializeField] TextMeshProUGUI _NextMatchInfoText;
-
-    string _leagueName;
-    int _myLeagueRankingPos;
-    DateTime _startOfTheSeason = new DateTime(2018, 8, 17);
-    DateTime _currDate = new DateTime(2018, 6, 24);
-    readonly DateTime[] _cupDates = { new DateTime(2018, 9, 4), new DateTime(2018, 11, 4), new DateTime(2019, 1, 1), new DateTime(2019, 3, 19), new DateTime(2019, 5, 15)};
-    int _currentMatch = 0, _firstMatchOfTheWeek = 0;
-    List<CupKnockoutStage> _nationalCup = new List<CupKnockoutStage>();
-    List<CupRound> _championsCupRounds = new List<CupRound>();
-    List<CupRound> _europaCupRounds = new List<CupRound>();
-    List<CupRound> _europaTrophyRounds = new List<CupRound>();
-    List<Team> _leagueTeams = new List<Team>();
-    List<Club> _clubs;
-    int _currCupRound = 0, _currChampionsCupRound = 0, _currEuropaCupRound = 0, _currEuropaTrophyRound = 0;
-	int _teamsNumber;
-    MatchStats _leagueScorers = new MatchStats(new List<Scorer>());
-    bool _restAvailable = true;
-    readonly Dictionary<EuropaTournamentType, List<(EuropaTournamentData data, DateTime firstLeg, DateTime secondLeg)>> _tournamentData = new()
+    readonly DateTime[] CUP_DATES = { new DateTime(2018, 9, 4), new DateTime(2018, 11, 4), new DateTime(2019, 1, 1), new DateTime(2019, 3, 19), new DateTime(2019, 5, 15)};
+    readonly Dictionary<EuropaTournamentType, List<(EuropaTournamentData data, DateTime firstLeg, DateTime secondLeg)>> TORUNAMENT_DATA = new()
     {
         {
             EuropaTournamentType.ChampionsCup,
@@ -98,6 +64,42 @@ public class MyClub : MonoBehaviour
         }
     };
 
+    public static MyClub Instance;
+
+    public int MyLeagueID { get; private set; }
+    public int MyInLeagueIndex { get; private set; }
+    public int MyClubID { get; private set; }
+    public DateTime CurrentDate => _currDate;
+    public HashSet<string> MyTournaments { get; private set; } = new HashSet<string>();
+	public List<Match> Matches { get; set; } = new List<Match>();
+	public int[] CurrFederationRankingLeagueIndex { get; private set; } = new int[54];
+    public Dictionary<string, int> CurrFederationRankingCountryName { get; private set; } = new Dictionary<string, int>();
+    public Dictionary<int, int> ScoutedPlayers { get; private set; } = new Dictionary<int, int>();
+
+    [SerializeField] TextMeshProUGUI _DateText;
+    [SerializeField] CalendarEntry _CalendarMatchEntryPrefab;
+    [SerializeField] GameObject _CalendarEntriesParent;
+    [SerializeField] TextMeshProUGUI _ScorersText;
+    [SerializeField] TextMeshProUGUI _OutputClubName;
+	[SerializeField] Table _TableScript;
+    [SerializeField] TextMeshProUGUI _NextMatchInfoText;
+
+    string _leagueName;
+    int _myLeagueRankingPos;
+    DateTime _startOfTheSeason = new DateTime(2018, 8, 17);
+    DateTime _currDate = new DateTime(2018, 6, 24);
+    int _currentMatch = 0, _firstMatchOfTheWeek = 0;
+    List<CupKnockoutStage> _nationalCup = new List<CupKnockoutStage>();
+    List<CupRound> _championsCupRounds = new List<CupRound>();
+    List<CupRound> _europaCupRounds = new List<CupRound>();
+    List<CupRound> _europaTrophyRounds = new List<CupRound>();
+    List<Team> _leagueTeams = new List<Team>();
+    List<Club> _clubs;
+    int _currCupRound = 0, _currChampionsCupRound = 0, _currEuropaCupRound = 0, _currEuropaTrophyRound = 0;
+	int _teamsNumber;
+    MatchStats _leagueScorers = new MatchStats(new List<Scorer>());
+    bool _restAvailable = true;
+
     void Awake()
     {
         if (Instance != null)
@@ -132,7 +134,9 @@ public class MyClub : MonoBehaviour
         _clubs = new List<Club>();
         for (int i = 0; i < _teamsNumber; i++)
         {
-            _clubs.Add(Database.leagueDB[MyLeagueID].Teams[i]);
+            var club = Database.leagueDB[MyLeagueID].Teams[i];
+            _clubs.Add(club);
+            club.FootballersIDs.ForEach(id => ScoutedPlayers.Add(id, id == MyClubID ? 4 : 2));
         }
 
         // -1 oznacza ze numer rundy ma byc automatyczny, to znaczy kazda runda inny id rundy (dla ligi jest ok, np dla fazy gr lm trzeba to ustawic)
@@ -344,7 +348,7 @@ public class MyClub : MonoBehaviour
                 {
                     _nationalCup.Add(new CupKnockoutStage("National Cup", winners, new EuropaTournamentData(twoLeg: winners.Count != 2)));
                     _currCupRound++;
-                    AddCupMatchesToCalendar(_nationalCup[_currCupRound].GetMatches(), _currCupRound, _cupDates[_currCupRound], _cupDates[_currCupRound].AddDays(14), winners.Count != 2);
+                    AddCupMatchesToCalendar(_nationalCup[_currCupRound].GetMatches(), _currCupRound, CUP_DATES[_currCupRound], CUP_DATES[_currCupRound].AddDays(14), winners.Count != 2);
                 }
             }
         }
@@ -367,17 +371,17 @@ public class MyClub : MonoBehaviour
                     cs.AddRange(winners);
                     if (_currChampionsCupRound != 5)
                     {
-                        _championsCupRounds.Add(new CupKnockoutStage("Champions Cup", cs, _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data));
+                        _championsCupRounds.Add(new CupKnockoutStage("Champions Cup", cs, TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data));
                         Match[] ms = _championsCupRounds[_currChampionsCupRound].GetMatches();
                         AddCupMatchesToCalendar(
                                 ms,
                                 _currChampionsCupRound,
-                                _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg,
-                                _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].secondLeg
+                                TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].secondLeg
                             );
                     }
                     else
-                        _championsCupRounds.Add(new CupGroupStage("Champions Cup", 5, _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg, 14, cs, _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data));
+                        _championsCupRounds.Add(new CupGroupStage("Champions Cup", 5, TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg, 14, cs, TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data));
 
                 }
                 else  // knockout stage
@@ -389,13 +393,13 @@ public class MyClub : MonoBehaviour
                     else
                     {
                         _currChampionsCupRound++;
-                        _championsCupRounds.Add(new CupKnockoutStage("Champions Cup", winners, _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data, null, _currChampionsCupRound == 6));
+                        _championsCupRounds.Add(new CupKnockoutStage("Champions Cup", winners, TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data, null, _currChampionsCupRound == 6));
                         Match[] ms = _championsCupRounds[_currChampionsCupRound].GetMatches();
                         AddCupMatchesToCalendar(
                                 ms,
                                 _currChampionsCupRound,
-                                _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg,
-                                _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].secondLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].secondLeg,
                                 winners.Count != 2
                             );
                     }
@@ -422,20 +426,20 @@ public class MyClub : MonoBehaviour
                     if (_currEuropaCupRound != 5)
                     {
                         _europaCupRounds.Add(new CupKnockoutStage("Europa Cup", cs,
-                            _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data,
+                            TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data,
                             _currEuropaCupRound >= 2 ? _championsCupRounds[_currEuropaCupRound - 1].GetLoosers() : null));
                         Match[] ms = _europaCupRounds[_currEuropaCupRound].GetMatches();
                         AddCupMatchesToCalendar(
                                 ms,
                                 _currEuropaCupRound,
-                                _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg,
-                                _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].secondLeg
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].secondLeg
                             );
                     }
                     else
                     {
                         cs.AddRange(_championsCupRounds[4].GetLoosers());
-                        _europaCupRounds.Add(new CupGroupStage("Europa Cup", 5, _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg, 14, cs, _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data));
+                        _europaCupRounds.Add(new CupGroupStage("Europa Cup", 5, TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg, 14, cs, TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data));
                     }
 
                 }
@@ -460,13 +464,13 @@ public class MyClub : MonoBehaviour
                         else if(_currEuropaCupRound == 7)
                             clubsInCurrentRound.AddRange(_europaCupRounds[5].GetWinners().Take(8));
 
-                        _europaCupRounds.Add(new CupKnockoutStage("Europa Cup", clubsInCurrentRound, _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data, clubsFromHigherCup, _currEuropaCupRound == 6));
+                        _europaCupRounds.Add(new CupKnockoutStage("Europa Cup", clubsInCurrentRound, TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data, clubsFromHigherCup, _currEuropaCupRound == 6));
                         Match[] ms = _europaCupRounds[_currEuropaCupRound].GetMatches();
                         AddCupMatchesToCalendar(
                                 ms,
                                 _currEuropaCupRound,
-                                _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg,
-                                _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].secondLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].secondLeg,
                                 clubsInCurrentRound.Count != 2
                             );
                     }
@@ -493,20 +497,20 @@ public class MyClub : MonoBehaviour
                     if (_currEuropaTrophyRound != 5)
                     {
                         _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", cs,
-                            _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data,
+                            TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data,
                             _currEuropaTrophyRound >= 1 ? _europaCupRounds[_currEuropaTrophyRound - 1].GetLoosers() : null));
                         Match[] ms = _europaTrophyRounds[_currEuropaTrophyRound].GetMatches();
                         AddCupMatchesToCalendar(
                                 ms,
                                 _currEuropaTrophyRound,
-                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
-                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg
                             );
                     }
                     else
                     {
                         cs.AddRange(_europaCupRounds[4].GetLoosers());
-                        _europaTrophyRounds.Add(new CupGroupStage("Europa Trophy", 5, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg, 14, cs, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data));
+                        _europaTrophyRounds.Add(new CupGroupStage("Europa Trophy", 5, TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg, 14, cs, TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data));
                     }
 
                 }
@@ -522,13 +526,13 @@ public class MyClub : MonoBehaviour
                         _currEuropaTrophyRound++;
                         List<Club> clubsInCurrentRound = winners;
                         List<Club> clubsFromHigherCup = _currEuropaTrophyRound == 6 ? _europaCupRounds[5].GetLoosers() : null;
-                        _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", clubsInCurrentRound, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data, clubsFromHigherCup, _currEuropaTrophyRound == 6));
+                        _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", clubsInCurrentRound, TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data, clubsFromHigherCup, _currEuropaTrophyRound == 6));
                         Match[] ms = _europaTrophyRounds[_currEuropaTrophyRound].GetMatches();
                         AddCupMatchesToCalendar(
                                 ms,
                                 _currEuropaTrophyRound,
-                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
-                                _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
+                                TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg,
                                 clubsInCurrentRound.Count != 2
                             );
                     }
@@ -551,13 +555,13 @@ public class MyClub : MonoBehaviour
                 cs.AddRange(c);
         }
         _championsCupRounds.Add(null);
-        _championsCupRounds.Add(new CupKnockoutStage("Champions Cup",cs, _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data));
+        _championsCupRounds.Add(new CupKnockoutStage("Champions Cup",cs, TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].data));
         Match[] ms = _championsCupRounds[_currChampionsCupRound].GetMatches();
         AddCupMatchesToCalendar(
                             ms,
                             1,
-                            _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg,
-                            _tournamentData[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].secondLeg
+                            TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].firstLeg,
+                            TORUNAMENT_DATA[EuropaTournamentType.ChampionsCup][_currChampionsCupRound].secondLeg
                         );
 
         // EUROPA CUP
@@ -569,13 +573,13 @@ public class MyClub : MonoBehaviour
             if (c != null)
                 cs.AddRange(c);
         }
-        _europaCupRounds.Add(new CupKnockoutStage("Europa Cup", cs, _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data));
+        _europaCupRounds.Add(new CupKnockoutStage("Europa Cup", cs, TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].data));
         ms = _europaCupRounds[_currEuropaCupRound].GetMatches();
         AddCupMatchesToCalendar(
                             ms,
                             0,
-                            _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg,
-                            _tournamentData[EuropaTournamentType.EuropaCup][_currEuropaCupRound].secondLeg
+                            TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].firstLeg,
+                            TORUNAMENT_DATA[EuropaTournamentType.EuropaCup][_currEuropaCupRound].secondLeg
                         );
         // EUROP TROPHY
         _currEuropaTrophyRound = 0;
@@ -586,13 +590,13 @@ public class MyClub : MonoBehaviour
             if (c != null)
                 cs.AddRange(c);
         }
-        _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", cs, _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data));
+        _europaTrophyRounds.Add(new CupKnockoutStage("Europa Trophy", cs, TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].data));
         ms = _europaTrophyRounds[_currEuropaTrophyRound].GetMatches();
         AddCupMatchesToCalendar(
                             ms,
                             0,
-                            _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
-                            _tournamentData[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg
+                            TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].firstLeg,
+                            TORUNAMENT_DATA[EuropaTournamentType.EuropaTrophy][_currEuropaTrophyRound].secondLeg
                         );
     }
 
@@ -606,7 +610,7 @@ public class MyClub : MonoBehaviour
             cs.Add(Database.leagueDB[MyLeagueID].Teams[i]);
         }
         _nationalCup.Add(new CupKnockoutStage("National Cup", cs, new EuropaTournamentData()));
-        AddCupMatchesToCalendar(_nationalCup[0].GetMatches(), 0, _cupDates[0], _cupDates[0].AddDays(7));
+        AddCupMatchesToCalendar(_nationalCup[0].GetMatches(), 0, CUP_DATES[0], CUP_DATES[0].AddDays(7));
 
         void CalculateBiggestTeamsNumber()
         {
