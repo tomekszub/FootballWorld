@@ -2,32 +2,42 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class ScoutedPlayersPanel : BasePanel
 {
     [SerializeField] int _EntriesPerPage;
     [SerializeField] FootballerTableData _FootballerTableData;
     [SerializeField] TextMeshProUGUI _PageCounter;
+    [SerializeField] TMP_Dropdown _PositionDropdown;
 
-    List<(Footballer, int)> _players;
+    List<(Footballer, int)> _players = new();
+    List<(Footballer, int)> _filteredPlayers;
     int _currPage;
     int _pageMax;
 
+    void Awake()
+    {
+        _PositionDropdown.options.Clear();
+        _PositionDropdown.options.Add(new TMP_Dropdown.OptionData("Position"));
+
+        foreach (var pos in Enum.GetNames(typeof(Footballer.Position)))
+            _PositionDropdown.options.Add(new TMP_Dropdown.OptionData(pos));
+    }
+
     void OnEnable()
     {
-        _currPage = 0;
-        _players = new List<(Footballer, int)> ();
+        _players.Clear();
         var playerDatabase = Database.footballersDB;
         foreach (var scoutedPlayerKVP in MyClub.Instance.ScoutedPlayers)
         {
             _players.Add((playerDatabase[scoutedPlayerKVP.Key], scoutedPlayerKVP.Value));
         }
 
-        _players = _players.OrderBy(p => p.Item1.Surname).ToList();
+        _filteredPlayers = new(_players);
 
-        _pageMax = Mathf.CeilToInt(_players.Count / (float)_EntriesPerPage);
+        _currPage = 0;
 
-        UpdatePageCounter();
         ShowPlayers();
     }
 
@@ -51,9 +61,35 @@ public class ScoutedPlayersPanel : BasePanel
         ShowPlayers();
     }
 
+    public void OnPositionChanged(int option)
+    {
+        if (option == 0)
+        {
+            _filteredPlayers = new(_players);
+        }
+        else
+        {
+            var position = (Footballer.Position)(option - 1);
+
+            // lets try work on ienumerables
+            _filteredPlayers = _players.Where(p => p.Item1.Pos == position).ToList();
+        }
+
+        _currPage = 0;
+
+        ShowPlayers();
+    }
+
     void ShowPlayers()
     {
-        _FootballerTableData.ShowData(_players.Skip(_currPage * _EntriesPerPage).Take(_EntriesPerPage).Select(x => x.Item1).ToList(), true);
+
+        _filteredPlayers = _filteredPlayers.OrderBy(p => p.Item1.Surname).ToList();
+
+        _pageMax = Mathf.CeilToInt(_filteredPlayers.Count / (float)_EntriesPerPage);
+
+        UpdatePageCounter();
+
+        _FootballerTableData.ShowData(_filteredPlayers.Skip(_currPage * _EntriesPerPage).Take(_EntriesPerPage).Select(x => x.Item1).ToList(), true);
     }
 
     void UpdatePageCounter() => _PageCounter.text = $"{_currPage + 1}/{_pageMax}";

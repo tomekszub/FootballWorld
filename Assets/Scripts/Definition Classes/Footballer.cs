@@ -28,7 +28,16 @@ public class Footballer : IComparable<Footballer>
 
 	public enum Position
 	{
-		BR,PO,ŚO,LO,ŚPD,ŚP,PP,ŚPO,LP,N
+		BR = 0,
+        PO = 1,
+        ŚO = 2,
+        LO = 3,
+        ŚPD = 4,
+        ŚP = 5,
+        PP = 6,
+        ŚPO = 7,
+        LP = 8,
+        N = 9
 	}
 
 	public int Id;
