@@ -6,6 +6,7 @@ using static Footballer.PlayerStatistics;
 using static PlayerInfoPanel.PlayerInfoPanelData;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 
 public class FootballerTableDataRow : SerializedMonoBehaviour
 {
@@ -19,14 +20,19 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
     {
         _playerInfoContext = playerInfoContext;
         _footballer = footballer;
+        int knowledgeLevel = MyClub.Instance.GetKnowledgeOfPlayer(footballer.Id);
+
         _Fields[FootballerFieldType.Position].SetTextData(footballer.Pos.ToString());
         _Fields[FootballerFieldType.Nationality].SetImageData(Database.Instance.CountryMaster.GetFlagByName(footballer.Country));
         _Fields[FootballerFieldType.Name].SetTextData(footballer.Name);
         _Fields[FootballerFieldType.Surname].SetTextData(footballer.Surname);
         _Fields[FootballerFieldType.NameAndSurname].SetTextData(footballer.FullName);
-        _Fields[FootballerFieldType.Rating].SetTextData(footballer.Rating.ToString());
-        _Fields[FootballerFieldType.RatingStars].SetTextData(footballer.Rating.ToString());
-        _Fields[FootballerFieldType.RatingStars].SetImageData(Resources.Load<Sprite>($"Stars/{Mathf.Max(1, Mathf.RoundToInt(footballer.Rating/10))}"));
+        _Fields[FootballerFieldType.Rating].SetTextData(
+            knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? footballer.Rating.ToString() : "?");
+        _Fields[FootballerFieldType.RatingStars].SetTextData(
+            knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? footballer.Rating.ToString() : "?");
+        _Fields[FootballerFieldType.RatingStars].SetImageData(Resources.Load<Sprite>(
+            knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? $"Stars/{Mathf.Max(1, Mathf.RoundToInt(footballer.Rating/10))}" : "Stars/0"));
 
         if (footballer.ClubID != -1)
         {
@@ -39,16 +45,25 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
             _Fields[FootballerFieldType.Club].SetTextData("Free Agent");
         }
 
-        _Fields[FootballerFieldType.Shoot].SetTextData(footballer.Shoot.ToString());
-        _Fields[FootballerFieldType.Pass].SetTextData(footballer.Pass.ToString());
-        _Fields[FootballerFieldType.Dribling].SetTextData(footballer.Dribling.ToString());
-        _Fields[FootballerFieldType.Tackle].SetTextData(footballer.Tackle.ToString());
-        _Fields[FootballerFieldType.Heading].SetTextData(footballer.Heading.ToString());
-        _Fields[FootballerFieldType.Speed].SetTextData(footballer.Speed.ToString());
-        _Fields[FootballerFieldType.Endurance].SetTextData(footballer.Endurance.ToString());
+        _Fields[FootballerFieldType.Shoot].SetTextData(
+            knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? footballer.Shoot.ToString() : "?");
+        _Fields[FootballerFieldType.Pass].SetTextData(
+            knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? footballer.Pass.ToString() : "?");
+        _Fields[FootballerFieldType.Dribling].SetTextData(
+            knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? footballer.Dribling.ToString() : "?");
+        _Fields[FootballerFieldType.Tackle].SetTextData(
+            knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? footballer.Tackle.ToString() : "?");
+        _Fields[FootballerFieldType.Heading].SetTextData(
+            knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? footballer.Heading.ToString() : "?");
+        _Fields[FootballerFieldType.Speed].SetTextData(
+            knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? footballer.Speed.ToString() : "?");
+        _Fields[FootballerFieldType.Endurance].SetTextData(
+            knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? footballer.Endurance.ToString() : "?");
         _Fields[FootballerFieldType.Condition].SetImageFillAmount(footballer.Condition / 100);
+
         if(_Fields[FootballerFieldType.Perks] is PerksTableDataField perksDataField)
-            perksDataField.SetPerks(footballer.Perks);
+            perksDataField.SetPerks(
+                knowledgeLevel >= Footballer.PERK_KNOWLEDGE_LEVEL ? footballer.Perks : Enumerable.Empty<Perk>());
         UpdateStatistics(tournamentFilter);
     }
 

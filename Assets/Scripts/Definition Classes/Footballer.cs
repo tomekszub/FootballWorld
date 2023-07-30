@@ -17,6 +17,14 @@ public enum Perk
 
 public class Footballer : IComparable<Footballer>
 {
+    public const byte BASE_INFO_KNOWLEDGE_LEVEL = 1;
+
+    public const byte RATING_KNOWLEDGE_LEVEL = 2;
+
+    public const byte STATS_KNOWLEDGE_LEVEL = 3;
+
+    public const byte PERK_KNOWLEDGE_LEVEL = 4;
+
 	const float BASE_FATIGUE_LOSS = 10;
 	const float BASE_REST_VALUE_LOSS_PER_MATCH = 0.12f;
 	const float MAX_FATIGUE_LOSS_ENDURANCE = 0.4f;
@@ -26,7 +34,7 @@ public class Footballer : IComparable<Footballer>
 	const float MAX_FATIGUE_GAIN_ENDURANCE = 0.3f;
 	const float BASE_FATIGUE_GAIN_PER_ENDURANCE = 0.003f;
 
-	public enum Position
+    public enum Position
 	{
 		BR = 0,
         PO = 1,

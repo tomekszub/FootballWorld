@@ -119,29 +119,34 @@ public class MyClub : MonoBehaviour
     public void GenerateGameData(int leagueID, int inLeagueIndex)
     {
         MyLeagueID = leagueID;
-        _teamsNumber = Database.leagueDB[MyLeagueID].Teams.Count;
+
+        var myLeagueTeams = Database.leagueDB[MyLeagueID].Teams;
+
+        _teamsNumber = myLeagueTeams.Count;
         _leagueName = Database.leagueDB[MyLeagueID].Name;
         MyInLeagueIndex = inLeagueIndex;
-        MyClubID = Database.leagueDB[MyLeagueID].Teams[MyInLeagueIndex].Id;
+        MyClubID = myLeagueTeams[MyInLeagueIndex].Id;
         _OutputClubName.text = Database.clubDB[MyClubID].Name;
+
 
         for (int i = 0; i < _teamsNumber; i++)
         {
-            _leagueTeams.Add(new Team(Database.leagueDB[MyLeagueID].Teams[i].Id, Database.leagueDB[MyLeagueID].Teams[i].Name, 0, 0, 0, 0, 0, 0));
+            _leagueTeams.Add(new Team(myLeagueTeams[i].Id, myLeagueTeams[i].Name, 0, 0, 0, 0, 0, 0));
         }
+
         ShowLeagueTable();
 
         _clubs = new List<Club>();
         for (int i = 0; i < _teamsNumber; i++)
         {
-            var club = Database.leagueDB[MyLeagueID].Teams[i];
+            var club = myLeagueTeams[i];
             _clubs.Add(club);
-            club.FootballersIDs.ForEach(id => ScoutedPlayers.Add(id, id == MyClubID ? 4 : 2));
+            club.FootballersIDs.ForEach(id => ScoutedPlayers.Add(id, club.Id == MyClubID ? 4 : 2));
         }
 
         // -1 oznacza ze numer rundy ma byc automatyczny, to znaczy kazda runda inny id rundy (dla ligi jest ok, np dla fazy gr lm trzeba to ustawic)
-        MatchCalendar.CreateGroupCalendar(Database.leagueDB[MyLeagueID].Name, -1, _clubs, _startOfTheSeason);
-        MyTournaments.Add(Database.leagueDB[MyLeagueID].Name);
+        MatchCalendar.CreateGroupCalendar(_leagueName, -1, _clubs, _startOfTheSeason);
+        MyTournaments.Add(_leagueName);
 
         CreateCupCalendar();
         MyTournaments.Add("National Cup");
@@ -162,6 +167,8 @@ public class MyClub : MonoBehaviour
         UpdateCurrentDateUI();
         UpdateNextMatchInfo();
     }
+
+    public int GetKnowledgeOfPlayer(int playerID) => ScoutedPlayers.TryGetValue(playerID, out var scoutingLevel) ? scoutingLevel : 0;
 
     public void ShowLeagueTable()
     {

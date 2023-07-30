@@ -5,9 +5,12 @@ using UnityEngine.UI;
 public class PerksTableDataField : TableDataField
 {
     [SerializeField] List<Image> _PerkSlots;
+    [SerializeField] GameObject _MissingDataObject;
 
     public void SetPerks(IEnumerable<Perk> perks)
     {
+        if(_MissingDataObject != null)
+            _MissingDataObject.SetActive(false);
         _PerkSlots.ForEach(p => p.gameObject.SetActive(false));
 
         int index = 0;
@@ -24,5 +27,11 @@ public class PerksTableDataField : TableDataField
 
             index++;
         }
+    }
+
+    public void ShowMissingData()
+    {
+        _PerkSlots.ForEach(p => p.gameObject.SetActive(false));
+        _MissingDataObject.SetActive(true);
     }
 }

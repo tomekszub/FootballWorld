@@ -98,25 +98,36 @@ public class PlayerInfoPanel : BasePanel
 
     void ShowPlayerInfo(Footballer player)
     {
+        int knowledgeLevel = MyClub.Instance.GetKnowledgeOfPlayer(player.Id);
+
         _FullName.text = player.FullName;
         _NationalityFlag.sprite = Database.Instance.CountryMaster.GetFlagByName(player.Country);
         _ClubName.text = player.ClubID == -1 ? "Free Agent" : Database.clubDB[player.ClubID].Name;
         _ClubCountryFlag.sprite = player.ClubID == -1 ? null : Database.Instance.CountryMaster.GetFlagByName(Database.clubDB[player.ClubID].CountryName);
-        _Position.text = player.Pos.ToString();
-        _Age.text = (MyClub.Instance.CurrentDate.Year - player.BirthYear).ToString();
-        _Height.text = player.Height.ToString();
-        _Weight.text = player.Weight.ToString();
-        _PerksTable.SetPerks(player.Perks);
-        _Rating.text = player.Rating.ToString();
-        _RatingStars.sprite = Resources.Load<Sprite>($"Stars/{Mathf.Max(1, Mathf.RoundToInt(player.Rating / 10))}");
-        _Shooting.text = player.Shoot.ToString();
-        _Dribble.text = player.Dribling.ToString();
-        _Speed.text = player.Speed.ToString();
-        _Pass.text = player.Pass.ToString();
-        _Heading.text = player.Heading.ToString();
-        _Tackle.text = player.Tackle.ToString();
-        _FreeKick.text = player.FreeKicks.ToString();
-        _Endurance.text = player.Endurance.ToString();
+        _Position.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? player.Pos.ToString() : "?";
+        _Age.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ?
+            (MyClub.Instance.CurrentDate.Year - player.BirthYear).ToString() :
+            "?";
+        _Height.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? player.Height.ToString() : "?";
+        _Weight.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? player.Weight.ToString() : "?";
+
+        if(knowledgeLevel >= Footballer.PERK_KNOWLEDGE_LEVEL)
+            _PerksTable.SetPerks(player.Perks);
+        else
+            _PerksTable.ShowMissingData();
+
+        _Rating.text = knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? player.Rating.ToString() : "?";
+        _RatingStars.sprite = Resources.Load<Sprite>(knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? 
+            $"Stars/{Mathf.Max(1, Mathf.RoundToInt(player.Rating / 10))}" :
+            "Stars/0");
+        _Shooting.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Shoot.ToString() : "?";
+        _Dribble.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Dribling.ToString() : "?";
+        _Speed.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Speed.ToString() : "?";
+        _Pass.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Pass.ToString() : "?";
+        _Heading.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Heading.ToString() : "?";
+        _Tackle.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Tackle.ToString() : "?";
+        _FreeKick.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.FreeKicks.ToString() : "?";
+        _Endurance.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Endurance.ToString() : "?";
 
         var stats = player.Statistics;
 
