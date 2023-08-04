@@ -10,6 +10,7 @@ public class SquadListPanel : BasePanel
     [SerializeField] TMP_Dropdown _TableDataModeDropdown;
 
     int _currLeagueTeamIndex;
+    int _currClubID;
 
     void OnEnable()
     {
@@ -27,6 +28,8 @@ public class SquadListPanel : BasePanel
 
     void SetupSquad(int id, bool fieldsChanged = false)
     {
+        _currClubID = id;
+
         if (id == MyClub.Instance.MyClubID)
         {
             _TournamentSelectionDropdown.gameObject.SetActive(true);
@@ -43,7 +46,7 @@ public class SquadListPanel : BasePanel
 
         _CoachText.text = Database.clubDB[id].Name;
 
-        _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(id), fieldsChanged);
+        _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(id), fieldsChanged, () => _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(id)));
     }
 
     public void ShowNextClub()

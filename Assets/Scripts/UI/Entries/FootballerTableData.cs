@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,10 +46,13 @@ public class FootballerTableData : SerializedMonoBehaviour
     [SerializeField] RectTransform _DataRowsParent;
     [SerializeField] PlayerInfoPanel.PlayerInfoPanelData.InfoContext _PlayerInfoContext;
 
-    List<FootballerTableDataRow> _TableRows = new();
+    List<FootballerTableDataRow> _tableRows = new();
+    Action _onRefresh;
 
-    public void ShowData(List<Footballer> footballers, bool fieldsChanged = false)
+    public void ShowData(List<Footballer> footballers, bool fieldsChanged = false, Action OnRefresh = null)
     {
+        _onRefresh = OnRefresh;
+
         if (fieldsChanged)
         {
             _Header.TurnOffAllFields();
@@ -60,31 +64,31 @@ public class FootballerTableData : SerializedMonoBehaviour
         for (;index < footballers.Count; index++)
         {
             FootballerTableDataRow dr;
-            if (index >= _TableRows.Count)
+            if (index >= _tableRows.Count)
             {
                 dr = Instantiate(_DataRowPrefab, _DataRowsParent);
                 dr.ShowFields(_TableDataModes[_CurrTableMode]);
-                _TableRows.Add(dr);
+                _tableRows.Add(dr);
             }
             else
             {
-                dr = _TableRows[index];
+                dr = _tableRows[index];
                 if (fieldsChanged)
                     dr.ShowFields(_TableDataModes[_CurrTableMode]);
-                _TableRows[index].gameObject.SetActive(true);
+                _tableRows[index].gameObject.SetActive(true);
             }
 
             dr.SetData(footballers[index], "", _PlayerInfoContext);
         }
 
-        for (; index < _TableRows.Count; index++)
-            _TableRows[index].gameObject.SetActive(false);
+        for (; index < _tableRows.Count; index++)
+            _tableRows[index].gameObject.SetActive(false);
     }
 
     public void UpdateStats(string tournamentName)
     {
-        for (int i = 0; i < _TableRows.Count; i++)
-            _TableRows[i].UpdateStatistics(tournamentName);
+        for (int i = 0; i < _tableRows.Count; i++)
+            _tableRows[i].UpdateStatistics(tournamentName);
     }
 
     public List<string> GetAvailableTableDataModes() => _TableDataModes.Keys.ToList();
@@ -100,7 +104,7 @@ public class FootballerTableData : SerializedMonoBehaviour
         _Header.TurnOffAllFields();
 
 
-        foreach (var dataRow in _TableRows)
+        foreach (var dataRow in _tableRows)
         {
             dataRow.TurnOffAllFields();
         }
@@ -109,10 +113,12 @@ public class FootballerTableData : SerializedMonoBehaviour
         StartCoroutine(RefreshRows());
     }
 
+    public void RefreshTable() => _onRefresh?.Invoke();
+
     IEnumerator RefreshRows()
     {
         yield return new WaitForEndOfFrame();
-        _TableRows.ForEach(row => row.RefreshThemAll(_TableDataModes[_CurrTableMode]));
+        _tableRows.ForEach(row => row.RefreshThemAll(_TableDataModes[_CurrTableMode]));
     }
 
     IEnumerator RefreshHeader()

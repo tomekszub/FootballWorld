@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using static Footballer.PlayerStatistics;
+using System;
+using Random = UnityEngine.Random;
 
 public class PlayerInfoPanel : BasePanel
 {
@@ -17,11 +19,13 @@ public class PlayerInfoPanel : BasePanel
 
         public Footballer Footballer;
         public InfoContext Context;
+        public Action OnSuccessfullPurchase;
 
-        public PlayerInfoPanelData(Footballer footballer, InfoContext context)
+        public PlayerInfoPanelData(Footballer footballer, InfoContext context, Action onSuccessfullPurchase = null)
         {
             Footballer = footballer;
             Context = context;
+            OnSuccessfullPurchase = onSuccessfullPurchase;
         }
     }
 
@@ -54,31 +58,53 @@ public class PlayerInfoPanel : BasePanel
 
     List<Footballer> _contextPlayers;
     int _currIndexInContextList;
+    Footballer _currFootballer;
+    PlayerInfoPanelData _infoData;
+
+    public void ShowTransferNegotiationWindow()
+    {
+        if (_currFootballer.ClubID == MyClub.Instance.MyClubID)
+            return;
+
+        decimal transferFee = (decimal)(_currFootballer.Rating * (Random.value * 2 + 0.2f));
+
+        CustomPanel.CustomPanelData customPanelData = new();
+        customPanelData.Title = "Transfer";
+        customPanelData.Description = $"Please confirm transfer of {_currFootballer.FullName} to your club.\nExpected fee: {transferFee}M $.";
+        customPanelData.OnConfirm = () =>
+        {
+            if(TransferHub.TryTransferToMyClub(_currFootballer, transferFee) == TransferHub.TransferResult.Success)
+            {
+                UpdatePlayerInfo();
+                _infoData.OnSuccessfullPurchase?.Invoke();
+            }
+        };
+        WindowsManager.Instance.ShowWindow("Custom", customPanelData, false);
+    }
 
     protected override void OnShow(PanelData panelData)
     {
-        Footballer player;
-        PlayerInfoPanelData infoData = panelData as PlayerInfoPanelData;
+        _infoData = panelData as PlayerInfoPanelData;
 
-        bool hasInfoData = infoData != null;
-        bool shouldShowArrows = hasInfoData && infoData.Context != PlayerInfoPanelData.InfoContext.None;
+        bool hasInfoData = _infoData != null;
+        bool shouldShowArrows = hasInfoData && _infoData.Context != PlayerInfoPanelData.InfoContext.None;
 
         _NextPlayer.onClick.RemoveAllListeners();
         _PreviousPlayer.onClick.RemoveAllListeners();
         _NextPlayer.gameObject.SetActive(shouldShowArrows);
         _PreviousPlayer.gameObject.SetActive(shouldShowArrows);
 
-        if(hasInfoData)
+        if (hasInfoData)
         {
-            player = infoData.Footballer;
+            _currFootballer = _infoData.Footballer;
 
-            if (infoData.Context == PlayerInfoPanelData.InfoContext.Club)
+            if (_infoData.Context == PlayerInfoPanelData.InfoContext.Club)
             {
-                _contextPlayers = Database.Instance.GetFootballersFromClub(player.ClubID);
+                _contextPlayers = Database.Instance.GetFootballersFromClub(_currFootballer.ClubID);
                 _currIndexInContextList = 0;
                 for (int i = 0; i < _contextPlayers.Count; i++)
                 {
-                    if (_contextPlayers[i].Id == player.Id)
+                    if (_contextPlayers[i].Id == _currFootballer.Id)
                     {
                         _currIndexInContextList = i;
                         break;
@@ -90,46 +116,46 @@ public class PlayerInfoPanel : BasePanel
         }
         else
         {
-            player = Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID)[0];
+            _currFootballer = Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID)[0];
         }
 
-        ShowPlayerInfo(player);
+        UpdatePlayerInfo();
     }
 
-    void ShowPlayerInfo(Footballer player)
+    void UpdatePlayerInfo()
     {
-        int knowledgeLevel = MyClub.Instance.GetKnowledgeOfPlayer(player.Id);
+        int knowledgeLevel = MyClub.Instance.GetKnowledgeOfPlayer(_currFootballer.Id);
 
-        _FullName.text = player.FullName;
-        _NationalityFlag.sprite = Database.Instance.CountryMaster.GetFlagByName(player.Country);
-        _ClubName.text = player.ClubID == -1 ? "Free Agent" : Database.clubDB[player.ClubID].Name;
-        _ClubCountryFlag.sprite = player.ClubID == -1 ? null : Database.Instance.CountryMaster.GetFlagByName(Database.clubDB[player.ClubID].CountryName);
-        _Position.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? player.Pos.ToString() : "?";
+        _FullName.text = _currFootballer.FullName;
+        _NationalityFlag.sprite = Database.Instance.CountryMaster.GetFlagByName(_currFootballer.Country);
+        _ClubName.text = _currFootballer.ClubID == -1 ? "Free Agent" : Database.clubDB[_currFootballer.ClubID].Name;
+        _ClubCountryFlag.sprite = _currFootballer.ClubID == -1 ? null : Database.Instance.CountryMaster.GetFlagByName(Database.clubDB[_currFootballer.ClubID].CountryName);
+        _Position.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? _currFootballer.Pos.ToString() : "?";
         _Age.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ?
-            (MyClub.Instance.CurrentDate.Year - player.BirthYear).ToString() :
+            (MyClub.Instance.CurrentDate.Year - _currFootballer.BirthYear).ToString() :
             "?";
-        _Height.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? player.Height.ToString() : "?";
-        _Weight.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? player.Weight.ToString() : "?";
+        _Height.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? _currFootballer.Height.ToString() : "?";
+        _Weight.text = knowledgeLevel >= Footballer.BASE_INFO_KNOWLEDGE_LEVEL ? _currFootballer.Weight.ToString() : "?";
 
-        if(knowledgeLevel >= Footballer.PERK_KNOWLEDGE_LEVEL)
-            _PerksTable.SetPerks(player.Perks);
+        if (knowledgeLevel >= Footballer.PERK_KNOWLEDGE_LEVEL)
+            _PerksTable.SetPerks(_currFootballer.Perks);
         else
             _PerksTable.ShowMissingData();
 
-        _Rating.text = knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? player.Rating.ToString() : "?";
-        _RatingStars.sprite = Resources.Load<Sprite>(knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? 
-            $"Stars/{Mathf.Max(1, Mathf.RoundToInt(player.Rating / 10))}" :
+        _Rating.text = knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ? _currFootballer.Rating.ToString() : "?";
+        _RatingStars.sprite = Resources.Load<Sprite>(knowledgeLevel >= Footballer.RATING_KNOWLEDGE_LEVEL ?
+            $"Stars/{Mathf.Max(1, Mathf.RoundToInt(_currFootballer.Rating / 10))}" :
             "Stars/0");
-        _Shooting.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Shoot.ToString() : "?";
-        _Dribble.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Dribling.ToString() : "?";
-        _Speed.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Speed.ToString() : "?";
-        _Pass.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Pass.ToString() : "?";
-        _Heading.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Heading.ToString() : "?";
-        _Tackle.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Tackle.ToString() : "?";
-        _FreeKick.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.FreeKicks.ToString() : "?";
-        _Endurance.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? player.Endurance.ToString() : "?";
+        _Shooting.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.Shoot.ToString() : "?";
+        _Dribble.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.Dribling.ToString() : "?";
+        _Speed.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.Speed.ToString() : "?";
+        _Pass.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.Pass.ToString() : "?";
+        _Heading.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.Heading.ToString() : "?";
+        _Tackle.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.Tackle.ToString() : "?";
+        _FreeKick.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.FreeKicks.ToString() : "?";
+        _Endurance.text = knowledgeLevel >= Footballer.STATS_KNOWLEDGE_LEVEL ? _currFootballer.Endurance.ToString() : "?";
 
-        var stats = player.Statistics;
+        var stats = _currFootballer.Statistics;
 
         _MatchStatsEntries.ForEach(entry => entry.gameObject.SetActive(false));
 
@@ -158,7 +184,9 @@ public class PlayerInfoPanel : BasePanel
 
         _currIndexInContextList %= _contextPlayers.Count;
 
-        ShowPlayerInfo(_contextPlayers[_currIndexInContextList]);
+        _currFootballer = _contextPlayers[_currIndexInContextList];
+
+        UpdatePlayerInfo();
     }
 
     void PreviousPlayer()
@@ -168,6 +196,8 @@ public class PlayerInfoPanel : BasePanel
         if (_currIndexInContextList < 0)
             _currIndexInContextList = _contextPlayers.Count - 1;
 
-        ShowPlayerInfo(_contextPlayers[_currIndexInContextList]);
+        _currFootballer = _contextPlayers[_currIndexInContextList];
+
+        UpdatePlayerInfo();
     }
 }

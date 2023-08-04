@@ -102,7 +102,10 @@ public class FootballerTableDataRow : SerializedMonoBehaviour
 
     public void OpenPlayerInfo()
     {
-        WindowsManager.Instance.ShowWindow("PlayerInfo", new PlayerInfoPanel.PlayerInfoPanelData(_footballer, _playerInfoContext), false);
+        WindowsManager.Instance.ShowWindow(
+            "PlayerInfo", 
+            new PlayerInfoPanel.PlayerInfoPanelData(_footballer, _playerInfoContext, 
+            () => GetComponentInParent<FootballerTableData>().RefreshTable()), false);
     }
 
     void SetFieldVisibility(FootballerFieldType fieldName, bool setTo)

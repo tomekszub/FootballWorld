@@ -9,6 +9,8 @@ using static League_Old;
 
 public class MyClub : MonoBehaviour 
 {
+    public const int MAX_KNOWLEDGE_LEVEL = 4;
+
     readonly DateTime[] CUP_DATES = { new DateTime(2018, 9, 4), new DateTime(2018, 11, 4), new DateTime(2019, 1, 1), new DateTime(2019, 3, 19), new DateTime(2019, 5, 15)};
     readonly Dictionary<EuropaTournamentType, List<(EuropaTournamentData data, DateTime firstLeg, DateTime secondLeg)>> TORUNAMENT_DATA = new()
     {
@@ -69,14 +71,16 @@ public class MyClub : MonoBehaviour
     public int MyLeagueID { get; private set; }
     public int MyInLeagueIndex { get; private set; }
     public int MyClubID { get; private set; }
+    public Club Club => Database.clubDB[MyClubID];
     public DateTime CurrentDate => _currDate;
     public HashSet<string> MyTournaments { get; private set; } = new HashSet<string>();
 	public List<Match> Matches { get; set; } = new List<Match>();
 	public int[] CurrFederationRankingLeagueIndex { get; private set; } = new int[54];
     public Dictionary<string, int> CurrFederationRankingCountryName { get; private set; } = new Dictionary<string, int>();
-    public Dictionary<int, int> ScoutedPlayers { get; private set; } = new Dictionary<int, int>();
+    public Dictionary<int, byte> ScoutedPlayers { get; private set; } = new Dictionary<int, byte>();
 
     [SerializeField] TextMeshProUGUI _DateText;
+    [SerializeField] TextMeshProUGUI _BudgetText;
     [SerializeField] CalendarEntry _CalendarMatchEntryPrefab;
     [SerializeField] GameObject _CalendarEntriesParent;
     [SerializeField] TextMeshProUGUI _ScorersText;
@@ -141,7 +145,7 @@ public class MyClub : MonoBehaviour
         {
             var club = myLeagueTeams[i];
             _clubs.Add(club);
-            club.FootballersIDs.ForEach(id => ScoutedPlayers.Add(id, club.Id == MyClubID ? 4 : 2));
+            club.FootballersIDs.ForEach(id => ScoutedPlayers.Add(id, (byte)(club.Id == MyClubID ? MAX_KNOWLEDGE_LEVEL : 2)));
         }
 
         // -1 oznacza ze numer rundy ma byc automatyczny, to znaczy kazda runda inny id rundy (dla ligi jest ok, np dla fazy gr lm trzeba to ustawic)
@@ -166,6 +170,8 @@ public class MyClub : MonoBehaviour
         UpdateCalendar();
         UpdateCurrentDateUI();
         UpdateNextMatchInfo();
+
+        UpdateBudgetUI();
     }
 
     public int GetKnowledgeOfPlayer(int playerID) => ScoutedPlayers.TryGetValue(playerID, out var scoutingLevel) ? scoutingLevel : 0;
@@ -548,6 +554,22 @@ public class MyClub : MonoBehaviour
         }
         _currentMatch++;
         UpdateCalendar();
+    }
+
+    public void UpdateBudgetUI()
+    {
+        _BudgetText.text = $"{Math.Round(Club.Budget, 3)}M $";
+    }
+
+    public void SetKnowledgeAboutPlayer(int id, byte val)
+    {
+        if (ScoutedPlayers.ContainsKey(id))
+        {
+            ScoutedPlayers[id] = val;
+            return;
+        }
+        
+        ScoutedPlayers.Add(id, val);
     }
 
     void CreateEuropaTournamentsCalendar()

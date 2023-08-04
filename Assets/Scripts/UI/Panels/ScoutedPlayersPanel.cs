@@ -19,7 +19,7 @@ public class ScoutedPlayersPanel : BasePanel
     void Awake()
     {
         _PositionDropdown.options.Clear();
-        _PositionDropdown.options.Add(new TMP_Dropdown.OptionData("Position"));
+        _PositionDropdown.options.Add(new TMP_Dropdown.OptionData("No Filter"));
 
         foreach (var pos in Enum.GetNames(typeof(Footballer.Position)))
             _PositionDropdown.options.Add(new TMP_Dropdown.OptionData(pos));
@@ -28,6 +28,9 @@ public class ScoutedPlayersPanel : BasePanel
     void OnEnable()
     {
         _players.Clear();
+
+        _PositionDropdown.value = 0;
+
         var playerDatabase = Database.footballersDB;
         foreach (var scoutedPlayerKVP in MyClub.Instance.ScoutedPlayers)
         {

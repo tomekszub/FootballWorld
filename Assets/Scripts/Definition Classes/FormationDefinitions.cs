@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using static Footballer;
 
 public static class FormationDefinitions
 {
-    public static Dictionary<string, List<Position>> Formations = new Dictionary<string, List<Position>>()
+    public static readonly Dictionary<string, List<Position>> Formations = new Dictionary<string, List<Position>>()
     {
         { 
             "4-3-3", 
