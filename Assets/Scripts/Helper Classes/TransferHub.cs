@@ -27,7 +27,9 @@ public static class TransferHub
 
         MyClub.Instance.UpdateBudgetUI();
 
-        MyClub.Instance.SetKnowledgeAboutPlayer(footballer.Id, MyClub.MAX_KNOWLEDGE_LEVEL);
+        MyClub.Instance.SetKnowledgeAboutFootballer(footballer.Id, MyClub.MAX_KNOWLEDGE_LEVEL);
+
+        MyClub.Instance.AddNewFootballerToPresets(footballer.Id);
 
         from.RefreshSquad();
 

@@ -73,6 +73,8 @@ public class MyClub : MonoBehaviour
     public int MyClubID { get; private set; }
     public Club Club => Database.clubDB[MyClubID];
     public DateTime CurrentDate => _currDate;
+    public List<(string, List<int>)> SquadPresets => _squadPresets;
+    public int ActiveSquadPresetIndex { get; private set; }
     public HashSet<string> MyTournaments { get; private set; } = new HashSet<string>();
 	public List<Match> Matches { get; set; } = new List<Match>();
 	public int[] CurrFederationRankingLeagueIndex { get; private set; } = new int[54];
@@ -103,6 +105,7 @@ public class MyClub : MonoBehaviour
 	int _teamsNumber;
     MatchStats _leagueScorers = new MatchStats(new List<Scorer>());
     bool _restAvailable = true;
+    List<(string, List<int>)> _squadPresets;
 
     void Awake()
     {
@@ -130,8 +133,10 @@ public class MyClub : MonoBehaviour
         _leagueName = Database.leagueDB[MyLeagueID].Name;
         MyInLeagueIndex = inLeagueIndex;
         MyClubID = myLeagueTeams[MyInLeagueIndex].Id;
-        _OutputClubName.text = Database.clubDB[MyClubID].Name;
 
+        var myClub = Database.clubDB[MyClubID];
+
+        _OutputClubName.text = myClub.Name;
 
         for (int i = 0; i < _teamsNumber; i++)
         {
@@ -147,6 +152,12 @@ public class MyClub : MonoBehaviour
             _clubs.Add(club);
             club.FootballersIDs.ForEach(id => ScoutedPlayers.Add(id, (byte)(club.Id == MyClubID ? MAX_KNOWLEDGE_LEVEL : 2)));
         }
+
+        _squadPresets = new()
+        {
+            (myClub.Formation, new(myClub.FootballersIDs)),
+            (myClub.Formation, new(myClub.FootballersIDs))
+        };
 
         // -1 oznacza ze numer rundy ma byc automatyczny, to znaczy kazda runda inny id rundy (dla ligi jest ok, np dla fazy gr lm trzeba to ustawic)
         MatchCalendar.CreateGroupCalendar(_leagueName, -1, _clubs, _startOfTheSeason);
@@ -561,7 +572,7 @@ public class MyClub : MonoBehaviour
         _BudgetText.text = $"{Math.Round(Club.Budget, 3)}M $";
     }
 
-    public void SetKnowledgeAboutPlayer(int id, byte val)
+    public void SetKnowledgeAboutFootballer(int id, byte val)
     {
         if (ScoutedPlayers.ContainsKey(id))
         {
@@ -570,6 +581,22 @@ public class MyClub : MonoBehaviour
         }
         
         ScoutedPlayers.Add(id, val);
+    }
+
+    public void SaveSquadPresets(List<(string, List<int>)> presets, int activePreset)
+    {
+        ActiveSquadPresetIndex = activePreset;
+        _squadPresets = presets;
+    }
+
+    public void UpdateCurrentPresetSquad()
+    {
+        _squadPresets[ActiveSquadPresetIndex] = (_squadPresets[ActiveSquadPresetIndex].Item1, new(Club.FootballersIDs));
+    }
+
+    public void AddNewFootballerToPresets(int footballersID)
+    {
+        _squadPresets.ForEach(x => x.Item2.Add(footballersID));
     }
 
     void CreateEuropaTournamentsCalendar()

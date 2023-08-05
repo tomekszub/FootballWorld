@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class SquadListPanel : BasePanel
 {
@@ -8,9 +9,9 @@ public class SquadListPanel : BasePanel
     [SerializeField] TextMeshProUGUI _CoachText;
     [SerializeField] TMP_Dropdown _TournamentSelectionDropdown;
     [SerializeField] TMP_Dropdown _TableDataModeDropdown;
+    [SerializeField] Button _AutoChoiceButton;
 
     int _currLeagueTeamIndex;
-    int _currClubID;
 
     void OnEnable()
     {
@@ -28,18 +29,15 @@ public class SquadListPanel : BasePanel
 
     void SetupSquad(int id, bool fieldsChanged = false)
     {
-        _currClubID = id;
+        bool isMyClub = id == MyClub.Instance.MyClubID;
 
-        if (id == MyClub.Instance.MyClubID)
+        _TournamentSelectionDropdown.gameObject.SetActive(isMyClub);
+        _TableDataModeDropdown.gameObject.SetActive(isMyClub);
+        _AutoChoiceButton.gameObject.SetActive(isMyClub);
+
+        if (isMyClub)
         {
-            _TournamentSelectionDropdown.gameObject.SetActive(true);
-            _TableDataModeDropdown.gameObject.SetActive(true);
             _TournamentSelectionDropdown.value = 0;
-        }
-        else
-        {
-            _TableDataModeDropdown.gameObject.SetActive(false);
-            _TournamentSelectionDropdown.gameObject.SetActive(false);
         }
 
         _TableDataModeDropdown.value = 0;
@@ -74,5 +72,21 @@ public class SquadListPanel : BasePanel
     public void OnTableDataModeChanged(int option)
     {
         _FootballersTableData.ChangeTableMode(_TableDataModeDropdown.options[option].text);
+    }
+
+    public void SquadAutoChoose()
+    {
+        CustomPanel.CustomPanelData customPanelData = new();
+        customPanelData.Title = "Auto Squad Selection";
+        customPanelData.Description = $"Do you want to automatically choose squad based on overall Rating?";
+        customPanelData.OnConfirm = OnComfirm;
+        WindowsManager.Instance.ShowWindow("Custom", customPanelData, false);
+
+        void OnComfirm()
+        {
+            MyClub.Instance.Club.RefreshSquad();
+            MyClub.Instance.UpdateCurrentPresetSquad();
+            _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID), false, () => Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID));
+        }
     }
 }
