@@ -44,7 +44,7 @@ public class SquadListPanel : BasePanel
 
         _CoachText.text = Database.clubDB[id].Name;
 
-        _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(id), fieldsChanged, () => _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(id)));
+        _FootballersTableData.ShowData(Database.GetFootballersFromClub(id), fieldsChanged, () => _FootballersTableData.ShowData(Database.GetFootballersFromClub(id)));
     }
 
     public void ShowNextClub()
@@ -86,7 +86,7 @@ public class SquadListPanel : BasePanel
         {
             MyClub.Instance.Club.RefreshSquad();
             MyClub.Instance.UpdateCurrentPresetSquad();
-            _FootballersTableData.ShowData(Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID), false, () => Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID));
+            _FootballersTableData.ShowData(Database.GetFootballersFromClub(MyClub.Instance.MyClubID), false, () => Database.GetFootballersFromClub(MyClub.Instance.MyClubID));
         }
     }
 }

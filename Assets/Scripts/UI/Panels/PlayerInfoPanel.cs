@@ -100,7 +100,7 @@ public class PlayerInfoPanel : BasePanel
 
             if (_infoData.Context == PlayerInfoPanelData.InfoContext.Club)
             {
-                _contextPlayers = Database.Instance.GetFootballersFromClub(_currFootballer.ClubID);
+                _contextPlayers = Database.GetFootballersFromClub(_currFootballer.ClubID);
                 _currIndexInContextList = 0;
                 for (int i = 0; i < _contextPlayers.Count; i++)
                 {
@@ -116,7 +116,7 @@ public class PlayerInfoPanel : BasePanel
         }
         else
         {
-            _currFootballer = Database.Instance.GetFootballersFromClub(MyClub.Instance.MyClubID)[0];
+            _currFootballer = Database.GetFootballersFromClub(MyClub.Instance.MyClubID)[0];
         }
 
         UpdatePlayerInfo();

@@ -148,7 +148,7 @@ public class Database : MonoBehaviour
         return null;
     }
 
-    public List<Footballer> GetFootballersFromClub(int id)
+    public static List<Footballer> GetFootballersFromClub(int id)
     {
         List<Footballer> footballers = new();
         clubDB[id].FootballersIDs.ForEach(fID => footballers.Add(footballersDB[fID]));
