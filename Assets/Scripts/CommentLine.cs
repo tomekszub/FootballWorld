@@ -17,8 +17,7 @@ public class CommentLine : MonoBehaviour
 
     string _guestName, _hostName;
     int _guestId, _hostId;
-    List<Footballer>[] _teams = new List<Footballer>[2];
-    int[,] _defWingPos = new int[2, 2];
+    PitchTeam[] _teams = new PitchTeam[2];
 
     void Awake()
     {
@@ -31,7 +30,6 @@ public class CommentLine : MonoBehaviour
     public void UpdateTeams()
     {
         _teams = Comment.Instance.GetTeams();
-        _defWingPos = Comment.Instance.GetDefWingPos();
     }
 
     public void StartingSettings()
@@ -64,8 +62,6 @@ public class CommentLine : MonoBehaviour
     {
         int arb = Random.Range(0, 5);
         string text;
-        List<Footballer> hostTeam = _teams[0];
-        List<Footballer> guestTeam = _teams[1];
         switch (GetRandomIndex(10))
         {
             case 1: text = $"\nWitam, dzisiaj przed nami bardzo ciekawe widowisko. Mecz: {_hostName} - {_guestName}."; break;
@@ -73,10 +69,10 @@ public class CommentLine : MonoBehaviour
             case 3: text = $"\nDeszczowy wieczór i spotkanie rozgrywane na {Database.clubDB[_hostId].Stadium}. Jak zwykle liczymy na emocje."; break;
             case 4: text = $"\nPiłkarze wychodzą na boisko, skupieni czekają na pierwszy gwizdek arbitra."; break;
             case 5: text = $"\nArbitrem dzisiejszego spotkania jest {Database.arbiterDB[0, arb]}-letni {Database.arbiterDB[1, arb]}."; break;
-            default: text = $"\nDzisiaj {_hostName} w składzie: {hostTeam[0].Surname}, {hostTeam[1].Surname}, {hostTeam[2].Surname}, {hostTeam[3].Surname}, {hostTeam[4].Surname}, " +
-                    $"{hostTeam[5].Surname}, {hostTeam[6].Surname}, {hostTeam[7].Surname}, {hostTeam[8].Surname}, {hostTeam[9].Surname}, {hostTeam[10].Surname}." +
-                    $"\n{_guestName} w składzie: {guestTeam[0].Surname}, {guestTeam[1].Surname}, {guestTeam[2].Surname}, {guestTeam[3].Surname}, {guestTeam[4].Surname}, " +
-                    $"{guestTeam[5].Surname}, {guestTeam[6].Surname}, {guestTeam[7].Surname}, {guestTeam[8].Surname}, {guestTeam[9].Surname}, {guestTeam[10].Surname}."; break;
+            default: text = $"\nDzisiaj {_hostName} w składzie: {_teams[0][0].Surname}, {_teams[0][1].Surname}, {_teams[0][2].Surname}, {_teams[0][3].Surname}, {_teams[0][4].Surname}, " +
+                    $"{_teams[0][5].Surname}, {_teams[0][6].Surname}, {_teams[0][7].Surname}, {_teams[0][8].Surname}, {_teams[0][9].Surname}, {_teams[0][10].Surname}." +
+                    $"\n{_guestName} w składzie: {_teams[1][0].Surname}, {_teams[1][1].Surname}, {_teams[1][2].Surname}, {_teams[1][3].Surname}, {_teams[1][4].Surname}, " +
+                    $"{_teams[1][5].Surname}, {_teams[1][6].Surname}, {_teams[1][7].Surname}, {_teams[1][8].Surname}, {_teams[1][9].Surname}, {_teams[1][10].Surname}."; break;
         }
         _Commentary.text += text;
     }
@@ -667,7 +663,7 @@ public class CommentLine : MonoBehaviour
 
     public void FailedWingDribble(int direction)
     {
-        _Commentary.text += $"\nSprytna próba, ale {_teams[Comment.Instance.ReverseGuestBall][_defWingPos[Comment.Instance.ReverseGuestBall, direction]].Surname} nie dał się nabrać i zabrał piłkę.";
+        _Commentary.text += $"\nSprytna próba, ale {_teams[Comment.Instance.ReverseGuestBall][_teams[Comment.Instance.ReverseGuestBall].GetIndexOfDefensiveWinger(direction)].Surname} nie dał się nabrać i zabrał piłkę.";
     }
 
     public void FailedMidDribble(Footballer defender)
