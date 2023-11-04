@@ -91,7 +91,7 @@ public class PitchTeam
 
     #region Stats
 
-    public void IncreaseFatigueForAll()
+    public void IncreaseMinuteFatigueForAll()
     {
         for (int i = 0; i < _players.Count; i++)
             _players[i].GainFatigue(i == 0);
@@ -115,7 +115,7 @@ public class PitchTeam
 
     void AddStatisticToPlayer(int index, StatName statName, double val = 1)
     {
-        if (index < _players.Count || _players[index] == null)
+        if (index >= _players.Count || _players[index] == null)
             return;
 
         _players[index].AddStatistic(_competitionName, statName, val);
