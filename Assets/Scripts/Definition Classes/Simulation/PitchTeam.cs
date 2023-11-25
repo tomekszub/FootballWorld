@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,8 +12,8 @@ public class PitchTeam
     int[] _playersMidDefPos;
     int[] _wingPos = new int[2];
     int[] _defWingPos = new int[2];
-    int _defLastPlayerNumber;
-    int _midLastPlayerNumber;
+    int _defLastPlayer;
+    int _midLastPlayer;
 
     public float TeamDefenceRating { get; private set; }
 
@@ -29,63 +30,72 @@ public class PitchTeam
 
     public Footballer this[int i] => _players[i];
 
+    #region PositionChecks
+
+    public bool HasWinger(int rigthSide) => _players[_wingPos[rigthSide]] != null;
+
+    public bool HasMiddfielder() => AnyPlayerOnThePitch(_defLastPlayer + 1, _midLastPlayer);
+
+    #endregion
+
     #region Specific Players
 
-    public int GetIndexOfWinger(int isRightWing) => _wingPos[isRightWing];
+    public int GetIndexOfWinger(int rightSide) => _players[_wingPos[rightSide]] == null ? -1 : _wingPos[rightSide];
 
-    public int GetIndexOfDefensiveWinger(int isRightWing) => _defWingPos[isRightWing];
+    public int GetIndexOfDefensiveWinger(int rightSide) => _players[_defWingPos[rightSide]] == null ? -1 : _defWingPos[rightSide];
 
-    public int GetIndexOfLastDefender() => _defLastPlayerNumber;
+    public int GetIndexOfLastDefender() => _defLastPlayer;
+
+    public int GetPenaltyExecutor()
+    {
+        List<int> penaltyPlayers = new(10);
+        for (int i = 1; i < 11; i++)
+        {
+            if (_players[i] != null)
+                penaltyPlayers.Add(i);
+        }
+        return penaltyPlayers.OrderByDescending(x => _players[x].Penalty).First();
+    }
+
+    public int GetCornerExecutorIndex()
+    {
+        List<int> cornerPlayers = new(10);
+        for (int i = 1; i < 11; i++)
+        {
+            if (_players[i] != null)
+                cornerPlayers.Add(i);
+        }
+        return cornerPlayers.OrderByDescending(x => _players[x].Corner).First();
+    }
+
+    public int GetCornerHeaderExecutorIndex(int rankPosition, int excludeID = -1)
+    {
+        List<int> headerPlayers = new(10);
+        for (int i = 1; i < 11; i++)
+        {
+            if (_players[i] != null && excludeID != i)
+                headerPlayers.Add(i);
+        }
+
+        if (rankPosition > headerPlayers.Count - 1)
+            rankPosition = 0;
+
+        return headerPlayers.OrderByDescending(x => _players[x].Heading).ElementAt(rankPosition);
+    }
 
     #endregion
 
     #region Random Players
 
-    public int GetIndexOfRandomDefender()
-    {
-        return Random.Range(1, _defLastPlayerNumber + 1);
-    }
-    
-    public int GetIndexOfRandomAttacker()
-    {
-        return Random.Range(_midLastPlayerNumber + 1, 11);
-    }
+    public int GetIndexOfRandomDefender(int excludeID = -1) => GetRandomPlayerIndex(1, _defLastPlayer, excludeID);
 
-    public int GetIndexOfRandomAttacker(int excludeID)
-    {
-        List<int> indices = Enumerable.Range(_midLastPlayerNumber + 1, 10 - _midLastPlayerNumber).ToList();
-        indices.Remove(excludeID);
-        return indices[Random.Range(0, indices.Count)];
-    }
+    public int GetIndexOfRandomMidfielder(int excludeID = -1) => GetRandomPlayerIndex(_defLastPlayer + 1, _midLastPlayer, excludeID);
 
-    public int GetIndexOfRandomDefender(int excludeID)
-    {
-        List<int> indices = Enumerable.Range(1, _defLastPlayerNumber).ToList();
-        indices.Remove(excludeID);
-        return indices[Random.Range(0, indices.Count)];
-    }
+    public int GetIndexOfRandomAttacker(int excludeID = -1) => GetRandomPlayerIndex(_midLastPlayer + 1, 10, excludeID);
 
-    public int GetIndexOfRandomMidfielder()
-    {
-        return Random.Range(_defLastPlayerNumber + 1, _midLastPlayerNumber + 1);
-    }
+    public int GetIndexOfRandomMiddlePlayer(int excludeID = -1) => GetRandomPlayerIndex(_playersMidPos, excludeID);
 
-    public int GetIndexOfRandomMiddlePlayer()
-    {
-        return _playersMidPos[Random.Range(0, _playersMidPos.Length)];
-    }
-
-    public int GetIndexOfRandomMiddleDefender()
-    {
-        return _playersMidDefPos[Random.Range(0, _playersMidDefPos.Length)];
-    }
-
-    public int GetIndexOfRandomMiddleDefender(int excludeID)
-    {
-        List<int> indices = new(_playersMidDefPos);
-        indices.Remove(excludeID);
-        return indices[Random.Range(0, indices.Count)];
-    }
+    public int GetIndexOfRandomMiddleDefender(int excludeID = -1) => GetRandomPlayerIndex(_playersMidDefPos, excludeID);
 
     #endregion
 
@@ -129,10 +139,10 @@ public class PitchTeam
         {
             TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
-            _defLastPlayerNumber = 4;
+            _defLastPlayer = 4;
             TeamMidfieldRating = (_players[5].Rating + _players[6].Rating + _players[7].Rating);
             TeamMidfieldRating = (TeamMidfieldRating / 3) + (TeamMidfieldRating / 3);
-            _midLastPlayerNumber = 7;
+            _midLastPlayer = 7;
             TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 10 };
@@ -143,10 +153,10 @@ public class PitchTeam
         {
             TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
-            _defLastPlayerNumber = 4;
+            _defLastPlayer = 4;
             TeamMidfieldRating = (_players[5].Rating + _players[6].Rating);
             TeamMidfieldRating = (TeamMidfieldRating / 2) + (TeamMidfieldRating / 3);
-            _midLastPlayerNumber = 6;
+            _midLastPlayer = 6;
             TeamAttackRating = (_players[7].Rating + _players[8].Rating + _players[9].Rating + _players[10].Rating);
             TeamAttackRating = (TeamAttackRating / 4) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 7, 10 };
@@ -157,10 +167,10 @@ public class PitchTeam
         {
             TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
-            _defLastPlayerNumber = 4;
+            _defLastPlayer = 4;
             TeamMidfieldRating = (_players[5].Rating + _players[6].Rating + _players[7].Rating);
             TeamMidfieldRating = (TeamMidfieldRating / 3) + (TeamMidfieldRating / 3);
-            _midLastPlayerNumber = 6;
+            _midLastPlayer = 6;
             TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 6, 7, 10 };
@@ -171,10 +181,10 @@ public class PitchTeam
         {
             TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
-            _defLastPlayerNumber = 4;
+            _defLastPlayer = 4;
             TeamMidfieldRating = (_players[5].Rating + _players[6].Rating + _players[7].Rating);
             TeamMidfieldRating = (TeamMidfieldRating / 3) + (TeamMidfieldRating / 3);
-            _midLastPlayerNumber = 7;
+            _midLastPlayer = 7;
             TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 8, 9, 10 };
@@ -185,10 +195,10 @@ public class PitchTeam
         {
             TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
-            _defLastPlayerNumber = 4;
+            _defLastPlayer = 4;
             TeamMidfieldRating = (_players[5].Rating + _players[6].Rating);
             TeamMidfieldRating = (TeamMidfieldRating / 2) + (TeamMidfieldRating / 3);
-            _midLastPlayerNumber = 6;
+            _midLastPlayer = 6;
             TeamAttackRating = (_players[7].Rating + _players[8].Rating + _players[9].Rating + _players[10].Rating);
             TeamAttackRating = (TeamAttackRating / 4) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 9, 10 };
@@ -199,10 +209,10 @@ public class PitchTeam
         {
             TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating + _players[5].Rating);
             TeamDefenceRating = (TeamDefenceRating / 5) + (TeamDefenceRating / 4);
-            _defLastPlayerNumber = 5;
+            _defLastPlayer = 5;
             TeamMidfieldRating = (_players[6].Rating + _players[7].Rating);
             TeamMidfieldRating = (TeamMidfieldRating / 2) + (TeamMidfieldRating / 3);
-            _midLastPlayerNumber = 7;
+            _midLastPlayer = 7;
             TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 8, 9, 10 };
@@ -213,33 +223,64 @@ public class PitchTeam
         {
             TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating);
             TeamDefenceRating = (TeamDefenceRating / 3) + (TeamDefenceRating / 4);
-            _defLastPlayerNumber = 3;
+            _defLastPlayer = 3;
             TeamMidfieldRating = (_players[4].Rating + _players[5].Rating + _players[6].Rating + _players[7].Rating);
             TeamMidfieldRating = (TeamMidfieldRating / 4) + (TeamMidfieldRating / 3);
-            _midLastPlayerNumber = 7;
+            _midLastPlayer = 7;
             TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 8, 9, 10 };
             _wingPos[0] = 6;
             _wingPos[1] = 7;
         }
-        if (_defLastPlayerNumber == 5)
+        if (_defLastPlayer == 5)
         {
             _playersMidDefPos = new[] { 2, 3, 4 };
             _defWingPos[0] = 1;
             _defWingPos[1] = 5;
         }
-        else if (_defLastPlayerNumber == 4)
+        else if (_defLastPlayer == 4)
         {
             _playersMidDefPos = new[] { 2, 3 };
             _defWingPos[0] = 1;
             _defWingPos[1] = 4;
         }
-        else if (_defLastPlayerNumber == 3)
+        else if (_defLastPlayer == 3)
         {
             _playersMidDefPos = new[] { 1, 2, 3 };
             _defWingPos[0] = 1;
             _defWingPos[1] = 3;
         }
+    }
+
+    int GetRandomPlayerIndex(IEnumerable<int> sourceIndices, int excludeIndex = -1)
+    {
+        List<int> indices = new(sourceIndices);
+        for (int i = indices.Count - 1; i >= 0; i--)
+        {
+            if (indices[i] == excludeIndex || _players[indices[i]] == null)
+                indices.RemoveAt(i);
+        }
+
+        if(indices.Count == 0)
+            return -1;
+
+        return indices[Random.Range(0, indices.Count)];
+    }
+
+    int GetRandomPlayerIndex(int minIndex, int maxIndex, int excludeIndex = -1)
+    {
+        return GetRandomPlayerIndex(Enumerable.Range(minIndex, maxIndex - minIndex + 1), excludeIndex);
+    }
+
+    bool AnyPlayerOnThePitch(int minIndex, int maxIndex)
+    {
+        for (int i = minIndex; i < maxIndex; i++)
+        {
+            if (_players[i] == null)
+                return false;
+        }
+
+        return true;
     }
 }

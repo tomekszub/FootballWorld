@@ -224,8 +224,8 @@ public class Comment : MonoBehaviour
     {
         GuestBall = Random.Range(1, 100) <= _hostChances ? 0 : 1;
 
-        PlayerWithBall = _teams[GuestBall].GetIndexOfRandomDefender();
-
+        var index = _teams[GuestBall].GetIndexOfRandomDefender();
+        PlayerWithBall = index == -1 ? 0 : index;
         CommentLine.Instance.AttackFirstPhase();
     }
 
@@ -239,51 +239,67 @@ public class Comment : MonoBehaviour
         UpdateMatchRatingForCurrentPlayer(dec > SECOND_PHASE_SAFE_INDEX ? MatchRatingConstants.COUNTER_BALL_LOSS : MatchRatingConstants.BASIC_PASS_SUCCESS);
 
         // TODO: Add decision making based on some attributes
-        if (dec <= 10)
+        if (dec <= 34)
         {
-            // środek podanie TODO: potential duplicated player
-            PlayerWithBall = _teams[GuestBall].GetIndexOfRandomMidfielder();
-            CommentLine.Instance.PassMiddle();
-            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.BASIC_PASS_SUCCESS);
-            PlayerWithBall = _teams[GuestBall].GetIndexOfRandomMiddlePlayer();
-            StartCoroutine(AttackThirdPhase(Direction.Middle));
-        }
-        else if (dec <= 34)
-        {
-            Direction direction = dec > 22 ? Direction.Left : Direction.Right;
+            List<Direction> directions = new() { Direction.Left, Direction.Right, Direction.Middle };
+            directions = directions.OrderBy(x => Random.Range(0, 100)).ToList();
+            int midfielderIndex = _teams[GuestBall].GetIndexOfRandomMidfielder();
 
-            int pos = _teams[GuestBall].GetIndexOfRandomMidfielder();
-            PlayerWithBall = pos;
-
-            CommentLine.Instance.PassToTheWing((int)direction);
-
-            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.BASIC_PASS_SUCCESS);
-
-            var potentialWingerIndex = _teams[GuestBall].GetIndexOfWinger((int)direction);
-
-            if (potentialWingerIndex != pos)
-                PlayerWithBall = potentialWingerIndex;
-            else
+            if (midfielderIndex != -1)
             {
-                // jesli skrzydlowym jest pomocnik podajacy pilke
-                // to na skrzydel pilke musi przejac obronca
-                // jesli akcja na prawym skrzydel to ostatni obronca z listy (kolejnosc pilkarzy od lewej), jesli nie to piewszy
-                if (direction == Direction.Right)
-                    PlayerWithBall = _teams[GuestBall].GetIndexOfLastDefender();
-                else
-                     PlayerWithBall = 1;
+                do
+                {
+                    if (directions[0] == Direction.Middle)
+                    {
+                        // środek podanie TODO: potential duplicated player
+                        PlayerWithBall = midfielderIndex;
+                        CommentLine.Instance.PassMiddle();
+                        UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.BASIC_PASS_SUCCESS);
+                        PlayerWithBall = _teams[GuestBall].GetIndexOfRandomMiddlePlayer();
+                        StartCoroutine(AttackThirdPhase(Direction.Middle));
+                        return;
+                    }
+                    else
+                    {
+                        var wingerIndex = _teams[GuestBall].GetIndexOfWinger((int)directions[0]);
+
+                        if (wingerIndex == -1 || wingerIndex == midfielderIndex)
+                            wingerIndex = _teams[GuestBall].GetIndexOfDefensiveWinger((int)directions[0]);
+
+                        if (wingerIndex != -1)
+                        {
+                            PlayerWithBall = midfielderIndex;
+
+                            CommentLine.Instance.PassToTheWing((int)directions[0]);
+
+                            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.BASIC_PASS_SUCCESS);
+
+                            PlayerWithBall = wingerIndex;
+
+                            StartCoroutine(AttackThirdPhase(directions[0]));
+                            return;
+                        }
+                    }
+
+                    directions.RemoveAt(0);
+                }
+                while (directions.Count > 0);
             }
 
-            StartCoroutine(AttackThirdPhase(direction));
+            if (Random.Range(0, 100) > 70)
+            {
+                BallLost();
+                return;
+            }
+
+            MiddlePassAndShot();
         }
         else if (dec <= 37)
-        {
-            PlayerWithBall = _teams[GuestBall].GetIndexOfRandomMidfielder();
-            // Strzał
-            CommentLine.Instance.DecidesToShoot();
-            StartCoroutine(Shot(10));
-        }
+            MiddlePassAndShot();
         else
+            BallLost();
+
+        void BallLost()
         {
             // Kontratak
             PlayerWithBall = counterPos;
@@ -294,9 +310,19 @@ public class Comment : MonoBehaviour
 
             StartCoroutine(CounterAttack());
         }
-    }
 
-    
+        void MiddlePassAndShot()
+        {
+            var playerIndex = _teams[GuestBall].GetIndexOfRandomMidfielder();
+            if (playerIndex == -1)
+                BallLost();
+
+            PlayerWithBall = playerIndex;
+            // Strzał
+            CommentLine.Instance.DecidesToShoot();
+            StartCoroutine(Shot(10));
+        }
+    }
 
     void UpdateChances()
     {
@@ -417,13 +443,7 @@ public class Comment : MonoBehaviour
         if (isPenalty)
         {
             MinutePassed();
-            int[] penaltyPlayers = new int[10];
-            for (int i = 1; i < 11; i++)
-            {
-                penaltyPlayers[i-1] = i;
-            }
-            penaltyPlayers = penaltyPlayers.OrderByDescending(x => _teams[GuestBall][x].Penalty).ToArray();
-            PlayerWithBall = penaltyPlayers[0];
+            PlayerWithBall = _teams[GuestBall].GetPenaltyExecutor();
             CommentLine.Instance.PreparingToPenalty();
             MinutePassed();
 
@@ -694,7 +714,9 @@ public class Comment : MonoBehaviour
 
         int rnd = Random.Range(1, 100);
         float x = 20 - _teams[GuestBall][PlayerWithBall].Pass / 10;
-        if (rnd <= 30)
+        int potentialAttackerIndex = _teams[GuestBall].GetIndexOfRandomAttacker(PlayerWithBall);
+
+        if (potentialAttackerIndex == -1 || rnd <= 30)
         {
             CommentLine.Instance.CounterAttackShotTry();
 
@@ -714,9 +736,9 @@ public class Comment : MonoBehaviour
         else
         {
             CommentLine.Instance.CounterAttackSuccessPass();
-            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_PASS_FAIL);
+            UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.COUNTER_PASS_SUCCESS);
 
-            PlayerWithBall = _teams[GuestBall].GetIndexOfRandomAttacker(PlayerWithBall);
+            PlayerWithBall = potentialAttackerIndex;
 
             CommentLine.Instance.CounterAttackPreShot();
 
@@ -725,7 +747,7 @@ public class Comment : MonoBehaviour
 
             // TODO: add chance to clean tackle based on defender's tackle and attacker's ... ball control?
             int chan = Random.Range(1, 101);
-            if (chan < 70)
+            if (chan > 70)
             {
                 CommentLine.Instance.CounterAttackPenaltyFoul();
                 UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.PENALTY_WON);
@@ -743,40 +765,31 @@ public class Comment : MonoBehaviour
         if(_time > 0) 
             yield return new WaitForSeconds(_time);
 
-        List<(int id, Footballer player)> cornerPlayers = new();
-        for (int i = 1; i < 11; i++)
-            cornerPlayers.Add((i, _teams[GuestBall][i]));
-
-        cornerPlayers = cornerPlayers.OrderByDescending(x => x.player.Corner).ToList();
-        CommentLine.Instance.CornerExecution(cornerPlayers[0].player);
-        float border = 35 + ((cornerPlayers[0].player.FreeKicks + cornerPlayers[0].player.Pass) * .32f);
-        // executor of corner cannot jump to the header...
-        int cornerExecutorID = cornerPlayers[0].id;
-        cornerPlayers.RemoveAt(0);
+        int cornerExecutorIndex = _teams[GuestBall].GetCornerExecutorIndex();
+        CommentLine.Instance.CornerExecution(_teams[GuestBall][cornerExecutorIndex]);
+        // TODO: stat Corner is used only to check for executor, but not to estimate player's ability to execute corners...
+        float border = 35 + ((_teams[GuestBall][cornerExecutorIndex].FreeKicks + _teams[GuestBall][cornerExecutorIndex].Pass) * .32f);
 
         if (Random.Range(1, 101) <= border)
         {
-            var attackerHeaders = cornerPlayers.OrderByDescending(x => x.player.Heading).ToList();
-            List<(int id, Footballer player)> defenderHeaders = new();
-            for (int i = 1; i < 11; i++)
-            {
-                defenderHeaders.Add((i, _teams[ReverseGuestBall][i]));
-            }
-            int y = Random.Range(0, 30); // losowanie indeksu piłkarzy, którzy będą walczyć o piłkę
-            y /= 10;
-            PlayerWithBall = attackerHeaders[y].id;
+            int pairIndex = Random.Range(0, 89) / 30;
+
+            var attackerIndex = _teams[GuestBall].GetCornerHeaderExecutorIndex(pairIndex, cornerExecutorIndex);
+            var defenderIndex = _teams[ReverseGuestBall].GetCornerHeaderExecutorIndex(pairIndex);
+
+            PlayerWithBall = attackerIndex;
             // TODO: instead of comparing rating, could compare positioning or smth
             // główka
-            if (Random.Range(1, 101) <= 25 + ((attackerHeaders[y].player.Rating - defenderHeaders[y].player.Rating) / 5))
+            if (Random.Range(1, 101) <= 25 + ((_teams[GuestBall][attackerIndex].Rating - _teams[ReverseGuestBall][defenderIndex].Rating) / 5))
             {
                 // zgubienie obrońcy i strzał głową
                 if(_time > 0) 
                     yield return new WaitForSeconds(_time);
 
                 CommentLine.Instance.FreeHeader();
-                UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_SUCCESS);
+                UpdateMatchRatingForPlayer(GuestBall, cornerExecutorIndex, MatchRatingConstants.CORNER_SUCCESS);
                 UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CORNER_WON_POSITIONING);
-                UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeaders[y].id, MatchRatingConstants.CORNER_LOST_POSITIONING);
+                UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.CORNER_LOST_POSITIONING);
 
                 if(_time > 0) 
                     yield return new WaitForSeconds(_time);
@@ -789,12 +802,12 @@ public class Comment : MonoBehaviour
                 if(_time > 0) 
                     yield return new WaitForSeconds(_time);
 
-                if (Random.Range(1, 101) <= 50 + ((attackerHeaders[y].player.Heading - defenderHeaders[y].player.Heading) / 2))
+                if (Random.Range(1, 101) <= 50 + ((_teams[GuestBall][attackerIndex].Heading - _teams[ReverseGuestBall][defenderIndex].Heading) / 2))
                 {
                     CommentLine.Instance.ContestedHeader();
-                    UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_SUCCESS);
+                    UpdateMatchRatingForPlayer(GuestBall, cornerExecutorIndex, MatchRatingConstants.CORNER_SUCCESS);
                     UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CORNER_WON_HEADER);
-                    UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeaders[y].id, MatchRatingConstants.CORNER_LOST_HEADER);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.CORNER_LOST_HEADER);
 
                     if (_time > 0) 
                         yield return new WaitForSeconds(_time);
@@ -803,10 +816,10 @@ public class Comment : MonoBehaviour
                 }
                 else
                 {
-                    CommentLine.Instance.DefenderWinsHeader(defenderHeaders[y].player);
-                    UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_SUCCESS);
+                    CommentLine.Instance.DefenderWinsHeader(_teams[ReverseGuestBall][defenderIndex]);
+                    UpdateMatchRatingForPlayer(GuestBall, cornerExecutorIndex, MatchRatingConstants.CORNER_SUCCESS);
                     UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.CORNER_LOST_HEADER);
-                    UpdateMatchRatingForPlayer(ReverseGuestBall, defenderHeaders[y].id, MatchRatingConstants.CORNER_WON_HEADER);
+                    UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.CORNER_WON_HEADER);
                     MinutePassed();
                     StartCoroutine(CommentStart());
                 }
@@ -818,7 +831,7 @@ public class Comment : MonoBehaviour
                 yield return new WaitForSeconds(_time);
 
             CommentLine.Instance.FailedCross();
-            UpdateMatchRatingForPlayer(GuestBall, cornerExecutorID, MatchRatingConstants.CORNER_FAIL);
+            UpdateMatchRatingForPlayer(GuestBall, cornerExecutorIndex, MatchRatingConstants.CORNER_FAIL);
 
             MinutePassed();
             StartCoroutine(CommentStart());
@@ -836,24 +849,36 @@ public class Comment : MonoBehaviour
         {
             CommentLine.Instance.TryingToGetPastDefender();
 
-            if(_time > 0) 
+            if (_time > 0)
                 yield return new WaitForSeconds(_time);
 
-            float plus = ((_teams[GuestBall][PlayerWithBall].Dribling + _teams[GuestBall][PlayerWithBall].Speed) - (_teams[ReverseGuestBall][_teams[ReverseGuestBall].GetIndexOfDefensiveWinger((int)direction)].Tackle + _teams[ReverseGuestBall][_teams[ReverseGuestBall].GetIndexOfDefensiveWinger((int)direction)].Speed)) / 3;
+            int defenderIndex = _teams[ReverseGuestBall].GetIndexOfDefensiveWinger((int)direction);
+
+            float plus = defenderIndex == -1 ? 100 
+                : ((_teams[GuestBall][PlayerWithBall].Dribling + _teams[GuestBall][PlayerWithBall].Speed) 
+                - (_teams[ReverseGuestBall][defenderIndex].Tackle + _teams[ReverseGuestBall][defenderIndex].Speed)) 
+                / 3;
+
+            // add variant with empty space without need for dribbling
             if (Random.Range(1, 101) < 55 + plus)
             {
                 if (Random.Range(1, 101) <= 70)
                 {
                     CommentLine.Instance.DecidesToCross();
-                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
-                    UpdateMatchRatingForPlayer(ReverseGuestBall, _teams[ReverseGuestBall].GetIndexOfDefensiveWinger((int)direction), MatchRatingConstants.DRIBBLE_DUEL_LOST);
+
+                    if (defenderIndex != -1)
+                    {
+                        UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
+                        UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.DRIBBLE_DUEL_LOST);
+                    }
+
                     float border = 40 + (_teams[0][PlayerWithBall].Pass / 3);           //----------------- ewentualnie zmniejszyc mnożnik gdyby za dużo goli z główki
                     int acc = Random.Range(1, 100);
                     if (acc <= border)
                     {
                         int attackerHeader = _teams[GuestBall].GetIndexOfRandomAttacker(PlayerWithBall);
                         
-                        int defenderHeader = _teams[ReverseGuestBall].GetIndexOfRandomDefender(_teams[ReverseGuestBall].GetIndexOfDefensiveWinger((int)direction));
+                        int defenderHeader = _teams[ReverseGuestBall].GetIndexOfRandomDefender(defenderIndex);
 
                         // główka
                         if (Random.Range(1, 101) <= (30 + (_teams[GuestBall][attackerHeader].Rating - _teams[ReverseGuestBall][defenderHeader].Rating) / 3))
@@ -917,8 +942,11 @@ public class Comment : MonoBehaviour
                 else
                 {
                     CommentLine.Instance.DecidesToShootInsteadOfCrossing();
-                    UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
-                    UpdateMatchRatingForPlayer(ReverseGuestBall, _teams[ReverseGuestBall].GetIndexOfDefensiveWinger((int)direction), MatchRatingConstants.DRIBBLE_DUEL_LOST);
+                    if (defenderIndex != -1)
+                    {
+                        UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
+                        UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.DRIBBLE_DUEL_LOST);
+                    }
                     StartCoroutine(Shot(5));
                 }
             }
@@ -933,12 +961,19 @@ public class Comment : MonoBehaviour
         }
         else
         {
+            int firstDef = _teams[ReverseGuestBall].GetIndexOfRandomMiddleDefender();
+            if (firstDef == -1) 
+            {
+                CommentLine.Instance.MiddleEmptySpace();
+                StartCoroutine(Shot(2));
+                yield break;
+            }
+
             CommentLine.Instance.TryingToGetPastDefender();
 
-            if(_time > 0) 
+            if (_time > 0)
                 yield return new WaitForSeconds(_time);
 
-            int firstDef = _teams[ReverseGuestBall].GetIndexOfRandomMiddleDefender();
             float plus = ((_teams[GuestBall][PlayerWithBall].Dribling + _teams[GuestBall][PlayerWithBall].Speed) - (_teams[ReverseGuestBall][firstDef].Tackle + _teams[ReverseGuestBall][firstDef].Speed)) / 3;
             if (Random.Range(1, 101) < 45 + plus)
             {

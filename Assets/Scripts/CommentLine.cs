@@ -651,6 +651,11 @@ public class CommentLine : MonoBehaviour
         _Commentary.text += $"\n{Comment.Instance.GetMinute()} min. Piłkę przy nodze ma {_teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname}. próbuje minąć przeciwnika...";
     }
 
+    public void MiddleEmptySpace()
+    {
+        _Commentary.text += $"\n{Comment.Instance.GetMinute()} min. {_teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname} przy piłce, zastaje nieprawdopodobnie pustą przestrzeń przed sobą. Przed nim tylko bramkarz...";
+    }
+
     public void DecidesToCross()
     {
         _Commentary.text += $"\nMinął rywala i dośrodkowuje...";

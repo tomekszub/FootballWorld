@@ -7,6 +7,7 @@ public static class MatchRatingConstants
 
     public const float COUNTER_BALL_LOSS = -0.35f;
     public const float COUNTER_BALL_INTERCEPTION = 0.35f;
+    public const float COUNTER_PASS_SUCCESS = 0.3f;
     public const float COUNTER_PASS_FAIL = -0.3f;
 
     public const float LONG_SAVE_SUCCESS = 0.1f;
