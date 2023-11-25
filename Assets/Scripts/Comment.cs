@@ -440,9 +440,10 @@ public class Comment : MonoBehaviour
         if(_time > 0) 
             yield return new WaitForSeconds(_time);
 
+        MinutePassed();
+
         if (isPenalty)
         {
-            MinutePassed();
             PlayerWithBall = _teams[GuestBall].GetPenaltyExecutor();
             CommentLine.Instance.PreparingToPenalty();
             MinutePassed();
@@ -472,7 +473,31 @@ public class Comment : MonoBehaviour
         }
         else
         {
-            //TODO: free kick
+            PlayerWithBall = _teams[GuestBall].GetFreeKickExecutor();
+            CommentLine.Instance.PreparingToFreeKick();
+            MinutePassed();
+
+            if (_time > 0)
+                yield return new WaitForSeconds(_time);
+
+            //TODO: more variety of free kick solutions eg. save => corner, cross, quick pass to the wing
+
+            float directGoalTreshold = (_teams[GuestBall][PlayerWithBall].FreeKicks - _teams[ReverseGuestBall][0].Rating) / 10;
+            int rnd = Random.Range(1, 101);
+            if (rnd < directGoalTreshold)
+            {
+                // gol
+                GoalScored();
+                CommentLine.Instance.FreeKickGoal();
+            }
+            else
+            {
+                CommentLine.Instance.FreeKickMissed();
+            }
+
+            _matchStats[GuestBall].ShotTaken();
+            MinutePassed();
+            StartCoroutine(CommentStart());
         }
     }
 
@@ -854,22 +879,52 @@ public class Comment : MonoBehaviour
 
             int defenderIndex = _teams[ReverseGuestBall].GetIndexOfDefensiveWinger((int)direction);
 
-            float plus = defenderIndex == -1 ? 100 
+            float dribbleChance = defenderIndex == -1 ? 100 
                 : ((_teams[GuestBall][PlayerWithBall].Dribling + _teams[GuestBall][PlayerWithBall].Speed) 
                 - (_teams[ReverseGuestBall][defenderIndex].Tackle + _teams[ReverseGuestBall][defenderIndex].Speed)) 
                 / 3;
 
+            dribbleChance += 55;
+            int roll = Random.Range(1, 101);
             // add variant with empty space without need for dribbling
-            if (Random.Range(1, 101) < 55 + plus)
+            if (roll < dribbleChance)
             {
+                if(defenderIndex != -1 && dribbleChance - roll < 7.5f)
+                {
+                    CommentLine.Instance.FoulAfterDribble(_teams[ReverseGuestBall][defenderIndex]);
+                    if(Random.value > 0.75f)
+                    {
+                        if (_time > 0)
+                            yield return new WaitForSeconds(_time);
+
+                        CommentLine.Instance.YellowCard(_teams[ReverseGuestBall][defenderIndex]);
+                        var redCard = !_teams[ReverseGuestBall].TryReceiveYellowCard(defenderIndex);
+                        UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.YELLOW_CARD);
+                        if(redCard)
+                        {
+                            if (_time > 0)
+                                yield return new WaitForSeconds(_time);
+                            MinutePassed();
+                            CommentLine.Instance.RedCard(_teams[ReverseGuestBall][defenderIndex], false);
+                            UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.RED_CARD);
+                            _teams[ReverseGuestBall].ReceiveRedCard(defenderIndex);
+                        }
+                    }
+                    StartCoroutine(FreeKick(false));
+                    yield break;
+                }
+
                 if (Random.Range(1, 101) <= 70)
                 {
-                    CommentLine.Instance.DecidesToCross();
-
                     if (defenderIndex != -1)
                     {
+                        CommentLine.Instance.DecidesToCross();
                         UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.DRIBBLE_DUEL_WON);
                         UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.DRIBBLE_DUEL_LOST);
+                    }
+                    else
+                    {
+                        CommentLine.Instance.DecidesToCrossUncontested();
                     }
 
                     float border = 40 + (_teams[0][PlayerWithBall].Pass / 3);           //----------------- ewentualnie zmniejszyc mnożnik gdyby za dużo goli z główki
@@ -995,7 +1050,7 @@ public class Comment : MonoBehaviour
                             yield return new WaitForSeconds(_time);
 
                         CommentLine.Instance.ChanceForOneOnOne();
-                        UpdateMatchRatingForPreviousPlayer(MatchRatingConstants.ADVANCED_PASS_FAIL);
+                        UpdateMatchRatingForPreviousPlayer(MatchRatingConstants.ADVANCED_PASS_SUCCESS);
 
                         if (_time > 0)
                             yield return new WaitForSeconds(_time);

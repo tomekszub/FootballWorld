@@ -8,10 +8,12 @@ public class PitchTeam
 {
     List<Footballer> _players;
     string _competitionName;
+    string _formation;
     int[] _playersMidPos;
     int[] _playersMidDefPos;
     int[] _wingPos = new int[2];
     int[] _defWingPos = new int[2];
+    bool[] _yellowCards = new bool[11];
     int _defLastPlayer;
     int _midLastPlayer;
 
@@ -25,7 +27,8 @@ public class PitchTeam
     {
         _players = players;
         _competitionName = competitionName;
-        RecognizeFormation(formation);
+        _formation = formation;
+        UpdatePositionsAndStrengths();
     }
 
     public Footballer this[int i] => _players[i];
@@ -55,6 +58,17 @@ public class PitchTeam
                 penaltyPlayers.Add(i);
         }
         return penaltyPlayers.OrderByDescending(x => _players[x].Penalty).First();
+    }
+
+    public int GetFreeKickExecutor()
+    {
+        List<int> freeKickPlayers = new(10);
+        for (int i = 1; i < 11; i++)
+        {
+            if (_players[i] != null)
+                freeKickPlayers.Add(i);
+        }
+        return freeKickPlayers.OrderByDescending(x => _players[x].FreeKicks).First();
     }
 
     public int GetCornerExecutorIndex()
@@ -103,8 +117,8 @@ public class PitchTeam
 
     public void IncreaseMinuteFatigueForAll()
     {
-        for (int i = 0; i < _players.Count; i++)
-            _players[i].GainFatigue(i == 0);
+        for (int i = 0; i < 11; i++)
+            _players[i]?.GainFatigue(i == 0);
     }
 
     public void ReportPlayerStartedMatch(int index) => AddStatisticToPlayer(index, StatName.MatchesPlayed);
@@ -125,7 +139,7 @@ public class PitchTeam
 
     void AddStatisticToPlayer(int index, StatName statName, double val = 1)
     {
-        if (index >= _players.Count || _players[index] == null)
+        if (_players[index] == null)
             return;
 
         _players[index].AddStatistic(_competitionName, statName, val);
@@ -133,101 +147,123 @@ public class PitchTeam
 
     #endregion
 
-    void RecognizeFormation(string formation)
+    #region Status
+
+    public bool TryReceiveYellowCard(int index)
     {
-        if (formation == "4-3-3")
+        if (_yellowCards[index])
+            return false;
+
+        _yellowCards[index] = true;
+
+        AddStatisticToPlayer(index, StatName.YellowCards);
+        return true;
+    }
+
+    public void ReceiveRedCard(int index)
+    {
+        AddStatisticToPlayer(index, StatName.RedCards);
+        _players[index] = null;
+        UpdatePositionsAndStrengths();
+    }
+
+    #endregion
+
+    void UpdatePositionsAndStrengths()
+    {
+        if (_formation == "4-3-3")
         {
-            TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
+            TeamDefenceRating = (GetPlayerRating(1) + GetPlayerRating(2) + GetPlayerRating(3) + GetPlayerRating(4));
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
             _defLastPlayer = 4;
-            TeamMidfieldRating = (_players[5].Rating + _players[6].Rating + _players[7].Rating);
+            TeamMidfieldRating = (GetPlayerRating(5) + GetPlayerRating(6) + GetPlayerRating(7));
             TeamMidfieldRating = (TeamMidfieldRating / 3) + (TeamMidfieldRating / 3);
             _midLastPlayer = 7;
-            TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
+            TeamAttackRating = (GetPlayerRating(8) + GetPlayerRating(9) + GetPlayerRating(10));
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 10 };
             _wingPos[0] = 8;
             _wingPos[1] = 9;
         }
-        else if (formation == "4-2-3-1" || formation == "4-4-1-1")
+        else if (_formation == "4-2-3-1" || _formation == "4-4-1-1")
         {
-            TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
+            TeamDefenceRating = (GetPlayerRating(1) + GetPlayerRating(2) + GetPlayerRating(3) + GetPlayerRating(4));
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
             _defLastPlayer = 4;
-            TeamMidfieldRating = (_players[5].Rating + _players[6].Rating);
+            TeamMidfieldRating = (GetPlayerRating(5) + GetPlayerRating(6));
             TeamMidfieldRating = (TeamMidfieldRating / 2) + (TeamMidfieldRating / 3);
             _midLastPlayer = 6;
-            TeamAttackRating = (_players[7].Rating + _players[8].Rating + _players[9].Rating + _players[10].Rating);
+            TeamAttackRating = (GetPlayerRating(7) + GetPlayerRating(8) + GetPlayerRating(9) + GetPlayerRating(10));
             TeamAttackRating = (TeamAttackRating / 4) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 7, 10 };
             _wingPos[0] = 8;
             _wingPos[1] = 9;
         }
-        else if (formation == "4-1-4-1")
+        else if (_formation == "4-1-4-1")
         {
-            TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
+            TeamDefenceRating = (GetPlayerRating(1) + GetPlayerRating(2) + GetPlayerRating(3) + GetPlayerRating(4));
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
             _defLastPlayer = 4;
-            TeamMidfieldRating = (_players[5].Rating + _players[6].Rating + _players[7].Rating);
+            TeamMidfieldRating = (GetPlayerRating(5) + GetPlayerRating(6) + GetPlayerRating(7));
             TeamMidfieldRating = (TeamMidfieldRating / 3) + (TeamMidfieldRating / 3);
             _midLastPlayer = 6;
-            TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
+            TeamAttackRating = (GetPlayerRating(8) + GetPlayerRating(9) + GetPlayerRating(10));
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 6, 7, 10 };
             _wingPos[0] = 8;
             _wingPos[1] = 9;
         }
-        else if (formation == "4-3-1-2")
+        else if (_formation == "4-3-1-2")
         {
-            TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
+            TeamDefenceRating = (GetPlayerRating(1) + GetPlayerRating(2) + GetPlayerRating(3) + GetPlayerRating(4));
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
             _defLastPlayer = 4;
-            TeamMidfieldRating = (_players[5].Rating + _players[6].Rating + _players[7].Rating);
+            TeamMidfieldRating = (GetPlayerRating(5) + GetPlayerRating(6) + GetPlayerRating(7));
             TeamMidfieldRating = (TeamMidfieldRating / 3) + (TeamMidfieldRating / 3);
             _midLastPlayer = 7;
-            TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
+            TeamAttackRating = (GetPlayerRating(8) + GetPlayerRating(9) + GetPlayerRating(10));
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 8, 9, 10 };
             _wingPos[0] = 6;
             _wingPos[1] = 7;
         }
-        else if (formation == "4-4-2")
+        else if (_formation == "4-4-2")
         {
-            TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating);
+            TeamDefenceRating = (GetPlayerRating(1) + GetPlayerRating(2) + GetPlayerRating(3) + GetPlayerRating(4));
             TeamDefenceRating = (TeamDefenceRating / 4) + (TeamDefenceRating / 4);
             _defLastPlayer = 4;
-            TeamMidfieldRating = (_players[5].Rating + _players[6].Rating);
+            TeamMidfieldRating = (GetPlayerRating(5) + GetPlayerRating(6));
             TeamMidfieldRating = (TeamMidfieldRating / 2) + (TeamMidfieldRating / 3);
             _midLastPlayer = 6;
-            TeamAttackRating = (_players[7].Rating + _players[8].Rating + _players[9].Rating + _players[10].Rating);
+            TeamAttackRating = (GetPlayerRating(7) + GetPlayerRating(8) + GetPlayerRating(9) + GetPlayerRating(10));
             TeamAttackRating = (TeamAttackRating / 4) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 9, 10 };
             _wingPos[0] = 7;
             _wingPos[1] = 8;
         }
-        else if (formation == "5-3-2")
+        else if (_formation == "5-3-2")
         {
-            TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating + _players[4].Rating + _players[5].Rating);
+            TeamDefenceRating = (GetPlayerRating(1) + GetPlayerRating(2) + GetPlayerRating(3) + GetPlayerRating(4) + GetPlayerRating(5));
             TeamDefenceRating = (TeamDefenceRating / 5) + (TeamDefenceRating / 4);
             _defLastPlayer = 5;
-            TeamMidfieldRating = (_players[6].Rating + _players[7].Rating);
+            TeamMidfieldRating = (GetPlayerRating(6) + GetPlayerRating(7));
             TeamMidfieldRating = (TeamMidfieldRating / 2) + (TeamMidfieldRating / 3);
             _midLastPlayer = 7;
-            TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
+            TeamAttackRating = (GetPlayerRating(8) + GetPlayerRating(9) + GetPlayerRating(10));
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 8, 9, 10 };
             _wingPos[0] = 6;
             _wingPos[1] = 7;
         }
-        else if (formation == "3-4-1-2" || formation == "3-4-2-1")
+        else if (_formation == "3-4-1-2" || _formation == "3-4-2-1")
         {
-            TeamDefenceRating = (_players[1].Rating + _players[2].Rating + _players[3].Rating);
+            TeamDefenceRating = (GetPlayerRating(1) + GetPlayerRating(2) + GetPlayerRating(3));
             TeamDefenceRating = (TeamDefenceRating / 3) + (TeamDefenceRating / 4);
             _defLastPlayer = 3;
-            TeamMidfieldRating = (_players[4].Rating + _players[5].Rating + _players[6].Rating + _players[7].Rating);
+            TeamMidfieldRating = (GetPlayerRating(4) + GetPlayerRating(5) + GetPlayerRating(6) + GetPlayerRating(7));
             TeamMidfieldRating = (TeamMidfieldRating / 4) + (TeamMidfieldRating / 3);
             _midLastPlayer = 7;
-            TeamAttackRating = (_players[8].Rating + _players[9].Rating + _players[10].Rating);
+            TeamAttackRating = (GetPlayerRating(8) + GetPlayerRating(9) + GetPlayerRating(10));
             TeamAttackRating = (TeamAttackRating / 3) + (TeamAttackRating / 3);
             _playersMidPos = new[] { 8, 9, 10 };
             _wingPos[0] = 6;
@@ -251,6 +287,8 @@ public class PitchTeam
             _defWingPos[0] = 1;
             _defWingPos[1] = 3;
         }
+
+        float GetPlayerRating(int index) => _players[index] == null ? 0 : _players[index].Rating;
     }
 
     int GetRandomPlayerIndex(IEnumerable<int> sourceIndices, int excludeIndex = -1)

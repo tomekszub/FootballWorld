@@ -201,7 +201,9 @@ public class Footballer : IComparable<Footballer>
             Goals,
             Assists,
             CleanSheet,
-            MatchRating
+            MatchRating,
+            YellowCards,
+            RedCards
         }
 
         Dictionary<StatName, double> _stats;

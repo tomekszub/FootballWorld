@@ -67,4 +67,7 @@ public static class MatchRatingConstants
     public const float CROSS_LOST_POSITIONING = -0.2f;
     public const float CROSS_WON_HEADER = 0.1f;
     public const float CROSS_LOST_HEADER = -0.1f;
+
+    public const float YELLOW_CARD = -0.15f;
+    public const float RED_CARD = -1f;
 }

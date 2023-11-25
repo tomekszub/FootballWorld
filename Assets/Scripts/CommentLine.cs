@@ -177,6 +177,11 @@ public class CommentLine : MonoBehaviour
         _Commentary.text += $"\n{Comment.Instance.GetMinute()} min. Do piłki podchodzi {_teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname}...";
     }
 
+    public void PreparingToFreeKick()
+    {
+        _Commentary.text += $"\n{Comment.Instance.GetMinute()} min. Rzut wolny wykonywać będzie {_teams[Comment.Instance.GuestBall][Comment.Instance.PlayerWithBall].Surname}...";
+    }
+
     public void PenaltyGoal()
     {
         string text = "";
@@ -195,6 +200,24 @@ public class CommentLine : MonoBehaviour
         _Commentary.text += $"\n<color=#ffa500ff>{Comment.Instance.GetMinute()} min. {text}</color>";
     }
 
+    public void FreeKickGoal()
+    {
+        string text = "";
+        switch (GetRandomIndex(3))
+        {
+            case 1:
+                text = $"Co za bramka! Pajęczyna zdjęta z okienka bramki.";
+                break;
+            case 2:
+                text = $"Fantastyczny gol, {_teams[Comment.Instance.ReverseGuestBall][0].Surname} bez szans.";
+                break;
+            case 3:
+                text = $"Niewiarygodne, bramka bezposrednio z rzutu wolnego.";
+                break;
+        }
+        _Commentary.text += $"\n<color=#ffa500ff>{Comment.Instance.GetMinute()} min. {text}</color>";
+    }
+
     public void PenaltyMissed()
     {
         string text = $"";
@@ -205,6 +228,24 @@ public class CommentLine : MonoBehaviour
                 break;
             case 2:
                 text = $"Za słaby strzał, {_teams[Comment.Instance.ReverseGuestBall][0].Surname} odbija bez problemu.";
+                break;
+            case 3:
+                text = $"Mocno, nad bramką i nadal wynik bez zmian.";
+                break;
+        }
+        _Commentary.text += $"\n{Comment.Instance.GetMinute()} min. {text}";
+    }
+
+    public void FreeKickMissed()
+    {
+        string text = $"";
+        switch (GetRandomIndex(3))
+        {
+            case 1:
+                text = $"Słabiutkie uderzenie, {_teams[Comment.Instance.ReverseGuestBall][0].Surname} bez problemu łapie piłkę.";
+                break;
+            case 2:
+                text = $"Koszmarny strzał, {_teams[Comment.Instance.ReverseGuestBall][0].Surname} odprowadza piłkę wzrokiem.";
                 break;
             case 3:
                 text = $"Mocno, nad bramką i nadal wynik bez zmian.";
@@ -658,7 +699,103 @@ public class CommentLine : MonoBehaviour
 
     public void DecidesToCross()
     {
-        _Commentary.text += $"\nMinął rywala i dośrodkowuje...";
+        switch (GetRandomIndex(3))
+        {
+            case 1:
+                _Commentary.text += $"\nMinął rywala i dośrodkowuje...";
+                break;
+            case 2:
+                _Commentary.text += $"\nOgrał rywala i decyduje się na centrę...";
+                break;
+            case 3:
+                _Commentary.text += $"\nPo minięciu przeciwnika zostaje mu tylko dograć w pole karne...";
+                break;
+        }
+    }
+
+    public void DecidesToCrossUncontested()
+    {
+        switch (GetRandomIndex(3))
+        {
+            case 1:
+                _Commentary.text += $"\nMa czas i miejsce, dośrodkowuje...";
+                break;
+            case 2:
+                _Commentary.text += $"\nDecyduje się na centrę...";
+                break;
+            case 3:
+                _Commentary.text += $"\nMa dużo opcji, wrzutka w pole karne...";
+                break;
+        }
+    }
+
+    public void FoulAfterDribble(Footballer offender)
+    {
+        switch (GetRandomIndex(3))
+        {
+            case 1:
+                _Commentary.text += $"\n{offender.Surname} dał sie minąć i zdecydował się faulować, rzut wolny.";
+                break;
+            case 2:
+                _Commentary.text += $"\n{offender.Surname} musiał ratować się faulem, stały fragment gry dla przeciwników.";
+                break;
+            case 3:
+                _Commentary.text += $"\n{offender.Surname} dał się oszukać, zostaje mu tylko nieprzepisowe zatrzymanie rywala, rzut wolny.";
+                break;
+        }
+    }
+
+    public void YellowCard(Footballer receiver)
+    {
+        string text = "";
+        switch (GetRandomIndex(3))
+        {
+            case 1:
+                text = $"{receiver.Surname} otrzymuje upomnienie w postaci żółtej kartki.";
+                break;
+            case 2:
+                text = $"Zółta kartka, upomniany {receiver.Surname}.";
+                break;
+            case 3:
+                text = $"{receiver.Surname} dostaje żółtą kartkę.";
+                break;
+        }
+        _Commentary.text += $"\n<color=#fff14e>{text}</color>";
+    }
+
+    public void RedCard(Footballer receiver, bool directRedCard)
+    {
+        string text = "";
+
+        if (directRedCard)
+        {
+            switch (GetRandomIndex(3))
+            {
+                case 1:
+                    text = $"{receiver.Surname} otrzymuje bezposrednią czerwoną kartkę.";
+                    break;
+                case 2:
+                    text = $"Czerwona kartka, {receiver.Surname} musi zejść z boiska.";
+                    break;
+                case 3:
+                    text = $"{receiver.Surname} osłabia swoja drużynę.";
+                    break;
+            }
+        }
+        else
+        {
+            switch (GetRandomIndex(2))
+            {
+                case 1:
+                    text = $"To jego druga żółta kartka i w konsekwencji czerwona.";
+                    break;
+                case 2:
+                    text = $"Sędzia jest nieubłagany, dwie żołte i czerwona kartka, {receiver.Surname} musi zejść z boiska.";
+                    break;
+            }
+        }
+
+        _Commentary.text += $"\n<color=#e83838>{text}</color>";
     }
 
     public void DecidesToShootInsteadOfCrossing()
