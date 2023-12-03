@@ -772,10 +772,12 @@ public class Comment : MonoBehaviour
 
             // TODO: add chance to clean tackle based on defender's tackle and attacker's ... ball control?
             int chan = Random.Range(1, 101);
-            if (chan > 70)
+            if (chan > 75)
             {
+                var defender = _teams[ReverseGuestBall].GetIndexOfRandomDefender();
                 CommentLine.Instance.CounterAttackPenaltyFoul();
                 UpdateMatchRatingForCurrentPlayer(MatchRatingConstants.PENALTY_WON);
+                RedCard(defender, true);
                 StartCoroutine(FreeKick(true));
             }
             else
@@ -896,18 +898,12 @@ public class Comment : MonoBehaviour
                     {
                         if (_time > 0)
                             yield return new WaitForSeconds(_time);
-
-                        CommentLine.Instance.YellowCard(_teams[ReverseGuestBall][defenderIndex]);
-                        var redCard = !_teams[ReverseGuestBall].TryReceiveYellowCard(defenderIndex);
-                        UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.YELLOW_CARD);
-                        if(redCard)
+                        bool redCard = YellowCard(defenderIndex);
+                        if (redCard)
                         {
                             if (_time > 0)
                                 yield return new WaitForSeconds(_time);
-                            MinutePassed();
-                            CommentLine.Instance.RedCard(_teams[ReverseGuestBall][defenderIndex], false);
-                            UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.RED_CARD);
-                            _teams[ReverseGuestBall].ReceiveRedCard(defenderIndex);
+                            RedCard(defenderIndex, false);
                         }
                     }
                     StartCoroutine(FreeKick(false));
@@ -1029,9 +1025,33 @@ public class Comment : MonoBehaviour
             if (_time > 0)
                 yield return new WaitForSeconds(_time);
 
-            float plus = ((_teams[GuestBall][PlayerWithBall].Dribling + _teams[GuestBall][PlayerWithBall].Speed) - (_teams[ReverseGuestBall][firstDef].Tackle + _teams[ReverseGuestBall][firstDef].Speed)) / 3;
-            if (Random.Range(1, 101) < 45 + plus)
+            float dribbleChance = 45 + ((_teams[GuestBall][PlayerWithBall].Dribling + _teams[GuestBall][PlayerWithBall].Speed) - 
+                (_teams[ReverseGuestBall][firstDef].Tackle + _teams[ReverseGuestBall][firstDef].Speed)) / 3;
+
+            int roll = Random.Range(1, 101);
+
+            if (roll < dribbleChance)
             {
+                if (dribbleChance - roll < 7.5f)
+                {
+                    CommentLine.Instance.FoulAfterDribble(_teams[ReverseGuestBall][firstDef]);
+                    // TODO: chance for card should depend on referee and optional player perks
+                    if (Random.value > 0.75f)
+                    {
+                        if (_time > 0)
+                            yield return new WaitForSeconds(_time);
+                        bool redCard = YellowCard(firstDef);
+                        if (redCard)
+                        {
+                            if (_time > 0)
+                                yield return new WaitForSeconds(_time);
+                            RedCard(firstDef, false);
+                        }
+                    }
+                    StartCoroutine(FreeKick(false));
+                    yield break;
+                }
+
                 //podanie bądź strzał
                 if (Random.Range(1, 101) <= 65)
                 {
@@ -1106,4 +1126,20 @@ public class Comment : MonoBehaviour
             }
         }
 	}
+
+    bool YellowCard(int defenderIndex)
+    {
+        CommentLine.Instance.YellowCard(_teams[ReverseGuestBall][defenderIndex]);
+        var redCard = !_teams[ReverseGuestBall].TryReceiveYellowCard(defenderIndex);
+        UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.YELLOW_CARD);
+        return redCard;
+    }
+
+    void RedCard(int defenderIndex, bool directRedcard)
+    {
+        MinutePassed();
+        CommentLine.Instance.RedCard(_teams[ReverseGuestBall][defenderIndex], directRedcard);
+        UpdateMatchRatingForPlayer(ReverseGuestBall, defenderIndex, MatchRatingConstants.RED_CARD);
+        _teams[ReverseGuestBall].ReceiveRedCard(defenderIndex);
+    }
 }
